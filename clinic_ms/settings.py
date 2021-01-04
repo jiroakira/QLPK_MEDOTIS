@@ -27,11 +27,8 @@ SECRET_KEY = '%=m%a_se_mvr^a&)4xyc@04(@cik9j9=9rq(4(a!xsfhwwk3zp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< HEAD
-ALLOWED_HOSTS = ['localhost', '162.0.231.234', 'duockalpharm.vn']
-=======
 ALLOWED_HOSTS = ['duockalpharm.vn', '162.0.231.234']
->>>>>>> a31cfe4ffd1cb651a77e15c6ebb67c31afec9755
+
 
 
 # Application definition
@@ -211,8 +208,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# Add these new line
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATIC_ROOT = '/home/niovtjvk/public_html/static'
