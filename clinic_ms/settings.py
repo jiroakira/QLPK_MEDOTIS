@@ -27,7 +27,7 @@ SECRET_KEY = '%=m%a_se_mvr^a&)4xyc@04(@cik9j9=9rq(4(a!xsfhwwk3zp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['duockalpharm.vn', '162.0.231.234:8000']
+ALLOWED_HOSTS = ['localhost', '162.0.231.234', 'duockalpharm.vn']
 
 
 # Application definition
@@ -61,7 +61,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://162.0.231.234:8000"
+    "http://162.0.231.234"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -208,12 +208,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Add these new lines
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# Add these new line
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATIC_ROOT = '/home/niovtjvk/public_html/static'
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # media directory in the root directory 
