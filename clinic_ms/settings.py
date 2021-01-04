@@ -208,12 +208,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Add these new lines
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATIC_ROOT = '/home/niovtjvk/public_html/static'
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # media directory in the root directory 
