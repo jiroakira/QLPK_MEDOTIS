@@ -63,7 +63,7 @@ class CheckupProcessConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
 
         context = await self.get_process_checkup(self.scope)
-        print(context)
+        
         await self.send_json(content=context)
 
 
@@ -89,7 +89,7 @@ class CheckupProcessConsumer(AsyncJsonWebsocketConsumer):
 
     async def checkup_process_info(self, event):
         context = await self.get_process_checkup(self.scope)
-        print(context)
+        
         await self.send_json(content=context)
 
     @database_sync_to_async
@@ -131,7 +131,7 @@ class FuncroomInfor(AsyncJsonWebsocketConsumer):
         await self.accept()
 
         context = await self.get_funcroom_info(self.scope)
-        print(context)
+        
         await self.send_json(content=context)
 
     async def websocket_disconnect(self, event):
@@ -152,7 +152,7 @@ class FuncroomInfor(AsyncJsonWebsocketConsumer):
     
     async def funcroom_info(self, event):
         context = await self.get_funcroom_info(self.scope)
-        print(context)
+        
         await self.send_json(content=context)
 
     @database_sync_to_async
@@ -219,7 +219,7 @@ class FirstProcessNoti(AsyncJsonWebsocketConsumer):
             'body': 'Bạn Vui Lòng Di Chuyển Tới Phòng Tài Chính \n Để Đóng Phí Lâm Sàng',
         }
 
-        print(context)
+        
 
         await self.send_json(content=context)
 
@@ -255,7 +255,7 @@ class CheckupProcessNoti(AsyncJsonWebsocketConsumer):
             'body': 'Bạn Vui Lòng Di Chuyển Tới Phòng Tài Chính \n Để Thanh Toán Hóa Đơn Dịch Vụ \n(Bấm vào đây để biết chi tiết hóa đơn)',
         } 
 
-        print(context)
+        
 
         await self.send_json(content=context)
 
@@ -292,7 +292,7 @@ class PrescriptionNoti(AsyncJsonWebsocketConsumer):
             'body': 'Bạn Vui Lòng Di Chuyển Tới Phòng Tài Chính Để \n Thanh Toán Hóa Đơn Thuốc \n (Bấm vào đây để biết chi tiết hóa đơn)',
         }
 
-        print(context)
+        
 
         await self.send_json(content=context)
 
@@ -308,7 +308,7 @@ class CancelAppointment(AsyncJsonWebsocketConsumer):
         await self.accept()
 
         # context = await self.get_process_checkup(self.scope)
-        # # print(context)
+        # # 
         # await self.send_json(content=context)
 
     async def websocket_disconnect(self, event):
@@ -329,7 +329,7 @@ class CancelAppointment(AsyncJsonWebsocketConsumer):
 
     async def cancel_appointment(self, event):
         context = await self.get_upcoming_appointment(self.scope)
-        print(context)
+        
         await self.send_json(content=context)
 
     @database_sync_to_async
@@ -368,7 +368,7 @@ class ChargeBillNoti(AsyncJsonWebsocketConsumer):
             'body': 'Bạn Vui Lòng Di Chuyển Tới Phòng Khám Lâm Sàng \nĐể Thực Hiện Khám',
         } 
 
-        print(context)
+        
 
         await self.send_json(content=context)
 
@@ -404,7 +404,7 @@ class ChargePrescriptionBillNoti(AsyncJsonWebsocketConsumer):
             'body': 'Bạn Vui Lòng Di Chuyển Tới Phòng Thuốc \nĐể Lấy Thuốc',
         } 
 
-        print(context)
+        
 
         await self.send_json(content=context)
 
@@ -440,7 +440,7 @@ class ChargeProcessBillNoti(AsyncJsonWebsocketConsumer):
             'body': 'Bạn Vui Lòng Di Chuyển Tới Các Phòng Chức Năng \nĐể Thực Hiện Khám \n(Tham Khảo Số Thứ Tự Trong Tiến Trình Khám)\n',
         } 
 
-        print(context)
+        
 
         await self.send_json(content=context)
 
@@ -477,6 +477,6 @@ class ProcessAccomplishedNoti(AsyncJsonWebsocketConsumer):
             'body': 'Bạn Đã Hoàn Thành Lịch Trình Khám Lần Này',
         } 
 
-        print(context)
+        
 
         await self.send_json(content=context)
