@@ -62,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://duockalpharm.vn"
+    "https://duockalpharm.vn"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
