@@ -27,7 +27,7 @@ SECRET_KEY = '%=m%a_se_mvr^a&)4xyc@04(@cik9j9=9rq(4(a!xsfhwwk3zp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.0.2.2', '127.0.0.1']
+ALLOWED_HOSTS = ['duockalpharm.vn', '162.0.231.234']
 
 
 # Application definition
@@ -61,7 +61,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8000"
+    "http://duockalpharm.vn"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -220,7 +220,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # MEDIA_URL = 'media/'
 # MEDIA_ROOT = '/home/niovtjvk/ClinicMSSystem2/media/'
 
-# MEDIA_URL = 'http://www.127.0.0.1:8000/ClinicMSSystem2/media/'
+# MEDIA_URL = 'http://www.duockalpharm.vn/ClinicMSSystem2/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
