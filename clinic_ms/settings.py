@@ -61,7 +61,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://duockalpharm.vn"
+    "http://162.0.231.234:8000"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -220,7 +220,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # MEDIA_URL = 'media/'
 # MEDIA_ROOT = '/home/niovtjvk/ClinicMSSystem2/media/'
 
-# MEDIA_URL = 'http://www.duockalpharm.vn/ClinicMSSystem2/media/'
+# MEDIA_URL = 'http://www.162.0.231.234:8000/ClinicMSSystem2/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
