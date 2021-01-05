@@ -148,7 +148,7 @@ urlpatterns = [
     path('api/danh_sach_doanh_thu_thuoc/', DanhSachDoanhThuThuoc.as_view(), name='danh_sach_daonh_thu_thuoc'),
     # * VIEW
     path('', RedirectView.as_view(url='trang_chu/'), name='index'),
-    path('', index, name='index'),
+    path('trang_chu/', index, name='index'),
     path('danh_sach_benh_nhan/', danh_sach_benh_nhan, name='danh_sach_benh_nhan'),
     path('danh_sach_benh_nhan/<int:id>/cap_nhat_thong_tin_benh_nhan', update_benh_nhan, name="update_benh_nhan"),
     path('cap_nhat_thong_tin_benh_nhan/', cap_nhat_thong_tin_benh_nhan, name="cap_nhat_thong_tin_benh_nhan"),
