@@ -1672,6 +1672,12 @@ def import_dich_vu_excel(request):
             'url' : '/danh_sach_dich_vu_kham/'
         }
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+    else:
+        response = {
+            'status': 404,
+            'message': 'That Bai',
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
         
 def them_thuoc_excel(request):
     phong_chuc_nang = PhongChucNang.objects.all()
