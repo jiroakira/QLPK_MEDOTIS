@@ -73,18 +73,18 @@ chuoi_kham = ChuoiKhamViewSet.as_view(
 )
 
 urlpatterns = [
-    # path('', include(router.urls)),
+    path('router/', include(router.urls)),
 
     # * API
-    path('api/nguoi_dung/<int:pk>/', nguoi_dung, name='nguoi_dung'),
-    path('api/dich_vu/<int:pk>/', dich_vu, name='dich_vu'),
-    path('api/phong_chuc_nang/<int:pk>/', phong_chuc_nang, name='phong_chuc_nang'),
+    path('router/api/nguoi_dung/<int:pk>/', nguoi_dung, name='nguoi_dung'),
+    path('router/router/api/dich_vu/<int:pk>/', dich_vu, name='dich_vu'),
+    path('router/api/phong_chuc_nang/<int:pk>/', phong_chuc_nang, name='phong_chuc_nang'),
 
     path('api/them_thuoc/', create_thuoc, name="them_thuoc_api"),
     # path('api/dieu_phoi/phong_chuc_nang/<int:pk>/', DieuPhoiPhongChucNangView.as_view(), name='dieu_phoi'),
     # path('api/lich_kham<int:pk>/', lich_kham, name='lich_kham'),
     path('api/danh_sach_benh_nhan_cho_lam_sang/', DanhSachBenhNhanChoLamSang.as_view(), name='danh_sach_benh_nhan_cho_lam_sang'),
-    path('api/chuoi_kham/<int:pk>/', chuoi_kham, name='chuoi_kham'),
+    path('router/api/chuoi_kham/<int:pk>/', chuoi_kham, name='chuoi_kham'),
     path('api/danh_sach_lich_hen/', ListNguoiDungDangKiKham.as_view(), name='danh_sach_lich_hen'),
     path('api/danh_sach_chuoi_kham/', ChuoiKhamNguoiDung.as_view(), name='danh_sach_chuoi_kham_nguoi_dung'),
     path('api/danh_sach_benh_nhan_theo_phong/', DanhSachBenhNhanTheoPhong.as_view(), name='danh_sach_benh_nhan_theo_phong'),
