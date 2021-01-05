@@ -1589,11 +1589,9 @@ def doanh_thu_phong_kham(request):
     return render(request, 'phong_tai_chinh/doanh_thu_phong_kham.html', context = {'phong_chuc_nang': phong_chuc_nang})
 
 def them_dich_vu_kham_excel(request):
-    bac_si_phu_trach = User.objects.get(chuc_nang = 4)
     phong_chuc_nang = PhongChucNang.objects.all()
 
     data = {
-        "bac_si_phu_trach" : bac_si_phu_trach,
         'phong_chuc_nang': phong_chuc_nang,
     }
     return render(request, 'phong_tai_chinh/them_dich_vu_kham_excel.html', context=data)
