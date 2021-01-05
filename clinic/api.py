@@ -2189,3 +2189,21 @@ class DanhSachHoaDonDichVuBaoHiem(APIView):
 
         # hoa_don_phan_khoa.clear()
         return Response(response)
+
+
+class DanhSachBenhNhanChoLamSang(APIView):
+    def get(self, request, format=None):
+        trang_thai = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Đã Thanh Toán Lâm Sàng")[0] 
+        now = timezone.localtime(timezone.now())
+        tomorrow = now + timedelta(1)
+        today_end = tomorrow.replace(hour=0, minute=0, second=0)
+
+        lich_hen = LichHenKham.objects.filter(trang_thai=trang_thai, thoi_gian_bat_dau__lte=today_end)
+        serializer = LichHenKhamSerializer(lich_hen, many=True, context={'request':request})
+        response = {
+            "error": False,
+            "status": status.HTTP_200_OK,
+            "message": "Danh Sach Lich Hen Kham",
+            "data": serializer.data        
+        }
+        return Response(response)

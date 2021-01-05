@@ -8,7 +8,7 @@ from os import name
 from django.conf.urls import url
 from django.urls import path, include
 from rest_framework import routers
-from .api import (ChuoiKhamGanNhat, ChuoiKhamNguoiDung, ChuoiKhamViewSet,DangKiAPI, DangKiLichHen, DanhSachBacSi, DanhSachBacSi1, DanhSachBaiDang, DanhSachBenhNhan,DanhSachBenhNhanTheoPhong, DanhSachBenhNhanTheoPhongChucNang,DanhSachChuoiKhamBenhNhan, DanhSachDichVuKhamTheoPhong,DanhSachDichVuTheoPhongChucNang, DanhSachDoanhThuTheoThoiGian,DanhSachDoanhThuDichVu, DanhSachDoanhThuThuoc, DanhSachDonThuocBenhNhan,DanhSachDonThuocDaKe,DanhSachDonThuocPhongThuoc, DanhSachHoaDonDichVu,DanhSachHoaDonThuoc, DanhSachKhamTrongNgay, DanhSachLichHenTheoBenhNhan,DanhSachPhongChucNang, DanhSachVatTu, DanhSachThanhToanLamSang,DanhSachThuocBenhNhan, DanhSachThuocTheoCongTy, DieuPhoiPhongChucNangView,DonThuocGanNhat, FileKetQuaViewSet, KetQuaChuoiKhamBenhNhan,KetQuaChuoiKhamBenhNhan2, LichHenKhamViewSet, ListNguoiDungDangKiKham,PhanKhoaKhamBenhNhan, PhongChucNangTheoDichVu, SetChoThanhToan,SetXacNhanKham, TatCaLichHenBenhNhan, ThongTinBenhNhanTheoMa,ThongTinPhongChucNang, UserInfor, UserViewSet, DichVuKhamViewSet,PhongChucNangViewSet,LichHenKhamSapToi, UserUpdateInfo,UserUpdateInfoRequest, UploadAvatarView,UpdateAppointmentDetail,CapNhatLichHen, HoaDonChuoiKhamNguoiDung, HoaDonChuoiKhamCanThanhToan,HoaDonThuocCanThanhToan, DichVuTheoPhongChucNang, DonThuocCuaChuoiKham, HoaDonThuocCuaChuoiKham, HoaDonDichVuCuaChuoiKham, HoaDonLamSangChuoiKham, HoaDonLamSangGanNhat, DanhSachHoaDonDichVuBaoHiem, DanhSachDoanhThuLamSang)
+from .api import (ChuoiKhamGanNhat, ChuoiKhamNguoiDung, ChuoiKhamViewSet,DangKiAPI, DangKiLichHen, DanhSachBacSi, DanhSachBacSi1, DanhSachBaiDang, DanhSachBenhNhan, DanhSachBenhNhanChoLamSang,DanhSachBenhNhanTheoPhong, DanhSachBenhNhanTheoPhongChucNang,DanhSachChuoiKhamBenhNhan, DanhSachDichVuKhamTheoPhong,DanhSachDichVuTheoPhongChucNang, DanhSachDoanhThuTheoThoiGian,DanhSachDoanhThuDichVu, DanhSachDoanhThuThuoc, DanhSachDonThuocBenhNhan,DanhSachDonThuocDaKe,DanhSachDonThuocPhongThuoc, DanhSachHoaDonDichVu,DanhSachHoaDonThuoc, DanhSachKhamTrongNgay, DanhSachLichHenTheoBenhNhan,DanhSachPhongChucNang, DanhSachVatTu, DanhSachThanhToanLamSang,DanhSachThuocBenhNhan, DanhSachThuocTheoCongTy, DieuPhoiPhongChucNangView,DonThuocGanNhat, FileKetQuaViewSet, KetQuaChuoiKhamBenhNhan,KetQuaChuoiKhamBenhNhan2, LichHenKhamViewSet, ListNguoiDungDangKiKham,PhanKhoaKhamBenhNhan, PhongChucNangTheoDichVu, SetChoThanhToan,SetXacNhanKham, TatCaLichHenBenhNhan, ThongTinBenhNhanTheoMa,ThongTinPhongChucNang, UserInfor, UserViewSet, DichVuKhamViewSet,PhongChucNangViewSet,LichHenKhamSapToi, UserUpdateInfo,UserUpdateInfoRequest, UploadAvatarView,UpdateAppointmentDetail,CapNhatLichHen, HoaDonChuoiKhamNguoiDung, HoaDonChuoiKhamCanThanhToan,HoaDonThuocCanThanhToan, DichVuTheoPhongChucNang, DonThuocCuaChuoiKham, HoaDonThuocCuaChuoiKham, HoaDonDichVuCuaChuoiKham, HoaDonLamSangChuoiKham, HoaDonLamSangGanNhat, DanhSachHoaDonDichVuBaoHiem, DanhSachDoanhThuLamSang)
 from .views import BatDauChuoiKhamToggle, KetThucChuoiKhamToggle, LoginView, ThanhToanHoaDonDichVuToggle, add_lich_hen, bat_dau_chuoi_kham, cap_nhat_thong_tin_bac_si, cap_nhat_thong_tin_benh_nhan, cap_nhat_user, chi_tiet_bai_dang, chinh_sua_don_thuoc, chinh_sua_nguon_cung, chinh_sua_phong_chuc_nang, chinh_sua_thuoc, chinh_sua_thuoc_phong_thuoc, create_bac_si, create_dich_vu, create_user, danh_sach_bac_si, danh_sach_bai_dang, danh_sach_benh_nhan, danh_sach_benh_nhan_cho, danh_sach_dich_vu_kham, danh_sach_kham, danh_sach_phong_chuc_nang, danh_sach_thuoc, danh_sach_thuoc_phong_tai_chinh, danh_sach_vat_tu, doanh_thu_phong_kham, don_thuoc, dung_kham, dung_kham_chuyen_khoa, files_upload_view, hoa_don_dich_vu, hoa_don_thuoc, import_dich_vu_excel, import_thuoc_excel, import_vat_tu_excel, index, login, nhan_don_thuoc, phan_khoa_kham, phong_chuyen_khoa, phong_tai_chinh_danh_sach_cho, phong_thuoc_danh_sach_cho, store_cong_ty, store_ke_don, store_phan_khoa, store_thanh_toan_lam_sang, store_update_dich_vu_kham, them_bai_dang, them_dich_vu_kham, them_dich_vu_kham_excel, them_phong_chuc_nang, them_thuoc_excel, them_vat_tu_excel, update_bac_si, update_benh_nhan, update_dich_vu_kham, update_don_thuoc, update_nguon_cung, update_phong_chuc_nang, update_thuoc, update_thuoc_phong_thuoc, update_user, upload_bai_dang, upload_files_chuyen_khoa, upload_files_lam_sang, upload_view, them_moi_thuoc_phong_tai_chinh, create_thuoc, cong_ty, update_lich_hen, danh_sach_lich_hen, store_update_lich_hen, ThanhToanHoaDonThuocToggle, thanh_toan_hoa_don_thuoc, them_thuoc_phong_tai_chinh, upload_view_lam_sang, xoa_dich_vu, xoa_lich_hen, xoa_thuoc, xoa_vat_tu, them_pcn_kem_dich_vu, xoa_lich_hen, xuat_bao_hiem, upload_ket_qua_lam_sang, upload_ket_qua_chuyen_khoa
 
 from medicine.views import ke_don_thuoc_view
@@ -73,7 +73,7 @@ chuoi_kham = ChuoiKhamViewSet.as_view(
 )
 
 urlpatterns = [
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
 
     # * API
     path('api/nguoi_dung/<int:pk>/', nguoi_dung, name='nguoi_dung'),
@@ -82,7 +82,8 @@ urlpatterns = [
 
     path('api/them_thuoc/', create_thuoc, name="them_thuoc_api"),
     # path('api/dieu_phoi/phong_chuc_nang/<int:pk>/', DieuPhoiPhongChucNangView.as_view(), name='dieu_phoi'),
-    path('api/lich_kham<int:pk>/', lich_kham, name='lich_kham'),
+    # path('api/lich_kham<int:pk>/', lich_kham, name='lich_kham'),
+    path('api/danh_sach_benh_nhan_cho_lam_sang/', DanhSachBenhNhanChoLamSang.as_view(), name='danh_sach_benh_nhan_cho_lam_sang'),
     path('api/chuoi_kham/<int:pk>/', chuoi_kham, name='chuoi_kham'),
     path('api/danh_sach_lich_hen/', ListNguoiDungDangKiKham.as_view(), name='danh_sach_lich_hen'),
     path('api/danh_sach_chuoi_kham/', ChuoiKhamNguoiDung.as_view(), name='danh_sach_chuoi_kham_nguoi_dung'),
@@ -146,8 +147,8 @@ urlpatterns = [
     path('api/danh_sach_doanh_thu_dich_vu/', DanhSachDoanhThuDichVu.as_view(), name='danh_sach_doanh_thu_dich_vu'),
     path('api/danh_sach_doanh_thu_thuoc/', DanhSachDoanhThuThuoc.as_view(), name='danh_sach_daonh_thu_thuoc'),
     # * VIEW
-    path('', RedirectView.as_view(url='index/'), name='index'),
-    path('index/', index, name='index'),
+    path('', RedirectView.as_view(url='trang_chu/'), name='index'),
+    path('', index, name='index'),
     path('danh_sach_benh_nhan/', danh_sach_benh_nhan, name='danh_sach_benh_nhan'),
     path('danh_sach_benh_nhan/<int:id>/cap_nhat_thong_tin_benh_nhan', update_benh_nhan, name="update_benh_nhan"),
     path('cap_nhat_thong_tin_benh_nhan/', cap_nhat_thong_tin_benh_nhan, name="cap_nhat_thong_tin_benh_nhan"),
