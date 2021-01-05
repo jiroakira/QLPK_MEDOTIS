@@ -1611,8 +1611,9 @@ def them_dich_vu_kham(request):
 from decimal import Decimal
 def import_dich_vu_excel(request):
     if request.method == 'POST':
-        data             = request.POST.get('data')
+        data             = request.POST.get('data')  
         list_objects     = json.loads(data)
+        
         bulk_create_data = []
         print(list_objects)
         for obj in list_objects:
@@ -1621,8 +1622,8 @@ def import_dich_vu_excel(request):
             ma_cosokcb_key  = "MA_COSOKCB"
             ma_dvkt         = obj['MA_DVKT']
             ten_dvkt        = obj['TEN_DVKT']
-            don_gia         = obj['DON_GIA']
-            gia             = Decimal(don_gia)
+            don_gia         = "DON_GIA"
+            
             bao_hiem        = True
             quyet_dinh      = obj['QUYET_DINH']
             cong_bo         = obj['CONG_BO']
@@ -1634,10 +1635,19 @@ def import_dich_vu_excel(request):
                 ma_gia = obj[ma_gia_key]
             else:
                 ma_gia = ""
+
             if ma_cosokcb_key in obj.keys():
                 ma_cosokcb = obj[ma_cosokcb_key]
             else:
                 ma_cosokcb = ""
+
+            if don_gia in obj.keys():
+                don_gia = obj[don_gia]
+                gia     = Decimal(don_gia)
+            else:
+                gia=0
+
+                
             # print(ma_gia)
             model = DichVuKham(
                 stt             = stt,
