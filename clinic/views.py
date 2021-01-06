@@ -780,11 +780,18 @@ def upload_view(request, **kwargs):
 
 def upload_view_lam_sang(request, **kwargs):
     id_chuoi_kham = kwargs.get('id')
+    chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
+    ho_ten_benh_nhan = chuoi_kham.benh_nhan.ho_ten
+    now = datetime.now()
+    date_time = now.strftime("%m%d%y%H%M%S")
+ 
+    ma_ket_qua = getSubName(ho_ten_benh_nhan) +'-'+ str(date_time)
     phong_chuc_nang = PhongChucNang.objects.all()
-
+ 
     data = {
         'id_chuoi_kham' : id_chuoi_kham,
         'phong_chuc_nang' : phong_chuc_nang,
+        'ma_ket_qua' : ma_ket_qua,
     }
     return render(request, 'bac_si_lam_sang/upload_ket_qua.html', context=data)
 
