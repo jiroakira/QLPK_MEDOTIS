@@ -1008,9 +1008,10 @@ class DanhSachKhamTrongNgay(APIView):
         cho_thanh_toan = TrangThaiChuoiKham.objects.get(trang_thai_chuoi_kham="Chờ Thanh Toán")
         da_thanh_toan = TrangThaiChuoiKham.objects.get(trang_thai_chuoi_kham='Đã Thanh Toán')
         # dang_thuc_hien = TrangThaiChuoiKham.objects.get(trang_thai_chuoi_kham="Đang Thực Hiện")
-        dang_thuc_hien = TrangThaiChuoiKham.objects.get(trang_thai_chuoi_kham="Hoàn Thành")
+        dang_thuc_hien = TrangThaiChuoiKham.objects.get(trang_thai_chuoi_kham="Đang Thực Hiện")
+        hoan_thanh = TrangThaiChuoiKham.objects.get(trang_thai_chuoi_kham="Hoàn Thành")
 
-        ds_benh_nhan = ChuoiKham.objects.select_related('benh_nhan').filter(thoi_gian_tao__lt=today_end).filter(Q(trang_thai=cho_thanh_toan) | Q(trang_thai=da_thanh_toan) | Q(trang_thai=dang_thuc_hien))
+        ds_benh_nhan = ChuoiKham.objects.select_related('benh_nhan').filter(thoi_gian_tao__lt=today_end).filter(Q(trang_thai=cho_thanh_toan) | Q(trang_thai=da_thanh_toan) | Q(trang_thai=dang_thuc_hien) | Q(trang_thai=hoan_thanh))
 
         serializer = ChuoiKhamSerializerSimple(ds_benh_nhan, many=True, context={'request': request})
         data = serializer.data
@@ -2144,8 +2145,10 @@ class DanhSachBacSi1(APIView):
 
         serializer = DanhSachBacSiSerializer(danh_sach_bac_si, many=True, context={'request': request})
         data = serializer.data
-        
-        return Response(data)
+       	response = {
+	    'data': data
+	} 
+        return Response(response)
 
 class DanhSachHoaDonDichVuBaoHiem(APIView):
     def get(self, request, format=None):
