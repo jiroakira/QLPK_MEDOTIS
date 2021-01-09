@@ -112,13 +112,13 @@ class User(AbstractBaseUser):
         ('Nữ', "Nu")
     )
     ROLE = (
-        ('1', 'Nguoi Dung'),
-        ('2', 'Le Tan'),
-        ('3', 'Bac Si Lam Sang'),
-        ('4', 'Bac Si Chuyen Khoa'),
-        ('5', 'Nhan vien Phong Tai Chinh'),
-        ('6', 'Nhan vien Phong Thuoc'),
-        ('7', 'Quan tri vien')
+        ('1', 'Người Dùng'),
+        ('2', 'Lễ Tân'),
+        ('3', 'Bác Sĩ Lâm Sàng'),
+        ('4', 'Bác Sĩ Chuyên Khoa'),
+        ('5', 'Nhân Viên Phòng Tài Chính'),
+        ('6', 'Nhân Viên Phòng Thuốc'),
+        ('7', 'Quản Trị Viên')
     )
     id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
     ma_benh_nhan = models.CharField(max_length=20, unique=True, null=True)
