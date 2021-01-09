@@ -1,12 +1,8 @@
 from clinic.api import DanhSachHoaDonThuocBaoHiem, DanhSachPhongKham
-from collections import namedtuple
-from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.db.models import base
 from django.views.generic import RedirectView
 from medicine.api import ThuocViewSet, CongTyViewSet
-from os import name
-from django.conf.urls import url
 from django.urls import path, include
 from rest_framework import routers
 from .api import (ChuoiKhamGanNhat, ChuoiKhamNguoiDung, ChuoiKhamViewSet,DangKiAPI, DangKiLichHen, DanhSachBacSi, DanhSachBacSi1, DanhSachBaiDang, DanhSachBenhNhan, DanhSachBenhNhanChoLamSang,DanhSachBenhNhanTheoPhong, DanhSachBenhNhanTheoPhongChucNang,DanhSachChuoiKhamBenhNhan, DanhSachDichVuKhamTheoPhong,DanhSachDichVuTheoPhongChucNang, DanhSachDoanhThuTheoThoiGian,DanhSachDoanhThuDichVu, DanhSachDoanhThuThuoc, DanhSachDonThuocBenhNhan,DanhSachDonThuocDaKe,DanhSachDonThuocPhongThuoc, DanhSachHoaDonDichVu,DanhSachHoaDonThuoc, DanhSachKhamTrongNgay, DanhSachLichHenTheoBenhNhan,DanhSachPhongChucNang, DanhSachVatTu, DanhSachThanhToanLamSang,DanhSachThuocBenhNhan, DanhSachThuocTheoCongTy, DieuPhoiPhongChucNangView,DonThuocGanNhat, FileKetQuaViewSet, KetQuaChuoiKhamBenhNhan,KetQuaChuoiKhamBenhNhan2, LichHenKhamViewSet, ListNguoiDungDangKiKham,PhanKhoaKhamBenhNhan, PhongChucNangTheoDichVu, SetChoThanhToan,SetXacNhanKham, TatCaLichHenBenhNhan, ThongTinBenhNhanTheoMa,ThongTinPhongChucNang, UserInfor, UserViewSet, DichVuKhamViewSet,PhongChucNangViewSet,LichHenKhamSapToi, UserUpdateInfo,UserUpdateInfoRequest, UploadAvatarView,UpdateAppointmentDetail,CapNhatLichHen, HoaDonChuoiKhamNguoiDung, HoaDonChuoiKhamCanThanhToan,HoaDonThuocCanThanhToan, DichVuTheoPhongChucNang, DonThuocCuaChuoiKham, HoaDonThuocCuaChuoiKham, HoaDonDichVuCuaChuoiKham, HoaDonLamSangChuoiKham, HoaDonLamSangGanNhat, DanhSachHoaDonDichVuBaoHiem, DanhSachDoanhThuLamSang)
@@ -205,8 +201,6 @@ urlpatterns = [
     path('api/hoa_don_thuoc/chuoi_kham/', HoaDonThuocCuaChuoiKham.as_view(), name='hoa_don_thuoc_cua_chuoi_kham'),
     path('api/hoa_don_lam_sang/', HoaDonLamSangChuoiKham.as_view(), name='hoa_don_lam_sang'),
     path('api/hoa_don_lam_sang_gan_nhat/', HoaDonLamSangGanNhat.as_view(), name='hoa_don_lam_sang_gan_nhat'),
-
-
 
     path('phong_tai_chinh/', phong_tai_chinh_danh_sach_cho, name='phong_tai_chinh'),
     path('phong_thuoc/', phong_thuoc_danh_sach_cho, name='phong_thuoc'),

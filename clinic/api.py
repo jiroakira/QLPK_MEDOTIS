@@ -1,4 +1,5 @@
 
+from typing import Generic
 from finance.models import (
     HoaDonChuoiKham, 
     HoaDonThuoc, 
@@ -52,6 +53,7 @@ from medicine.serializers import (
 from rest_framework import pagination
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from rest_framework import generics
 
 User = get_user_model()
 
