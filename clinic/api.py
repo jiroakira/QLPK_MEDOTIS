@@ -2166,7 +2166,6 @@ class DanhSachBacSi1(APIView):
         }
         return Response(response)
 
-
 class DanhSachHoaDonDichVuBaoHiem(APIView):
     def get(self, request, format=None):
         range_start = self.request.query_params.get('range_start', None)
