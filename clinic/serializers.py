@@ -21,7 +21,9 @@ from .models import (
     TrangThaiChuoiKham, 
     TrangThaiKhoaKham, 
     TrangThaiLichHen, 
-    ChuoiKham, BacSi,
+    ChuoiKham, 
+    BacSi,
+    TinhTrangPhongKham,
 )
 from medicine.models import DonThuoc, NhomVatTu, VatTu
 
@@ -526,10 +528,10 @@ class HoaDonChuoiKhamSerializerSimple(serializers.ModelSerializer):
             'thoi_gian_tao',
         )
 
-# class DanhSachTinhTrangSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = TinhTrangPhongKham
-#         fields = '__all__'
+class DanhSachTinhTrangSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TinhTrangPhongKham
+        fields = '__all__'
 
 class DanhSachPhongKhamSerializer(serializers.ModelSerializer):
     tinh_trang = DanhSachTinhTrangSerializer()
