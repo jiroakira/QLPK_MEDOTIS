@@ -1,3 +1,4 @@
+from clinic.api import DanhSachHoaDonThuocBaoHiem, DanhSachPhongKham
 from collections import namedtuple
 from django.conf import settings
 from django.contrib.auth import views as auth_views
@@ -12,7 +13,7 @@ from .api import (ChuoiKhamGanNhat, ChuoiKhamNguoiDung, ChuoiKhamViewSet,DangKiA
 from .views import BatDauChuoiKhamToggle, KetThucChuoiKhamToggle, LoginView, ThanhToanHoaDonDichVuToggle, add_lich_hen, bat_dau_chuoi_kham, cap_nhat_thong_tin_bac_si, cap_nhat_thong_tin_benh_nhan, cap_nhat_user, chi_tiet_bai_dang, chinh_sua_don_thuoc, chinh_sua_nguon_cung, chinh_sua_phong_chuc_nang, chinh_sua_thuoc, chinh_sua_thuoc_phong_thuoc, create_bac_si, create_dich_vu, create_user, danh_sach_bac_si, danh_sach_bai_dang, danh_sach_benh_nhan, danh_sach_benh_nhan_cho, danh_sach_dich_vu_kham, danh_sach_kham, danh_sach_phong_chuc_nang, danh_sach_thuoc, danh_sach_thuoc_phong_tai_chinh, danh_sach_vat_tu, doanh_thu_phong_kham, don_thuoc, dung_kham, dung_kham_chuyen_khoa, files_upload_view, hoa_don_dich_vu, hoa_don_thuoc, import_dich_vu_excel, import_thuoc_excel, import_vat_tu_excel, index, login, nhan_don_thuoc, phan_khoa_kham, phong_chuyen_khoa, phong_tai_chinh_danh_sach_cho, phong_thuoc_danh_sach_cho, store_cong_ty, store_ke_don, store_phan_khoa, store_thanh_toan_lam_sang, store_update_dich_vu_kham, them_bai_dang, them_dich_vu_kham, them_dich_vu_kham_excel, them_phong_chuc_nang, them_thuoc_excel, them_vat_tu_excel, update_bac_si, update_benh_nhan, update_dich_vu_kham, update_don_thuoc, update_nguon_cung, update_phong_chuc_nang, update_thuoc, update_thuoc_phong_thuoc, update_user, upload_bai_dang, upload_files_chuyen_khoa, upload_files_lam_sang, upload_view, them_moi_thuoc_phong_tai_chinh, create_thuoc, cong_ty, update_lich_hen, danh_sach_lich_hen, store_update_lich_hen, ThanhToanHoaDonThuocToggle, thanh_toan_hoa_don_thuoc, them_thuoc_phong_tai_chinh, upload_view_lam_sang, xoa_dich_vu, xoa_lich_hen, xoa_thuoc, xoa_vat_tu, them_pcn_kem_dich_vu, xoa_lich_hen, xuat_bao_hiem, upload_ket_qua_lam_sang, upload_ket_qua_chuyen_khoa
 
 from medicine.views import ke_don_thuoc_view
-from clinic.views import loginUser
+from clinic.views import create_vat_tu, hoa_don_dich_vu_bao_hiem, hoa_don_thuoc_bao_hiem, loginUser, store_thong_ke_vat_tu, store_update_phong_kham, them_vat_tu, thong_ke_vat_tu, thong_tin_phong_kham, update_phong_kham
 
 router = routers.DefaultRouter()
 router.register('api/nguoi_dung', UserViewSet, basename="users")
@@ -281,5 +282,19 @@ urlpatterns = [
     path('upload_ket_qua_chuyen_khoa/', upload_ket_qua_chuyen_khoa, name="upload_ket_qua_chuyen_khoa"),
     path('api/danh_sach_doanh_thu_lam_sang/', DanhSachDoanhThuLamSang.as_view(), name="danh_sach_doanh_thu_lam_sang"), #import DoanhThuLamSang
 
+    # END
+
+    # UPDATE 9/1
+    path('thong_tin_phong_kham/', thong_tin_phong_kham, name="thong_tin_phong_kham"),
+    path('thong_ke_vat_tu/', thong_ke_vat_tu, name="thong_ke_vat_tu"),
+    path('store_thong_ke_vat_tu/', store_thong_ke_vat_tu, name="store_thong_ke_vat_tu"),
+    path('phong_tai_chinh/them_vat_tu/', them_vat_tu, name="them_vat_tu"),
+    path('create_vat_tu/', create_vat_tu, name="create_vat_tu"),
+    path('api/danh_sach_phong_kham/', DanhSachPhongKham.as_view(), name="danh_sach_phong_kham_api"),
+    path('cap_nhat_thong_tin_phong_kham/<int:id>', update_phong_kham, name="update_phong_kham"),
+    path('store_update_phong_kham/', store_update_phong_kham, name="store_update_phong_kham"),
+    path('api/danh_sach_hoa_don_thuoc_bao_hiem/', DanhSachHoaDonThuocBaoHiem.as_view(), name="danh_sach_hoa_don_thuoc_bao_hiem_api"),
+    path('xuat_bao_hiem/dich_vu/<int:id>', hoa_don_dich_vu_bao_hiem, name="hoa_don_dich_vu_bao_hiem"),
+    path('xuat_bao_hiem/thuoc/<int:id>', hoa_don_thuoc_bao_hiem, name="hoa_don_thuoc_bao_hiem"),
     # END
 ]

@@ -175,7 +175,7 @@
 {% endblock content %}
 
 {% block scripts %}
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
+<script>var HOST_URL = "http://127.0.0.1:8000";</script>
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 <!--begin::Global Theme Bundle(used by all pages)-->
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
@@ -245,58 +245,53 @@ var KTDatatableRemoteAjaxDemo = function() {
 
             // columns definition
             columns: [{
-                field: 'id',
-                title: '#',
+                field: 'ma_hoa_don',
+                title: 'Mã HĐ',
                 sortable: 'asc',
-                width: 30,
                 type: 'number',
                 selector: false,
                 textAlign: 'center',
             }, {
-                field: 'chuoi_kham.id',
-                title: 'Mã HĐ',
-                width: 30,
-            }, {
-                field: 'benh_nhan.ho_ten',
+                field: 'chuoi_kham.benh_nhan.ho_ten',
                 title: 'Bệnh Nhân',
-                width: 90,
+
             }, {
-                field: 'bac_si_lam_sang.ho_ten',
+                field: 'chuoi_kham.bac_si_dam_nhan.ho_ten',
                 title: 'Bác Sĩ',
-                width: 90,
 
             }, {
-                field: 'dich_vu_kham.ten_dvkt',
-                title: 'Dịch Vụ Khám',
-
+                field: 'tong_tien',
+                title: 'Tổng Tiền (Cả DV)',
+                template: function(row){
+                    return `<span class="tong_tien" data-id="${row.tong_tien}">${row.tong_tien}</span>`
+                }
             }, {
-                field: 'dich_vu_kham.don_gia',
-                title: 'Giá ',
-                width: 40,
-            }, {
-                field: 'thoi_gian_bat_dau',
-                title: 'Bắt Đầu',
+                field: 'thoi_gian_tao',
+                title: 'Thời Gian Tạo',
                 template: function(row) {
-                    var date = new Date(Date.parse(row.thoi_gian_bat_dau))
+                    var date = new Date(Date.parse(row.thoi_gian_tao))
 
-                    if(!row.thoi_gian_bat_dau){
+                    if(!row.thoi_gian_tao){
                         return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
                     } else {
                         return date.toLocaleString('vi-VN')
                     }
                 }
             }, {
-                field: 'thoi_gian_ket_thuc',
-                title: 'Bắt Đầu',
+                field: 'Actions',
+                title: 'Xem Chi Tiết',
+                sortable: false,
+                width: 125,
+                overflow: 'visible',
+                textAlign: 'center',
+                autoHide: false,
                 template: function(row) {
-                    var date = new Date(Date.parse(row.thoi_gian_ket_thuc))
-
-                    if(!row.thoi_gian_ket_thuc){
-                        return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
-                    } else {
-                        return date.toLocaleString('vi-VN')
-                    }
-                }
+                    return `
+                        <a href="/xuat_bao_hiem/dich_vu/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Chi Tiết">
+                            Hóa Đơn
+                        </a>
+                    `;
+                },
             }],
 
         });
@@ -305,6 +300,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 			// datatable.reload();
 			$('#kt_datatable').KTDatatable('reload');
 		});
+
 
 		$('#kt_datatable_search_status').on('change', function() {
             datatable.search($(this).val().toLowerCase(), 'Status');
@@ -328,7 +324,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 source: {
                     read: {
                         method: "GET",
-                        url: HOST_URL + '/api/danh_sach_hoa_don_dich_vu_bao_hiem/',
+                        url: HOST_URL + '/api/danh_sach_hoa_don_thuoc_bao_hiem/',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
                         map: function(raw) {
@@ -369,24 +365,29 @@ var KTDatatableRemoteAjaxDemo = function() {
 
             // columns definition
             columns: [{
-                field: 'id',
-                title: '#',
+                field: 'don_thuoc.ma_don_thuoc',
+                title: 'Mã Đơn Thuốc',
                 sortable: 'asc',
-                width: 30,
                 type: 'number',
                 selector: false,
                 textAlign: 'center',
             }, {
-                field: 'ma_don_thuoc',
-                title: 'Mã Hóa Đơn',
-            }, {
-                field: 'benh_nhan.ho_ten',
+                field: 'don_thuoc.benh_nhan.ho_ten',
                 title: 'Bệnh Nhân',
                 
             }, {
-                field: 'bac_si_ke_don.ho_ten',
+                field: 'don_thuoc.bac_si_ke_don.ho_ten',
                 title: 'Bác Sĩ',
-
+            }, {
+                field: 'tong_tien',
+                title: 'Tổng Tiền (Cả DV)',
+                template: function(row){
+                    if(!row.tong_tien){
+                        return '<span class="label font-weight-bold label-lg label-light-info label-inline">Không có thông tin</span>';
+                    }else{
+                        return row.tong_tien
+                    }
+                }
             }, {
                 field: 'thoi_gian_tao',
                 title: 'Thời Gian Tạo',
@@ -400,33 +401,15 @@ var KTDatatableRemoteAjaxDemo = function() {
                     }
                 }
             }, {
-                field: 'trang_thai',
-                title: 'Trạng Thái',
-                // callback function support for column rendering
-                template: function(row) {
-                    var status = {
-                        2: {
-                            'title': 'Chờ Thanh Toán',
-                            'class': ' label-light-warning'
-                        },
-                        1: {
-                            'title': 'Đã Thanh Toán',
-                            'class': ' label-light-primary'
-                        },
-                    };
-                    return '<span class="label font-weight-bold label-lg ' + status[row.trang_thai].class + ' label-inline">' + status[row.trang_thai].title + '</span>';
-                },
-            }, {
                 field: 'Actions',
-                title: 'Thao tác',
+                title: 'Xem Chi Tiết',
                 sortable: false,
                 width: 125,
                 overflow: 'visible',
                 autoHide: false,
                 template: function(row) {
-                    
                     return `
-                        <a href="/phong_tai_chinh/hoa_don_thuoc/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
+                        <a href="/xuat_bao_hiem/thuoc/${row.don_thuoc.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
                             Hóa Đơn
                         </a>
                     `;
@@ -538,12 +521,38 @@ var KTDatatableRemoteAjaxDemo = function() {
 
     }
 
+    var formatMoney = function(){
+        function formatMoney(amount, decimalCount = 0, decimal = ",", thousands = ".") {
+            try {
+                decimalCount = Math.abs(decimalCount);
+                decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+                const negativeSign = amount < 0 ? "-" : "";
+
+                let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+                let j = (i.length > 3) ? i.length % 3 : 0;
+
+                return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+            } catch (e) {
+                console.log(e)
+            }
+        };
+       
+        $(document).ready(function(){
+            $('#kt_datatable').find("span.tong_tien").each(function(){
+                console.log($(this).data('id'))
+                $(this).html(formatMoney($(this).data('id')))
+            })  
+        });
+    }
+
     return {
         // public functions
         init: function() {
             _initDatatable();
             _initDaterangepicker();
             hoa_don_dich_vu();
+            formatMoney();
         },
     };
 }();

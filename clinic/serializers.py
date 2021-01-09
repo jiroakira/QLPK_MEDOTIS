@@ -1,15 +1,22 @@
 from finance.models import HoaDonChuoiKham, HoaDonThuoc, HoaDonLamSang
-from medicine.serializers import CongTySerializer, ThuocSerializer
-# from finance.serializers import HoaDonChuoiKhamSerializer, HoaDonThuocSerializer
-from os import set_inheritable
-from django.http.request import validate_host
-from rest_framework import fields, serializers
+from medicine.serializers import CongTySerializer
+from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import (
-    BaiDang, DichVuKham, FileKetQua, FileKetQuaChuyenKhoa, FileKetQuaTongQuat, KetQuaChuyenKhoa, KetQuaTongQuat, 
-    LichHenKham, PhanKhoaKham, 
+    BaiDang, 
+    DichVuKham, 
+    FileKetQua, 
+    FileKetQuaChuyenKhoa,
+    FileKetQuaTongQuat, 
+    KetQuaChuyenKhoa, 
+    KetQuaTongQuat, 
+    LichHenKham, 
+    PhanKhoaKham, 
     PhongChucNang, 
-    ProfilePhongChucNang, TrangThaiChuoiKham, TrangThaiKhoaKham, 
+    PhongKham, 
+    ProfilePhongChucNang,
+    TrangThaiChuoiKham, 
+    TrangThaiKhoaKham, 
     TrangThaiLichHen, 
     ChuoiKham, BacSi,
 )
@@ -64,12 +71,6 @@ class DichVuKhamSerializerSimple(serializers.ModelSerializer):
 class TrangThaiLichHenSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrangThaiLichHen
-        fields = '__all__'
-
-
-class DichVuKhamSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DichVuKham
         fields = '__all__'
 
     # def create(self, validated_data):
@@ -218,11 +219,6 @@ class ChuoiKhamSerializer(serializers.ModelSerializer):
         response['actions'] = ''
         return response
 
-class FileKetQuaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FileKetQua
-        fields = ('id', 'file')
-
 class HoaDonChuoiKhamSerializer(serializers.ModelSerializer):
     chuoi_kham = ChuoiKhamSerializer()
     class Meta:
@@ -230,6 +226,7 @@ class HoaDonChuoiKhamSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class DonThuocSerializer(serializers.ModelSerializer):
+    bac_si_ke_don = UserSerializer()
     benh_nhan = UserSerializer()
     class Meta:
         model = DonThuoc
@@ -278,13 +275,13 @@ class PhanKhoaKhamDichVuSerializer(serializers.ModelSerializer):
         model = PhanKhoaKham
         fields = ('id', 'chuoi_kham', 'benh_nhan', 'bac_si_lam_sang', 'thoi_gian_bat_dau', 'thoi_gian_ket_thuc', 'dich_vu_kham')
 
-class PhongChucNangSerializer(serializers.ModelSerializer):
-    dich_vu_kham = DichVuKhamSerializer()
-    danh_sach_benh_nhan = PhanKhoaKhamDichVuSerializer(source='danh_sach_benh_nhan_theo_dich_vu_kham', many=
-    True)
-    class Meta:
-        model = PhongChucNang
-        fields = ('id', 'dich_vu_kham', 'ten_phong_chuc_nang', 'danh_sach_benh_nhan')
+# class PhongChucNangSerializer(serializers.ModelSerializer):
+#     dich_vu_kham = DichVuKhamSerializer()
+#     danh_sach_benh_nhan = PhanKhoaKhamDichVuSerializer(source='danh_sach_benh_nhan_theo_dich_vu_kham', many=
+#     True)
+#     class Meta:
+#         model = PhongChucNang
+#         fields = ('id', 'dich_vu_kham', 'ten_phong_chuc_nang', 'danh_sach_benh_nhan')
 
 class PhongChucNangSerializerSimple(serializers.ModelSerializer):
     bac_si_phu_trach = UserSerializer()
@@ -297,17 +294,6 @@ class DichVuKhamSerializer(serializers.ModelSerializer):
     class Meta:
         model = DichVuKham
         fields = '__all__'
-
-class FileKetQuaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FileKetQua
-        fields = ('id', 'file', 'thoi_gian_tao')
-
-class FileKetQuaChuyenKhoaSerializer(serializers.ModelSerializer):
-    file_ket_qua = FileKetQuaSerializer(source='file')
-    class Meta:
-        model = FileKetQuaChuyenKhoa
-        fields = ('id', 'file_ket_qua')
 
 class KetQuaChuyenKhoaSerializer(serializers.ModelSerializer):
     file_chuyen_khoa = FileKetQuaChuyenKhoaSerializer(many=True, source='file_ket_qua_chuyen_khoa')
@@ -529,3 +515,4 @@ class DanhSachBacSiSerializer(serializers.ModelSerializer):
         model = BacSi
         fields = '__all__'
 # END
+

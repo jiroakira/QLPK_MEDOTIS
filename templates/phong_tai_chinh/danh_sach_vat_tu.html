@@ -41,8 +41,16 @@
                         </h3>
                     </div>
                     <div class="card-toolbar">
+                    
+                        <!-- begin::Button Thống kê vật tư -->
+                        <a href="{% url 'thong_ke_vat_tu' %}" class="btn btn-light-info font-weight-bolder mr-2">
+                            <i class="la la-clipboard-list icon-md"></i>
+                            Thống kê vật tư cuối tháng 
+                        </a>
+                        <!-- end::Button Thống kê vật tư -->
+
                         <!-- begin::Button Thêm vật tư -->
-                        <a href="javascript:;" class="btn-them-thuoc btn btn-light-primary font-weight-bolder mr-2" id="btn-them-thuoc">
+                        <a href="{% url 'them_vat_tu' %}" class="btn-them-thuoc btn btn-light-primary font-weight-bolder mr-2" id="btn-them-thuoc">
                             <i class="la la-plus-circle icon-md"></i>
                             Thêm mới vật tư
                         </a>
@@ -99,7 +107,7 @@
                                                 <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Tùy chọn:</li>
                                                 
                                                 <li class="navi-item">
-                                                    <a href="{% url 'them_vat_tu_excel' %}" class="btn-them-thuoc navi-link" id="btn-them-thuoc">
+                                                    <a href="{% url 'them_vat_tu_excel' %}" class="navi-link">
                                                         <span class="navi-icon">
                                                             <i class="la la-file-import"></i>
                                                         </span>
@@ -142,7 +150,7 @@
 {% endblock content %}
 
 {% block scripts %}
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
+<script>var HOST_URL = "http://127.0.0.1:8000";</script>
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 <!--begin::Global Theme Bundle(used by all pages)-->
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>

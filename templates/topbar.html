@@ -18,6 +18,14 @@
                         <span class="text-primary text-uppercase font-weight-bold font-size-sm">Thao tác:</span>
                     </li>
                     <li class="navi-item">
+                        <a href="{% url 'thong_tin_phong_kham' %}" class="navi-link">
+                            <span class="navi-icon">
+                                <i class="flaticon-user"></i>
+                            </span>
+                            <span class="navi-text">Chỉnh sửa thông tin phòng khám</span>
+                        </a>
+                    </li>
+                    <li class="navi-item">
                         <a href="/cap_nhat_thong_tin/{{request.user.id}}" class="navi-link">
                             <span class="navi-icon">
                                 <i class="flaticon-user"></i>

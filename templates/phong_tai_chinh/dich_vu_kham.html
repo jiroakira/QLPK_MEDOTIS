@@ -140,7 +140,7 @@
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/excelexportjs.js' %} "></script>
 <!--end::Global Theme Bundle-->
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
+<script>var HOST_URL = "http://127.0.0.1:8000";</script>
 
 <script>
 "use strict";
@@ -159,7 +159,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 type: 'remote',
                 source: {
                     read: {
-                        url: HOST_URL + '/router/api/dich_vu/',
+                        url: HOST_URL + '/api/dich_vu/',
                         method: 'GET',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
