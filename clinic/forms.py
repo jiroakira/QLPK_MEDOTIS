@@ -3,7 +3,7 @@ from .models import (
     FileKetQuaTongQuat, 
     GiaDichVu, 
     KetQuaTongQuat, 
-    PhongChucNang, 
+    PhongChucNang, PhongKham, 
     User,
     DichVuKham,
     LichHenKham,

@@ -247,7 +247,6 @@ def cap_nhat_thong_tin_benh_nhan(request):
         }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
-@login_required(login_url='/dang_nhap/')
 class LoginView(auth_views.LoginView):
     template_name = 'registration/login.html'
 
@@ -2694,5 +2693,13 @@ def hoa_don_thuoc_bao_hiem(request, **kwargs):
         'phong_kham'     : phong_kham,
     }
     return render(request, 'phong_tai_chinh/hoa_don_thuoc_bao_hiem.html', context=data)
+
+def thong_tin_phong_kham(request, *args, **kwargs):
+    phong_chuc_nang = PhongChucNang.objects.all()
+
+    data = {
+        'phong_chuc_nang': phong_chuc_nang,
+    }
+    return render(request, 'thong_tin_phong_kham.html', context = data)
 
 # END
