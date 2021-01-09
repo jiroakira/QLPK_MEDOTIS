@@ -356,7 +356,7 @@ def create_user(request):
         }
         return HttpResponse(
             json.dumps(response),
-            content_type="application/json", charset=utf-8
+            content_type="application/json", charset="utf-8"
         )
 
 def add_lich_hen(request):      
