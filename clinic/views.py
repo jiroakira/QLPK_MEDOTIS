@@ -2696,4 +2696,3 @@ def hoa_don_thuoc_bao_hiem(request, **kwargs):
     return render(request, 'phong_tai_chinh/hoa_don_thuoc_bao_hiem.html', context=data)
 
 # END
-
