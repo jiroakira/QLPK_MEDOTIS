@@ -356,7 +356,7 @@ def create_user(request):
         }
         return HttpResponse(
             json.dumps(response),
-            content_type="application/json", charset=utf-8
+            content_type="application/json", charset="utf-8"
         )
 
 def add_lich_hen(request):      
@@ -594,7 +594,6 @@ def phan_khoa_kham(request, **kwargs):
 
     }
     return render(request, 'bac_si_lam_sang/phan_khoa_kham.html', context=data)
-
 
 def store_phan_khoa(request):
     if request.method == "POST":
