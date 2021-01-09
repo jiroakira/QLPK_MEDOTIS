@@ -2162,16 +2162,9 @@ class DanhSachBacSi1(APIView):
         serializer = DanhSachBacSiSerializer(danh_sach_bac_si, many=True, context={'request': request})
         data = serializer.data
        	response = {
-<<<<<<< HEAD
-	    'data': data
-	} 
-        return Response(response)
-=======
             'data': data
         }
         return Response(response)
-
->>>>>>> 2fbb6714b6565402907ce4a16acc7a3601fd8527
 
 class DanhSachHoaDonDichVuBaoHiem(APIView):
     def get(self, request, format=None):
@@ -2238,8 +2231,6 @@ class DanhSachBenhNhanChoLamSang(APIView):
             "data": serializer.data        
         }
         return Response(response)
-<<<<<<< HEAD
-=======
 
 # * --- update 6/1/2021 ---
 
@@ -2253,10 +2244,3 @@ class DanhSachPhongKham(APIView):
         }
         return Response(response)
 
-
-
-
-
-
-
->>>>>>> 2fbb6714b6565402907ce4a16acc7a3601fd8527
