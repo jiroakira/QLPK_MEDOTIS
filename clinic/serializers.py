@@ -6,10 +6,20 @@ from django.http.request import validate_host
 from rest_framework import fields, serializers
 from django.contrib.auth import get_user_model
 from .models import (
-    BaiDang, DichVuKham, FileKetQua, FileKetQuaChuyenKhoa, FileKetQuaTongQuat, KetQuaChuyenKhoa, KetQuaTongQuat, 
-    LichHenKham, PhanKhoaKham, 
-    PhongChucNang, PhongKham, 
-    ProfilePhongChucNang, ThongTinPhongKham, TrangThaiChuoiKham, TrangThaiKhoaKham, 
+    BaiDang, 
+    DichVuKham, 
+    FileKetQua, 
+    FileKetQuaChuyenKhoa, 
+    FileKetQuaTongQuat, 
+    KetQuaChuyenKhoa, 
+    KetQuaTongQuat, 
+    LichHenKham, 
+    PhanKhoaKham, 
+    PhongChucNang, 
+    PhongKham, 
+    ProfilePhongChucNang, 
+    TrangThaiChuoiKham, 
+    TrangThaiKhoaKham, 
     TrangThaiLichHen, 
     ChuoiKham, BacSi,
 )
@@ -515,3 +525,14 @@ class HoaDonChuoiKhamSerializerSimple(serializers.ModelSerializer):
             'hoa_don',
             'thoi_gian_tao',
         )
+
+# class DanhSachTinhTrangSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = TinhTrangPhongKham
+#         fields = '__all__'
+
+class DanhSachPhongKhamSerializer(serializers.ModelSerializer):
+    tinh_trang = DanhSachTinhTrangSerializer()
+    class Meta:
+        model = PhongKham
+        fields = '__all__'
