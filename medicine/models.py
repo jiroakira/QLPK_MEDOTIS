@@ -1,5 +1,6 @@
 from datetime import time
 import decimal
+from finance.models import HoaDonVatTu
 from django.db import models
 import uuid
 from django.db.models.deletion import SET_NULL
@@ -10,6 +11,10 @@ from bulk_update_or_create import BulkUpdateOrCreateQuerySet
 # User = get_user_model()
 
 class CongTy(models.Model):
+    TYPE_CHOICES_LOAI_CUNG = (
+        ('thuoc', 'Thuốc'),
+        ('vat_tu', 'Vật Tư'),
+    ) 
     id = models.AutoField(primary_key=True)
     
     ten_cong_ty = models.CharField(max_length=255, verbose_name="Tên Công Ty")
@@ -18,6 +23,7 @@ class CongTy(models.Model):
     so_lien_lac = models.CharField(max_length=255, verbose_name="Số liên lạc", null=True, blank=True)
     email = models.CharField(max_length=255, verbose_name="Email công ty", null=True, blank=True)
     mo_ta = models.CharField(max_length=255, verbose_name="Mô tả công ty", null=True, blank=True)
+    loai_cung = models.CharField(max_length=255, choices=TYPE_CHOICES_LOAI_CUNG, null=True, blank = True)
     
     ngay_gio_tao = models.DateTimeField(auto_now_add=True, verbose_name="Ngày giờ tạo")
     thoi_gian_cap_nhat = models.DateTimeField(auto_now=True)
@@ -44,6 +50,7 @@ class Thuoc(models.Model):
         ('2', 'Chế phẩm YHCT'),
         ('3', 'Vị thuốc YHCT'),
         ('4', 'Phóng xạ'),
+        ('5', 'Thực phẩm bảo vệ sức khỏe'),
     )
     TYPE_CHOICES_LOAI_THAU = (
         ('1', 'Thầu tập trung'),
@@ -330,3 +337,24 @@ class VatTu(models.Model):
     @property
     def kha_dung(self):
         return self.so_luong_kha_dung > 0
+
+class KeVatTu(models.Model):
+    hoa_don_vat_tu = models.ForeignKey(HoaDonVatTu, on_delete=models.CASCADE, null=True, blank=True, related_name="ke_don")
+    # bac_si_lam_sang = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="bac_si_lam_sang")
+    # benh_nhan = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="don_thuoc_benh_nhan")
+    vat_tu = models.ForeignKey(VatTu, on_delete=models.CASCADE, null=True, blank=True)
+    so_luong = models.PositiveIntegerField(null=True, blank=True)
+    bao_hiem = models.BooleanField(default=False)
+
+    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
+    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Kê Vật Tư "
+        verbose_name_plural = "Kê Vật Tư"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.thoi_gian_tao = timezone.now()
+        self.thoi_gian_cap_nhat = timezone.now()
+        return super(KeDonThuoc, self).save(*args, **kwargs)

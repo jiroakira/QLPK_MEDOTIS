@@ -13,15 +13,15 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">Hóa Đơn Dịch Vụ</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">Hóa Đơn Thuốc Hưởng Bảo Hiểm</h5>
                     <!--end::Page Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
                         <li class="breadcrumb-item">
-                            <a href="#" class="text-muted">Bệnh nhân: {{chuoi_kham.benh_nhan.ho_ten}}</a>
+                            <a href="javascript:;" class="text-muted">Bệnh nhân: {{don_thuoc.benh_nhan.ho_ten}}</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="#" class="text-muted">Thanh toán hóa đơn dịch vụ</a>
+                            <a href="javascript:;" class="text-muted">Xuất Bảo Hiểm Hóa Đơn Thuốc</a>
                         </li>
                     </ul>
                     <!--end::Breadcrumb-->
@@ -39,12 +39,12 @@
             <!-- begin::Card-->
             <div class="card card-custom overflow-hidden">
                 <!-- begin: Invoice-->
-                <div class="card-body p-0" id="hoa_don_dich_vu">
+                <div class="card-body p-0" id="hoa_don_thuoc">
                     <!-- begin: Invoice header-->
                     <div class="row justify-content-center bgi-size-cover bgi-no-repeat py-8 px-8 py-md-27 px-md-0" style="background-image: url({% static 'assets/media/bg/bg-6.jpg' %});">
                         <div class="col-md-9">
                             <div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
-                                <h1 class="display-4 text-white font-weight-boldest mb-10">Hóa Đơn Dịch Vụ</h1>
+                                <h1 class="display-4 text-white font-weight-boldest mb-10">HÓA ĐƠN THUỐC HƯỞNG BẢO HIỂM</h1>
                                 <div class="d-flex flex-column align-items-md-end px-0">
                                     <!--begin::Logo-->
                                     <a href="javascript:;" class="mb-5">
@@ -62,18 +62,18 @@
                             <div class="d-flex justify-content-between text-white pt-6">
                                 <div class="d-flex flex-column flex-root">
                                     <span class="font-weight-bolde mb-2r">THỜI GIAN THANH TOÁN</span>
-                                    <span class="opacity-70"> {{chuoi_kham.thoi_gian_tao}} </span>
+                                    <span class="opacity-70"> {{don_thuoc.thoi_gian_tao}} </span>
                                 </div>
                                 <div class="d-flex flex-column flex-root">
-                                    <span class="font-weight-bolder mb-2">MÃ CHUỖI KHÁM.</span>
-                                    <span class="opacity-70">{{chuoi_kham.id}}</span>
+                                    <span class="font-weight-bolder mb-2">MÃ ĐƠN THUỐC.</span>
+                                    <span class="opacity-70">{{don_thuoc.ma_don_thuoc}}</span>
                                 </div>
                                 <div class="d-flex flex-column flex-root">
                                     <span class="font-weight-bolder mb-2">NGƯỜI THANH TOÁN.</span>
                                     <span class="opacity-70">
-                                        {{chuoi_kham.benh_nhan.ho_ten}} - {{chuoi_kham.benh_nhan.so_dien_thoai}}
-                                    <br />{{chuoi_kham.benh_nhan.dia_chi}}
-                                    <br />{{chuoi_kham.benh_nhan.cmnd_cccd}}
+                                        {{don_thuoc.benh_nhan.ho_ten}} - {{don_thuoc.benh_nhan.so_dien_thoai}}
+                                    <br />{{don_thuoc.benh_nhan.dia_chi}}
+                                    <br />{{don_thuoc.benh_nhan.cmnd_cccd}}
                                     </span>
                                 </div>
                             </div>
@@ -87,33 +87,51 @@
                                 <table class="table" id="invoice-table">
                                     <thead>
                                         <tr>
-                                            <th class="pl-0 font-weight-bold text-muted text-uppercase">Dịch Vụ Khám</th>
-                                            {% comment %} <th class="text-right font-weight-bold text-muted text-uppercase">Bao Hiem</th> {% endcomment %}
-                                            <th class="text-center font-weight-bold text-muted text-uppercase">Áp Dụng Bảo Hiểm</th>
-                                            <th class="text-center font-weight-bold text-muted text-uppercase text-danger ">Giá Tiền</th>
-                                            <th class="text-left pr-0 font-weight-bold text-muted text-uppercase">DVT</th>
+                                            <th class="pl-0 font-weight-bold text-muted text-uppercase">Tên Thuốc</th>
+                                            
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">Áp dụng bảo hiểm</th>
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">Đơn giá</th>
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">Số lượng</th>
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">DVT</th>
+                                            <th class="text-right pr-0 font-weight-bold text-muted text-uppercase">Tổng tiền</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {% for khoa_kham in danh_sach_phan_khoa %}
+                                    {% for thuoc in danh_sach_thuoc %}
                                         <tr class="font-weight-boldest font-size-lg">
-                                            <td class="pl-0 pt-7">{{ khoa_kham.dich_vu_kham.ten_dvkt }}</td>
-                                            {% comment %} <td class="text-right pt-7">{{ khoa_kham.muc_bao_hiem }} %</td> {% endcomment %}
-                                            <td class="text-center pt-7">
-                                                {% if khoa_kham.bao_hiem == True %}
-                                                    Đã Áp Dụng
+                                            <td class="pl-0 pt-7">{{ thuoc.thuoc.ten_thuoc }}</td>
+                                            <td class="text-right text-center pt-7">
+                                                {% if thuoc.bao_hiem == True %}
+                                                    Đã áp dụng
                                                 {% else %}
-                                                    Chưa Áp Dụng
-                                                {% endif %}
-                                                {% comment %} {{ khoa_kham.dich_vu_kham.bao_hiem }} {% endcomment %}
+                                                    Chưa áp dụng
+                                                {% endif %}    
+                                                <!--{{ thuoc.bao_hiem }}-->
                                             </td>
-                                            <td class="format-gia text-center pt-7" data-id={{khoa_kham.dich_vu_kham.don_gia}}>
-                                                {{ khoa_kham.dich_vu_kham.don_gia }}
+                                            <td class="format-gia text-center pt-7" data-id={{thuoc.thuoc.don_gia_tt}}>
+                                                {{ thuoc.thuoc.don_gia_tt }}
                                             </td>
-                                            <td class="text-left pt-7">VND</td>
+                                            <td class="text-center pt-7">{{ thuoc.so_luong }}</td>
+                                            <td class="text-center pt-7" data-id={{thuoc.thuoc.don_vi_tinh}}>
+                                                {{ thuoc.thuoc.don_vi_tinh }}
+                                            </td>
+                                            <td class="format-gia text-danger pr-0 pt-7 text-right" data-id={{thuoc.gia_ban}}>
+                                                {{ thuoc.gia_ban }}
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
+                                    {% comment %} <tfoot>
+                                        <th class="pl-0 font-weight-bold text-muted text-uppercase"></th>
+                                        <th class="text-right font-weight-bold text-muted text-uppercase"></th>
+                                        <th class="text-center font-weight-bold text-muted text-uppercase"></th>
+                                        <th class="text-center font-weight-bold text-muted text-uppercase"></th>
+                                        <th class="text-center font-weight-bold text-muted text-uppercase pb-4">
+                                        </th>
+                                        <th class="text-right pr-0">
+                                            <span id="format-money-tong-tien" class="font-size-h2 font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}">{{tong_tien}}</span>
+                                        </th>
+                                    </tfoot> {% endcomment %}
                                 </table>
                             </div>
                         </div>
@@ -124,7 +142,7 @@
                         <div class="col-md-9">
                             <div class="d-flex justify-content-between flex-column flex-md-row font-size-lg">
                                 <div class="d-flex flex-column mb-10 mb-md-0">
-                                    <div class="font-weight-bolder font-size-lg mb-3">THÔNG TIN CHUYỂN KHOẢN</div>
+                                    {% comment %} <div class="font-weight-bolder font-size-lg mb-3">THÔNG TIN CHUYỂN KHOẢN</div>
                                     <div class="d-flex justify-content-between mb-3">
                                         <span class="mr-15 font-weight-bold">Chủ Khoản:</span>
                                         <span class="text-right">{{phong_kham.chu_khoan}}</span>
@@ -136,28 +154,23 @@
                                     <div class="d-flex justify-content-between">
                                         <span class="mr-15 font-weight-bold">Ngân Hàng:</span>
                                         <span class="text-right">{{phong_kham.thong_tin_ngan_hang}}</span>
-                                    </div>
+                                    </div> {% endcomment %}
                                 </div>
                                 <div class="d-flex flex-column text-md-right">
-                                    <div class="d-flex justify-content-between mb-3 font-size-h4">
+                                    {% comment %} <div class="d-flex justify-content-between mb-3 font-size-h4">
                                         <span class="mr-15 font-weight-bold">Tổng tiền</span>
-                                        <span class="text-right"><span id="format-money-tong-tien" class="font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}" data-hoa-don="{{chuoi_kham.hoa_don_dich_vu.ma_hoa_don}}">{{tong_tien}}</span></span>
+                                        <span class="text-right"><span id="format-money-tong-tien" class="font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}">{{tong_tien}}</span></span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-3 font-size-h5">
                                         <span class="mr-15 font-weight-bold">Bảo hiểm</span>
-                                        <span class="text-right"><span id="format-money-bao-hiem" class="font-weight-boldest text-danger mb-1" data-gia="{{ap_dung_bao_hiem}}">{{ap_dung_bao_hiem}}</span></span>
-                                    </div>
-                                    <div class="border-bottom border-bottom-warning w-100 mb-4"></div>
-                                    <span class="font-size-lg font-weight-bolder mb-1">TIỀN BỆNH NHÂN CẦN THANH TOÁN</span>
+                                        <span class="text-right"><span id="format-money-bao-hiem" class="font-weight-boldest text-danger mb-1" data-gia="{{tong_bao_hiem}}">{{tong_bao_hiem}}</span></span>
+                                    </div> {% endcomment %}
+                                    {% comment %} <div class="border-bottom border-bottom-warning w-100 mb-4"></div> {% endcomment %}
+                                    <span class="font-size-lg font-weight-bolder mb-1">TỔNG TIỀN BẢO HIỂM</span>
                                     {% comment %} <span class="format-tien font-size-h2 font-weight-boldest text-danger mb-1">{{tong_tien}}</span> {% endcomment %}
-                                    <span id="format-money-thanh-tien" class="font-size-h2 font-weight-boldest text-danger mb-1">{{thanh_tien}}</span>
+                                    <span id="format-money-tong-tien" class="font-size-h2 font-weight-boldest text-danger mb-1">{{tong_tien}}</span>
                                     <span>VND</span>
                                 </div>
-                                {% comment %} <div class="d-flex flex-column text-md-right">
-                                    <span class="font-size-lg font-weight-bolder mb-1">TỔNG TIỀN</span>
-                                    <span id="format-money-tong-tien" class="font-size-h2 font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}" data-hoa-don="{{chuoi_kham.hoa_don_dich_vu.ma_hoa_don}}">{{tong_tien}}</span>
-                                    <span>VND</span>
-                                </div> {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -167,9 +180,9 @@
                 <!-- begin: Invoice action-->
                 <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
                     <div class="col-md-9">
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-light-primary font-weight-bold" onclick="printDiv('hoa_don_dich_vu')">In Hóa Đơn</button>
-                            <button type="button" class="btn btn-primary font-weight-bold" id="btn-thanh-toan">Thanh Toán</button>
+                        <div class="text-right">
+                            {% comment %} <button id="button-payment" data-tong-tien="{{tong_tien}}" data-id="{{ don_thuoc.id }}" type="button" class="btn btn-primary font-weight-bold">Thanh Toán</button> {% endcomment %}
+                            <button type="button" class="btn btn-light-primary font-weight-bold" onclick="printDiv('hoa_don_thuoc')">In Hóa Đơn</button>
                         </div>
                     </div>
                 </div>
@@ -189,8 +202,8 @@
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
-
 <script>
+
     function formatMoney(amount, decimalCount = 0, decimal = ",", thousands = ".") {
         try {
             decimalCount = Math.abs(decimalCount);
@@ -214,40 +227,45 @@
         })  
     });
 
-    document.getElementById('format-money-tong-tien').innerText = formatMoney(document.getElementById('format-money-tong-tien').innerHTML)
-    document.getElementById('format-money-bao-hiem').innerText = formatMoney(document.getElementById('format-money-bao-hiem').innerHTML)
-    document.getElementById('format-money-thanh-tien').innerText = formatMoney(document.getElementById('format-money-thanh-tien').innerHTML)
-
-    $(document).on('click', '#btn-thanh-toan', function(){
-        var tong_tien = $('#format-money-tong-tien').data('gia')
-        var ma_hoa_don = $('#format-money-tong-tien').data('hoa-don')
+    $('#button-payment').on('click', function(){
+        var id_don_thuoc = $(this).attr('data-id')
+        var tong_tien = $(this).attr('data-tong-tien')
+        console.log(tong_tien)
         $.ajax({
             type: "GET",
-            url: "{% url 'thanh_toan_hoa_don_dich_vu_api' %}",
+            url: "{% url 'thanh_toan_don_thuoc_api' %}",
             data: {
-                'ma_hoa_don': ma_hoa_don,
-                'tong_tien' : tong_tien,
+                'id': id_don_thuoc,
+                'tong_tien': tong_tien,
             },
             dataType: 'json',
             safe: false,
             success: function (response) {
                 if (response.status == 200) {
                     toastr.success(response.message, "Thành Công")
+
+                    {% comment %} setTimeout(function () {
+                        window.location.href = '/phong_tai_chinh/'; 
+                    }, 1500); {% endcomment %}
+
                 } else if (response.status == 404) {
                     toastr.warning(response.message, "Xảy Ra Lỗi")
                 }
-                setTimeout(function () {
-                    window.location.href = "/phong_tai_chinh/"
-                }, 2000);
             },
             error: function () {
-                alert();                                                                                                                          
+                toastr.warning("Xảy Ra Lỗi Trong Quá Trình Thanh Toán", "Xảy Ra Lỗi")
+                                                                                                                         
             }
         });
+        
     })
 
-    function printDiv(hoa_don_dich_vu){
-        var printContents = document.getElementById("hoa_don_dich_vu").innerHTML;
+    document.getElementById('format-money-tong-tien').innerText = formatMoney(document.getElementById('format-money-tong-tien').innerHTML)
+    document.getElementById('format-money-bao-hiem').innerText = formatMoney(document.getElementById('format-money-bao-hiem').innerHTML)
+    document.getElementById('format-money-thanh-tien').innerText = formatMoney(document.getElementById('format-money-thanh-tien').innerHTML)
+
+    function printDiv(hoa_don_thuoc){
+        var printContents = document.getElementById("hoa_don_thuoc").innerHTML;
         var originalContents = document.body.innerHTML;
 
         document.body.innerHTML = printContents;
