@@ -187,21 +187,35 @@
 						}
 					);
 
-					$('#kt_login_signin_submit').on('click', function (e) {
+					$('#login-button').on('click', function (e) {
 						e.preventDefault();
 
 						validation.validate().then(function(status) {
 							if (status == 'Valid') {
-								swal.fire({
-									text: "All is cool! Now you submit this form",
-									icon: "success",
-									buttonsStyling: false,
-									confirmButtonText: "Ok, got it!",
-									customClass: {
-										confirmButton: "btn font-weight-bold btn-light-primary"
+								var so_dien_thoai = $('#input-phone').val()
+								var password      = $('#input-password').val()
+								var csrf_token    = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+								$.ajax({
+									type:"POST",
+									url:'{% url 'loginUser' %}',
+									data:{
+										'csrfmiddlewaretoken': csrf_token,
+										'so_dien_thoai'      : so_dien_thoai,
+										'password'           : password,
+									},
+									success : function(data){
+										console.log(data);
+										if(data['message'] == "Success"){
+											location = data.url
+										}
+										else if(data['message'] == "inactive"){
+											toastr.warning("Vui Lòng Nhập Lại Thông Tin","Sai số điện thoại hoặc mật khẩu");
+										}
+										else{
+											toastr.warning("Vui Lòng Nhập Lại Thông Tin","Sai số điện thoại hoặc mật khẩu");
+										}
 									}
-								}).then(function() {
-									KTUtil.scrollTop();
 								});
 							} else {
 								swal.fire({
@@ -390,35 +404,6 @@
 						_showForm('signin');
 					});
 				}
-
-				$('#login-button').on('click', function(){
-					var so_dien_thoai = $('#input-phone').val()
-					var password      = $('#input-password').val()
-					var csrf_token    = document.getElementsByName('csrfmiddlewaretoken')[0].value
-					$.ajax({
-						type:"POST",
-						url:'{% url 'loginUser' %}',
-						data:{
-							'csrfmiddlewaretoken': csrf_token,
-							'so_dien_thoai'      : so_dien_thoai,
-							'password'           : password,
-						},
-						success : function(data){
-							console.log(data);
-							if(data['message'] == "Success"){
-								location = data.url
-							}
-							else if(data['message'] == "inactive"){
-								$("#errorlogin").html("Please verify this E-mail address.");
-							}
-							else{
-								$("#errorlogin").html("The E-mail and Password do not match.");
-							}
-						}
-					});
-					
-				})
-
 				// Public Functions
 				return {
 					// public functions

@@ -259,7 +259,7 @@
 <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker9cd7.js' %} "></script>
 
 <!--end::Global Theme Bundle-->
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
+<script>var HOST_URL = "http://127.0.0.1:8000";</script>
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 {% comment %} <script src="{% static 'assets/js/pages/crud/ktdatatable/base/data-ajax9cd7.js' %} "></script> {% endcomment %}
 <script>
@@ -291,7 +291,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                             if (typeof raw.data !== 'undefined') {
                                 dataSet = raw.data;
                             }
-                            console.log(dataSet)
+                            {% comment %} console.log(dataSet) {% endcomment %}
                             return dataSet;
                         },
                         params: {
@@ -353,7 +353,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                 }
             }, {
                 field: 'thoi_gian_bat_dau',
-                autoHide: false,
                 title: 'Thời Gian Đăng Ký',
                 template: function(row) {
                     var date = new Date(Date.parse(row.thoi_gian_bat_dau))
@@ -366,7 +365,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                 }
             }, {
                 field: 'thoi_gian_ket_thuc',
-                autoHide: false,
                 title: 'Kết Thúc',
                 template: function(row) {
                     var date = new Date(Date.parse(row.thoi_gian_ket_thuc))
@@ -393,7 +391,6 @@ var KTDatatableRemoteAjaxDemo = function() {
             }, {
                 field: 'trang_thai.id',
                 title: 'Trạng Thái',
-                autoHide: false,
                 // callback function support for column rendering
                 template: function(row) {
                     var status = {
@@ -425,6 +422,14 @@ var KTDatatableRemoteAjaxDemo = function() {
                             'title': 'Đã Thanh Toán DV',
                             'class': ' label-light-success'
                         },
+                        10: {
+                            'title': 'Đang Khám',
+                            'class': ' label-light-primary'
+                        },
+                        11: {
+                            'title': 'Kết Thúc Khám',
+                            'class': ' label-light-primary'
+                        },
                     };
                     return '<span class="label font-weight-bold label-2x ' + status[row.trang_thai.id].class + ' label-inline">' + status[row.trang_thai.id].title + '</span>';
                 },
@@ -432,14 +437,14 @@ var KTDatatableRemoteAjaxDemo = function() {
                 field: 'update',
                 title: 'Thay Đổi LH',
                 sortable: false,
-                width: 50,
+                width: 40,
                 textAlign: 'center',
                 overflow: 'visible',
                 autoHide: false,
                 template: function(row) {
                     return `
                         <a href="javascript:;" class="btn-edit btn btn-clean btn-icon" title="Thay đổi thời gian lịch hẹn" data-id="${row.id}" data-lich-hen="${row.thoi_gian_bat_dau}">
-                            <i class="la la-edit icon-lg"></i>
+                            <i class="la la-edit icon-lg text-primary"></i>
                         </a>
                     `;
                 },
@@ -448,12 +453,12 @@ var KTDatatableRemoteAjaxDemo = function() {
                 title: 'Xác Nhận LH',
                 sortable: false,
                 textAlign: 'center',
-                width: 50,
+                width: 40,
                 autoHide: false,
                 template: function(row) {
                     return `
                         <a href="javascript:;" class="btn-confirm btn btn-clean btn-icon" data-id="${row.id}" title="Xác nhận lịch hẹn">
-                            <i class="la la-calendar-check icon-lg"></i>
+                            <i class="la la-calendar-check icon-lg text-primary"></i>
                         </a>
                     `;
                 },
@@ -461,13 +466,13 @@ var KTDatatableRemoteAjaxDemo = function() {
                 field: 'bill',
                 title: 'Xác Nhận Khám',
                 sortable: false,
-                width: 50,
+                width: 40,
                 textAlign: 'center',
                 autoHide: false,
                 template: function(row) {
                     return `
                         <a href="javascript:;" class="btn-set-status btn btn-clean btn-icon" data-id="${row.id}" title="Xác nhận đến khám và chờ thanh toán lâm sàng">
-                            <i class="la la-money-check icon-lg"></i>
+                            <i class="la la-money-check icon-lg text-primary"></i>
                         </a>
                     `;
                 },
@@ -521,8 +526,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                         $('#kt_datatable').KTDatatable('reload');
                     }
                 });
-                
-                {% comment %} $('#kt_datatable').KTDatatable('reload'); {% endcomment %}
             })
 
             $(document).on('click', '.btn-confirm', function(){
@@ -725,7 +728,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             })
         })
     }
-    
+
     var cancelLichHen = function() {
         $(document).on('click', '.btn-cancel', function() {
             var id = $(this).attr('data-id')

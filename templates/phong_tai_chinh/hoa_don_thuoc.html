@@ -47,15 +47,14 @@
                                 <h1 class="display-4 text-white font-weight-boldest mb-10">HÓA ĐƠN THUỐC</h1>
                                 <div class="d-flex flex-column align-items-md-end px-0">
                                     <!--begin::Logo-->
-                                    <a href="#" class="mb-5">
-                                        <img src="{% static 'assets/media/logos/logo MEDOTIS.png' %} " alt="" />
-
-                                        {% comment %} <img src="{% static 'assets/media/logos/logo-light.png' %} " alt="" /> {% endcomment %}
+                                    <a href="javascript:;" class="mb-5">
+                                        <img src="{{phong_kham.logo.url}}" class="bgi-size-cover min-h-100px w-100px" />
                                     </a>
                                     <!--end::Logo-->
                                     <span class="text-white d-flex flex-column align-items-md-end opacity-70">
-                                        <span>Địa Chỉ và Thông tin bệnh viện</span>
-                                        <span>Số điện thoại liên hệ</span>
+                                        <span>Phòng Khám {{phong_kham.ten_phong_kham}}</span>
+                                        <span>Địa chỉ: {{phong_kham.dia_chi}}</span>
+                                        <span>Hotline: {{phong_kham.so_dien_thoai}}</span>
                                     </span>
                                 </div>
                             </div>
@@ -146,15 +145,15 @@
                                     <div class="font-weight-bolder font-size-lg mb-3">THÔNG TIN CHUYỂN KHOẢN</div>
                                     <div class="d-flex justify-content-between mb-3">
                                         <span class="mr-15 font-weight-bold">Chủ Khoản:</span>
-                                        <span class="text-right">Bùi Thành Long</span>
+                                        <span class="text-right">{{phong_kham.chu_khoan}}</span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-3">
                                         <span class="mr-15 font-weight-bold">Số Tài Khoản:</span>
-                                        <span class="text-right">19035123351011</span>
+                                        <span class="text-right">{{phong_kham.so_tai_khoan}}</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <span class="mr-15 font-weight-bold">Ngân Hàng:</span>
-                                        <span class="text-right">Techcombank XaLa Hà Đông</span>
+                                        <span class="text-right">{{phong_kham.thong_tin_ngan_hang}}</span>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-column text-md-right">
@@ -245,9 +244,9 @@
                 if (response.status == 200) {
                     toastr.success(response.message, "Thành Công")
 
-                    setTimeout(function () {
+                    {% comment %} setTimeout(function () {
                         window.location.href = '/phong_tai_chinh/'; 
-                    }, 2000);
+                    }, 1500); {% endcomment %}
 
                 } else if (response.status == 404) {
                     toastr.warning(response.message, "Xảy Ra Lỗi")

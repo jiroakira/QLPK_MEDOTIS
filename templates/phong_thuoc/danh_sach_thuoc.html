@@ -95,7 +95,7 @@
 {% endblock content %}
 
 {% block scripts %}
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
+<script>var HOST_URL = "http://127.0.0.1:8000";</script>
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 <!--begin::Global Theme Bundle(used by all pages)-->
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
@@ -120,7 +120,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 source: {
                     read: {
                         method: "GET",
-                        url: HOST_URL + '/router/api/danh_sach_thuoc/',
+                        url: HOST_URL + '/api/danh_sach_thuoc/',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
                         map: function(raw) {

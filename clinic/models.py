@@ -1,7 +1,5 @@
-# from finance.models import HoaDonChuoiKham
-# from clinic.views import hoa_don_dich_vu
+
 import decimal
-# from finance.models import HoaDonChuoiKham, HoaDonThuoc
 import hashlib
 import datetime
 import os
@@ -10,8 +8,7 @@ from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
-from django.db.models.fields import AutoField, related
-from django.utils import timezone, tree
+from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import RegexValidator
@@ -163,14 +160,7 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'so_dien_thoai'
     REQUIRED_FIELDS = ['ho_ten', 'cmnd_cccd', 'dia_chi',] # Email & Password are required by default.
 
-    # def save(self, *agrs, **kwargs):
-    #     ''' Khi được lưu lại thì sẽ update timestamp'''
-    #     if not self.id:
-    #         self.thoi_gian_tao = timezone.now()
-    #     self.thoi_gian_chinh_sua = timezone.now()
-    #     return super(User, self).save(*agrs, **kwargs)
-
-    def __str__(self):              # __unicode__ on Python 2
+    def __str__(self):       
         return self.ho_ten
 
     def has_perm(self, perm, obj=None):
@@ -219,26 +209,39 @@ class BacSi(models.Model):
     kinh_nghiem = models.TextField(null=True, blank=True)
     loai_cong_viec = models.CharField(null=True, blank=True, choices= Type, max_length=50)
 
+    class Meta:
+        verbose_name = "Bác Sĩ"
+        verbose_name_plural = "Bác Sĩ"
+
 class TinhTrangPhongKham(models.Model):
     """ Mở rộng phần tình trạng của phòng khám, khi phòng khám muốn tạm ngưng hoạt động
     trong một khoảng thời gian thì bảng này sẽ được sử dụng để mở rộng tính năng cho bảng Phòng Khám """
     kha_dung = models.BooleanField(default=True)
-    thoi_gian_dong_cua = models.DateTimeField(null=True)
-    thoi_gian_mo_cua = models.DateTimeField(null=True)
+    thoi_gian_dong_cua = models.DateTimeField(null=True, blank=True)
+    thoi_gian_mo_cua = models.DateTimeField(null=True, blank=True)
 
     # tọa độ địa lí của phòng khám sẽ được sử dụng để hiển thị lên map trong mobile app
     latitude = models.CharField(null=True, blank=True, max_length=50)
     longtitude = models.CharField(null=True, blank=True, max_length=50)
-
+    
 class PhongKham(models.Model):
     """ Thông tin chi tiết của phòng khám """
+    file_prepend = "logo_phong_kham/"
     ten_phong_kham = models.CharField(max_length = 255)
-    dia_chi = models.TextField()
+    dia_chi = models.TextField(null=True, blank=True)
     so_dien_thoai = models.CharField(max_length = 12)
-    email = models.EmailField()
-    logo = models.URLField()
+    email = models.EmailField(null=True, blank=True)
+    logo = models.FileField(upload_to = file_url, null=True, blank=True)
     tinh_trang = models.ForeignKey(TinhTrangPhongKham, on_delete=models.CASCADE)
     gia_tri_diem_tich = models.PositiveIntegerField(null=True, blank=True)
+    # NEW 
+    chu_khoan = models.CharField(max_length=255, null=True, blank=True)
+    so_tai_khoan = models.CharField(max_length=20, null=True, blank=True)
+    thong_tin_ngan_hang = models.TextField(null=True, blank=True)
+    # END
+    class Meta:
+        verbose_name = "Phòng Khám"
+        verbose_name_plural = "Phòng Khám"
 
 class PhongChucNang(models.Model):
     """ Mỗi dịch vụ khám sẽ có một phòng chức năng riêng biệt, là nơi bệnh nhân sau khi được phân dịch vụ khám sẽ đến trong suốt chuỗi khám của bệnh nhân """
@@ -248,6 +251,10 @@ class PhongChucNang(models.Model):
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True, auto_now_add=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True, auto_now=True)
     
+    class Meta:
+        verbose_name = "Phòng Chức Năng"
+        verbose_name_plural = "Phòng Chức Năng"
+
     def __str__(self):
         return self.ten_phong_chuc_nang
     
@@ -279,6 +286,10 @@ class DichVuKham(models.Model):
     phong_chuc_nang = models.ForeignKey(PhongChucNang, on_delete=models.SET_NULL, null=True, blank=True, related_name="dich_vu_kham_theo_phong")
 
     objects = BulkUpdateOrCreateQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = "Dịch Vụ Khám"
+        verbose_name_plural = "Dịch Vụ Khám"
 
     def __str__(self):
         return self.ten_dvkt
@@ -332,8 +343,12 @@ def get_sentinel_user():
 class TrangThaiLichHen(models.Model):
     ten_trang_thai = models.CharField(max_length=255)
 
-    def __str__(self) -> str:
-        return self.ten_trang_thai
+    class Meta:
+        verbose_name = "Trạng Thái Lịch Hẹn"
+        verbose_name_plural = "Trạng Thái Lịch Hẹn"
+
+    def __str__(self):
+        return f"({self.id})" + self.ten_trang_thai 
 
 def get_default_trang_thai_lich_hen():
     return TrangThaiLichHen.objects.get_or_create(ten_trang_thai="Đã đặt trước")[0]
@@ -369,6 +384,10 @@ class LichHenKham(models.Model):
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True, auto_now_add=True)
     thoi_gian_chinh_sua = models.DateTimeField(null=True, blank=True, auto_now=True)
 
+    class Meta:
+        verbose_name = "Lịch Hẹn Khám"
+        verbose_name_plural = "Lịch Hẹn Khám"
+
     # objects = LichHenKhamManager()
 
 
@@ -387,14 +406,22 @@ class TrangThaiKhoaKham(models.Model):
     """ Tất cả các trạng thái có thể xảy ra trong phòng khám """
     trang_thai_khoa_kham = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name = "Trạng Thái Khoa Khám"
+        verbose_name_plural = "Trạng Thái Khoa Khám"
+
     def __str__(self):
-        return self.trang_thai_khoa_kham
+        return f"({self.id})" + self.trang_thai_khoa_kham 
 
 class TrangThaiChuoiKham(models.Model):
     trang_thai_chuoi_kham = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name = "Trạng Thái Chuỗi Khám"
+        verbose_name_plural = "Trạng Thái Chuỗi Khám"
+
     def __str__(self):
-        return self.trang_thai_chuoi_kham
+        return f"({self.id})" + self.trang_thai_chuoi_kham
 
 def get_default_trang_thai_chuoi_kham():
     return TrangThaiChuoiKham.objects.get_or_create(trang_thai_chuoi_kham="Đang chờ")[0]
@@ -416,6 +443,10 @@ class ChuoiKham(models.Model):
     thoi_gian_tao = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     thoi_gian_cap_nhat = models.DateTimeField(auto_now=True, blank=True, null=True)
 
+    class Meta:
+        verbose_name = "Chuỗi Khám"
+        verbose_name_plural = "Chuỗi Khám"
+
 
 class PhanKhoaKham(models.Model):
     benh_nhan = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
@@ -432,6 +463,13 @@ class PhanKhoaKham(models.Model):
 
     thoi_gian_tao = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True, auto_now=True)
+
+    class Meta:
+        verbose_name = "Phân Khoa Khám"
+        verbose_name_plural = "Phân Khoa Khám"
+
+    def __str__(self):
+        return self.benh_nhan.ho_ten + self.dich_vu_kham.ten_dich_vu
 
     def gia_dich_vu_theo_bao_hiem(self):
         gia = self.dich_vu_kham.gia_dich_vu_kham.gia 
@@ -480,6 +518,9 @@ class KetQuaTongQuat(models.Model):
     ma_ket_qua = models.CharField(max_length=50, null=True, blank=True)
     mo_ta = models.CharField(max_length=255, null=True, blank=True)
     ket_luan = models.TextField(null=True, blank=True)
+    class Meta:
+        verbose_name = "Kết Quả Tổng Quát"
+        verbose_name_plural = "Kết Quả Tổng Quát"
 
 class KetQuaChuyenKhoa(models.Model):
     """ Kết quả của khám chuyên khoa mà người dùng có thể nhận được """ 
@@ -487,6 +528,10 @@ class KetQuaChuyenKhoa(models.Model):
     ket_qua_tong_quat = models.ForeignKey(KetQuaTongQuat, on_delete=models.CASCADE, related_name="ket_qua_chuyen_khoa")
     mo_ta = models.CharField(max_length=255, null=True, blank=True)
     ket_luan = models.TextField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Kết Quả Chuyên Khoa"
+        verbose_name_plural = "Kết Quả Chuyên Khoa"
 
 key_store = FileSystemStorage()
 
@@ -496,6 +541,10 @@ class FileKetQua(models.Model):
     file = models.FileField(upload_to=file_url,null=True, blank=True, storage=key_store)
     # file = models.CharField(max_length=500, null=True, blank=True)
     thoi_gian_tao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Tài Liệu"
+        verbose_name_plural = "Tài Liệu"
     
     def __unicode__(self):
         return self.file.url
@@ -506,10 +555,18 @@ class FileKetQuaTongQuat(models.Model):
     file = models.ForeignKey(FileKetQua, on_delete=models.CASCADE, related_name="file_tong_quat")
     ket_qua_tong_quat = models.ForeignKey(KetQuaTongQuat, on_delete=models.CASCADE, related_name="file_ket_qua_tong_quat")
 
+    class Meta:
+        verbose_name = "File Kết Quả Tổng Quát"
+        verbose_name_plural = "File Kết Quả Tổng Quát"
+
+
 class FileKetQuaChuyenKhoa(models.Model):
     file = models.ForeignKey(FileKetQua, on_delete=models.CASCADE, related_name="file_chuyen_khoa")
     ket_qua_chuyen_khoa = models.ForeignKey(KetQuaChuyenKhoa, on_delete=models.CASCADE, related_name="file_ket_qua_chuyen_khoa")
 
+    class Meta:
+        verbose_name = "File Kết Quả Chuyên Khoa"
+        verbose_name_plural = "File Kết Quả Chuyên Khoa"
 
 class BaiDang(models.Model):
     file_prepend = 'bai_dang/'
@@ -522,3 +579,7 @@ class BaiDang(models.Model):
     nguoi_dang_bai = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="nguoi_dang_bai", null=True, blank=True)
 
     thoi_gian_tao = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Bài Đăng"
+        verbose_name_plural = "Bài Đăng"

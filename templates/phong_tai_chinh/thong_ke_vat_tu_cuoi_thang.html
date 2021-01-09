@@ -29,18 +29,15 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">Kê Đơn Thuốc</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">Thống Kê Vật Tư Cuối Tháng</h5>
                     <!--end::Page Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
                         <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted">Bác sĩ lâm sàng</a>
+                            <a href={% url 'danh_sach_vat_tu' %} class="text-muted">Danh sách vật tư</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted">Bệnh nhân</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted">Kê đơn thuốc</a>
+                            <a href="#" class="text-muted">Thống kê vật tư cuối tháng</a>
                         </li>
                     </ul>
                     <!--end::Breadcrumb-->
@@ -63,11 +60,11 @@
                         <span class="card-icon">
                             <i class="la la-clipboard-list text-primary"></i>
                         </span>
-                        <h3 class="card-label">Danh Sách Thuốc</h3>
+                        <h3 class="card-label">Danh Sách Vật Tư</h3>
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
-                        <a href="{% url 'danh_sach_kham' %}" class="btn btn-light-primary font-weight-bolder">
+                        <a href="{% url 'danh_sach_vat_tu' %}" class="btn btn-light-primary font-weight-bolder">
                             <span class="svg-icon svg-icon-md">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -124,7 +121,7 @@
                         <span class="card-icon">
                             <i class="flaticon-clipboard text-primary"></i>
                         </span>
-                        <h3 class="card-label">Đơn thuốc của bệnh nhân</h3>
+                        <h3 class="card-label">Bảng Thống Kê Vật Tư</h3>
                     </div>
                 </div>
                 <div class="card-body">
@@ -132,12 +129,12 @@
                     <table class="table table-bordered table-checkable" id="kt_datatable_3" style="margin-top: 13px !important;">
                         <thead>
                             <tr>
-                                <td>Tên Thuốc</td>
+                                <td>Tên Vật Tư</td>
                                 <td>Bảo Hiểm</td>
                                 <td>Số Lượng</td>
                                 <td>ĐVT</td>
-                                <td>Cách Dùng</td>
-                                <td>Ghi Chú</td>
+                                <td>Đơn Giá</td>
+                                <td>Thành Tiền</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -147,10 +144,10 @@
                     <!--end: Datatable-->
                 </div>
                 <div class="card-footer">
-                    <div class="card-toolbar">
+                    <div class="card-toolbar text-right">
                         <!--begin::Button-->
                         <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="get-table-data" data-user-id="{{ user_id }}" data-chuoi-kham-id="{{id_chuoi_kham}}">
-                            <i class="la la-plus"></i>Kê Đơn Thuốc
+                            <i class="la la-check"></i>Xác Nhận
                         </a>
                         <!--end::Button-->
                     </div>
@@ -191,7 +188,7 @@ var KTDatatableRecordSelectionDemo = function() {
             type: 'remote',
             source: { 
                 read: {
-                    url: HOST_URL + '/api/danh_sach_thuoc/',
+                    url: HOST_URL + '/api/danh_sach_vat_tu/',
                     method: 'GET',
                 },
             },
@@ -214,7 +211,7 @@ var KTDatatableRecordSelectionDemo = function() {
 
         // columns definition
         columns: [{
-            field: 'id',
+            field: 'stt',
             title: '#',
             sortable: false,
             width: 20,
@@ -223,23 +220,17 @@ var KTDatatableRecordSelectionDemo = function() {
             },
             textAlign: 'center',
         }, {
-            field: 'ten_thuoc',
-            title: 'Tên thuốc',
-            template: function(row) {
+            field: 'ma_vtyt_bv',
+            title: 'Mã Vật Tư',
+        }, {
+            field: 'ten_vtyt_bv',
+            title: 'Vật Tư',
+            {% comment %} template: function(row) {
                 return '<a href id=' + '"' + row.id + '"' + ' data-title="This is my tooltip content for:'+row.ten_thuoc+'" data-toggle="tooltip" data-trigger="hover">'+row.ten_thuoc+'</a>'
-            }
+            } {% endcomment %}
         }, {
-            field: 'loai_thuoc',
-            title: 'Loại',
-        }, {
-            field: 'ma_hoat_chat',
-            title: 'Mã hoạt chất',
-        }, {
-            field: 'ten_hoat_chat',
-            title: 'Tên hoạt chất',
-        }, {
-            field: 'duong_dung',
-            title: 'Cách dùng',
+            field: 'don_gia',
+            title: 'Đơn Giá',
         }, {
             field: 'so_luong_kha_dung',
             title: 'Số lượng khả dụng',
@@ -247,76 +238,6 @@ var KTDatatableRecordSelectionDemo = function() {
             field: 'don_vi_tinh',
             title: 'Đơn vị tính',
         }],
-    };
-
-    // basic demo
-    var localSelectorDemo = function() {
-        // enable extension
-        options.extensions = {
-            // boolean or object (extension options)
-            checkbox: true,
-        };
-
-        options.search = {
-            input: $('#kt_datatable_search_query'),
-            key: 'generalSearch'
-        };
-
-        var datatable = $('#kt_datatable').KTDatatable(options);
-
-        $('#kt_datatable_search_status').on('change', function() {
-            datatable.search($(this).val().toLowerCase(), 'Status');
-        });
-
-        $('#kt_datatable_search_type').on('change', function() {
-            datatable.search($(this).val().toLowerCase(), 'Type');
-        });
-
-        $('#kt_datatable_search_status, #kt_datatable_search_type').selectpicker();
-
-        datatable.on(
-            'datatable-on-check datatable-on-uncheck',
-            function(e) {
-                var checkedNodes = datatable.rows('.datatable-row-active').nodes();
-                var count = checkedNodes.length;
-                $('#kt_datatable_selected_records').html(count);
-                if (count > 0) {
-                    $('#kt_datatable_group_action_form').collapse('show');
-                } else {
-                    $('#kt_datatable_group_action_form').collapse('hide');
-                }
-            });
-
-        datatable.on('mouseenter', 'tbody tr', function(){
-            // alert($(this).data());
-            $(this).find('[data-toggle="tooltip"]').tooltip({
-                delay: 300,
-                title: $(this).data().obj.Country,
-                html: true,
-            });
-
-        })
-
-        $('#kt_datatable_fetch_modal').on('show.bs.modal', function(e) {
-            var ids = datatable.rows('.datatable-row-active').
-            nodes().
-            find('.checkbox > [type="checkbox"]').
-            map(function(i, chk) {
-                return $(chk).val();
-            });
-            console.log(ids);
-        
-            var c = document.createDocumentFragment();
-            for (var i = 0; i < ids.length; i++) {
-                var li = document.createElement('li');
-                li.setAttribute('data-id', ids[i]);
-                li.innerHTML = 'Selected record ID: ' + ids[i];
-                c.appendChild(li);
-            }
-            $('#kt_datatable_fetch_display').append(c);
-        }).on('hide.bs.modal', function(e) {
-            $('#kt_datatable_fetch_display').empty();
-        });
     };
 
     var serverSelectorDemo = function() {
@@ -376,22 +297,18 @@ var KTDatatableRecordSelectionDemo = function() {
         var lstData = [];
         var lstCheckbox = {};
         var lstQuantity = {};
-        var lstUsage = {};
-        var lstNote = {};
+        var lstTien = {};
 
         $('#get-table-data').on('click', function (){
             var user_id = $(this).data('user-id');
-            var id_chuoi_kham = $(this).data('chuoi-kham-id');
             lstCheckbox = {};
             lstQuantity = {};
-            lstUsage = {};
-            lstNote = {};
+            lstTien = {};
             getCheckbox();
             getInputQuantity();
-            getInputUsage();
-            getInputNote();
+            getTien();
             getPostData(user_id);
-            postData(user_id, id_chuoi_kham); 
+            postData(user_id); 
         })
 
     
@@ -414,7 +331,7 @@ var KTDatatableRecordSelectionDemo = function() {
                     $('#kt_datatable_3 tbody').append(`
                         <tr class="${trVals.obj.id}" data-id = "${trVals.obj.id}" name="true" >
                             <td>
-                            ${trVals.obj.ten_thuoc}
+                            ${trVals.obj.ten_vtyt_bv}
                             </td>
                             <td>
                                 <input type="checkbox" id="${trVals.obj.id}" class="checkbox checkbox-lg checkbox-light-success checkbox-inline flex-shrink-0 m-0 mx-4 big-checkbox" data-checked="True" data-unchecked="False" />
@@ -426,18 +343,18 @@ var KTDatatableRecordSelectionDemo = function() {
                                 <span>
                                     ${trVals.obj.don_vi_tinh}
                                 </span>
-                                {% comment %} <input type="text" class="big-input-usage"> {% endcomment %}
                             </td>
                             <td>
-                                <span class="big-input-usage">
-                                    ${trVals.obj.duong_dung}
-                                </span>
+                                <p class="don-gia">
+                                    ${trVals.obj.don_gia}
+                                </p>
                             </td>
                             <td>
-                                <input type="text" class="big-input-note form-control" />
+                                <p class="big-input-thanh-tien"></p>
                             </td>
                         </tr>
                     `);
+                    keyPressForInput();
                 })
 
             } else {
@@ -445,10 +362,38 @@ var KTDatatableRecordSelectionDemo = function() {
                 $(`.${trVals.obj.id}`).remove();
                 lstData = lstData.filter((item) => item!==trVals)
                 lstQuantity = {}
-                lstUsage = {}
-                lstNote = {}
+                lstTien = {}
             }
         })
+
+        function keyPressForInput(){
+            $('.big-input-quantity').keyup(function() {
+                var so_luong  = $(this).val();
+                var gia_ban   = $(this).closest('tr').find(".don-gia").text();
+                var tong_tien = so_luong * gia_ban;
+                tong_tien     = formatMoney(tong_tien);
+                gia_ban       = formatMoney(gia_ban);
+                
+                $(this).parents('tr').find(".big-input-thanh-tien").text(tong_tien);
+            });
+        }
+
+        // format money
+        function formatMoney(amount, decimalCount = 0, decimal = ",", thousands = ".") {
+            try {
+                decimalCount = Math.abs(decimalCount);
+                decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+                const negativeSign = amount < 0 ? "-" : "";
+
+                let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+                let j = (i.length > 3) ? i.length % 3 : 0;
+
+                return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+            } catch (e) {
+                console.log(e)
+            }
+        };
 
         $('#kt_datatable_3').on('click', 'tbody input[type="checkbox"]', function () {
             if($(this).is(":checked")){
@@ -462,8 +407,7 @@ var KTDatatableRecordSelectionDemo = function() {
             }
         })
 
-        function postData(user_id, id_chuoi_kham){
-            var id_chuoi_kham = id_chuoi_kham
+        function postData(user_id){
             var user_id = user_id
             console.log(getPostData());
 
@@ -500,14 +444,13 @@ var KTDatatableRecordSelectionDemo = function() {
 
             $.ajax({
                 type: "POST",
-                url: "{% url 'store_ke_don' %}",
+                url: "{% url 'store_thong_ke_vat_tu' %}",
                 data: {
                     // here data should be a string so that
                     // in your views.py you can fetch the value using get('data')
                     'data': JSON.stringify(getPostData(user_id)),
                     'csrfmiddlewaretoken': csrftoken,
                     'user': user_id,
-                    'id_chuoi_kham': id_chuoi_kham,
                 },
                 dataType: 'json',
                 safe: false,
@@ -515,10 +458,9 @@ var KTDatatableRecordSelectionDemo = function() {
                     if (response.status == 200){
                         toastr.success(response.message, "Thành Công")
                         setTimeout(function () {
-                            window.location.href = '/bac_si_lam_sang/ket_qua_kham/'; //redirect về danh sách chờ lâm sàng
+                            window.location.href = '/phong_tai_chinh/danh_sach_vat_tu/'; //redirect về danh sách chờ lâm sàng
                         }, 1500);
                     }
-
                 },
                 error: function (res) {
                     toastr.warning("Có Lỗi Xảy Ra Trong Quá Trình Xử Lý")
@@ -528,43 +470,24 @@ var KTDatatableRecordSelectionDemo = function() {
 
         function getPostData(user_id){
             var user_id = user_id
-            console.log(user_id)
             var rowData = lstData;
             var checkBoxObj = lstCheckbox;
             var quantityObj = lstQuantity;
-            var usageObj = lstUsage;
-            var noteObj = lstNote;
+            var tienObj = lstTien;
 
             for (const each in checkBoxObj) {
                 for (let i = 0; i < rowData.length; i++) {
                     if (rowData[i].obj.id == each) {
-                        rowData[i].obj.bao_hiem = checkBoxObj[each];
-                        rowData[i].obj.so_luong = quantityObj[each];
-                        rowData[i].obj.cach_dung = usageObj[each];
-                        rowData[i].obj.ghi_chu = noteObj[each];
-                        rowData[i].obj.benh_nhan = user_id;
+                        rowData[i].obj.bao_hiem        = checkBoxObj[each];
+                        rowData[i].obj.so_luong        = quantityObj[each];
+                        rowData[i].obj.thanh_tien      = tienObj[each];
+                        rowData[i].obj.nguoi_phu_trach = user_id;
                     }
                 }
             }
             console.log(rowData)
             return rowData;
         }
-
-        // function getPostData(){
-        //     var rowData = lstData;
-        //     var checkBoxArr = Object.values(lstCheckbox);
-        //     var quantityArr = Object.values(lstQuantity);
-        //     var usageArr = Object.values(lstUsage);
-        //     var noteArr = Object.values(lstNote);
-        //     for (let i = 0; i < checkBoxArr.length; i++) {
-        //         rowData[i].obj["bao_hiem"] = checkBoxArr[i];
-        //         rowData[i].obj["so_luong"] = quantityArr[i];
-        //         rowData[i].obj["cach_dung"] = usageArr[i];
-        //         rowData[i].obj["ghi_chu"] = noteArr[i];
-        //     }
-        //     console.log(rowData)
-        //     return rowData;
-        // }
 
         function getCheckbox(){
             
@@ -587,47 +510,24 @@ var KTDatatableRecordSelectionDemo = function() {
             $('#kt_datatable_3 tbody tr').each(function() {
                 var sectionId = $(this).data('id');
                 $(this).find('input.big-input-quantity').each(function(){
-                    lstQuantity[sectionId] = $(this).val();
+                    if($('.big-input-quantity').val() >=0){
+                        lstQuantity[sectionId] = $(this).val();
+                    }else{
+                        toastr.warning('Số Lượng Không Được Âm', "Cảnh Báo")
+                    }
                 })
             });
         }
 
-        function getInputUsage(){
+        function getTien(){
             $('#kt_datatable_3 tbody tr').each(function() {
                 var sectionId = $(this).data('id');
-                $(this).find('input.big-input-usage').each(function(){
-                    console.log($(this).val());
-                    lstUsage[sectionId] = $(this).val();
+                $(this).find('.big-input-thanh-tien').each(function(){
+                    lstTien[sectionId] = $(this).text().replace(/[.]/g, '');
+                    console.log($(this).html())
                 })
             });
         }
-
-        function getInputNote(){
-            $('#kt_datatable_3 tbody tr').each(function() {
-                var sectionId = $(this).data('id');
-                $(this).find('input.big-input-note').each(function(){
-                    console.log($(this).val());
-                    lstNote[sectionId] = $(this).val();
-                })
-            });
-        }
-
-        $('#kt_datatable_fetch_modal_2').on('show.bs.modal', function(e) {
-            var ids = datatable.checkbox().getSelectedId();
-            
-            var recordID = [];
-            var c = document.createDocumentFragment();
-            for (var i = 0; i < ids.length; i++) {
-                var li = document.createElement('li');
-                li.setAttribute('data-id', ids[i]);
-                li.innerHTML = 'Selected record ID: ' + ids[i];
-                c.appendChild(li);
-            }
-
-            $('#kt_datatable_fetch_display_2').append(c);
-        }).on('hide.bs.modal', function(e) {
-            $('#kt_datatable_fetch_display_2').empty();
-        });
     };
 
     return {

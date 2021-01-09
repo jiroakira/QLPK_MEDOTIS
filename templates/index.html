@@ -560,7 +560,7 @@
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker9cd7.js' %} "></script>
 <script src="{% static 'assets/js/pages/owl.carousel.min.js' %} "></script>
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
+<script>var HOST_URL = "http://127.0.0.1:8000";</script>
 
 <!--end::Global Theme Bundle-->
 
@@ -648,7 +648,16 @@
                 yaxis: {
                     title: {
                         text: 'VND'
-                    }
+                    },
+                    ticks: {
+                        callback: function(label, index, labels) {
+                            return label/1000+'k';
+                        }
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: '1k = 1000'
+                    },
                 },
                 fill: {
                     opacity: 1

@@ -92,3 +92,12 @@ class BacSiForm(forms.ModelForm):
         fields = '__all__'
 
 # END
+
+# NEW BY LONG 8/1
+class PhongKhamForm(forms.ModelForm):
+    class Meta:
+        model = PhongKham
+        fields = '__all__'
+
+
+# END NEW

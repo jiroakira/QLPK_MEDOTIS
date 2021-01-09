@@ -13,15 +13,15 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">Hóa Đơn Dịch Vụ</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">Hóa Đơn Dịch Vụ Hưởng Bảo Hiểm</h5>
                     <!--end::Page Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
                         <li class="breadcrumb-item">
-                            <a href="#" class="text-muted">Bệnh nhân: {{chuoi_kham.benh_nhan.ho_ten}}</a>
+                            <a href="javascript:;" class="text-muted">Bệnh nhân: {{chuoi_kham.benh_nhan.ho_ten}}</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="#" class="text-muted">Thanh toán hóa đơn dịch vụ</a>
+                            <a href="javascript:;" class="text-muted">Xuất Bảo Hiểm Hóa Đơn Dịch Vụ</a>
                         </li>
                     </ul>
                     <!--end::Breadcrumb-->
@@ -44,7 +44,7 @@
                     <div class="row justify-content-center bgi-size-cover bgi-no-repeat py-8 px-8 py-md-27 px-md-0" style="background-image: url({% static 'assets/media/bg/bg-6.jpg' %});">
                         <div class="col-md-9">
                             <div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
-                                <h1 class="display-4 text-white font-weight-boldest mb-10">Hóa Đơn Dịch Vụ</h1>
+                                <h1 class="display-4 text-white font-weight-boldest mb-10">Hóa Đơn Dịch Vụ Hưởng Bảo Hiểm</h1>
                                 <div class="d-flex flex-column align-items-md-end px-0">
                                     <!--begin::Logo-->
                                     <a href="javascript:;" class="mb-5">
@@ -124,33 +124,12 @@
                         <div class="col-md-9">
                             <div class="d-flex justify-content-between flex-column flex-md-row font-size-lg">
                                 <div class="d-flex flex-column mb-10 mb-md-0">
-                                    <div class="font-weight-bolder font-size-lg mb-3">THÔNG TIN CHUYỂN KHOẢN</div>
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <span class="mr-15 font-weight-bold">Chủ Khoản:</span>
-                                        <span class="text-right">{{phong_kham.chu_khoan}}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <span class="mr-15 font-weight-bold">Số Tài Khoản:</span>
-                                        <span class="text-right">{{phong_kham.so_tai_khoan}}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="mr-15 font-weight-bold">Ngân Hàng:</span>
-                                        <span class="text-right">{{phong_kham.thong_tin_ngan_hang}}</span>
-                                    </div>
+                                    
                                 </div>
                                 <div class="d-flex flex-column text-md-right">
-                                    <div class="d-flex justify-content-between mb-3 font-size-h4">
-                                        <span class="mr-15 font-weight-bold">Tổng tiền</span>
-                                        <span class="text-right"><span id="format-money-tong-tien" class="font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}" data-hoa-don="{{chuoi_kham.hoa_don_dich_vu.ma_hoa_don}}">{{tong_tien}}</span></span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-3 font-size-h5">
-                                        <span class="mr-15 font-weight-bold">Bảo hiểm</span>
-                                        <span class="text-right"><span id="format-money-bao-hiem" class="font-weight-boldest text-danger mb-1" data-gia="{{ap_dung_bao_hiem}}">{{ap_dung_bao_hiem}}</span></span>
-                                    </div>
-                                    <div class="border-bottom border-bottom-warning w-100 mb-4"></div>
-                                    <span class="font-size-lg font-weight-bolder mb-1">TIỀN BỆNH NHÂN CẦN THANH TOÁN</span>
+                                    <span class="font-size-lg font-weight-bolder mb-1">TỔNG TIỀN BẢO HIỂM</span>
                                     {% comment %} <span class="format-tien font-size-h2 font-weight-boldest text-danger mb-1">{{tong_tien}}</span> {% endcomment %}
-                                    <span id="format-money-thanh-tien" class="font-size-h2 font-weight-boldest text-danger mb-1">{{thanh_tien}}</span>
+                                    <span id="format-money-tong-tien" class="font-size-h2 font-weight-boldest text-danger mb-1">{{tong_tien}}</span>
                                     <span>VND</span>
                                 </div>
                                 {% comment %} <div class="d-flex flex-column text-md-right">
@@ -167,9 +146,9 @@
                 <!-- begin: Invoice action-->
                 <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
                     <div class="col-md-9">
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-light-primary font-weight-bold" onclick="printDiv('hoa_don_dich_vu')">In Hóa Đơn</button>
-                            <button type="button" class="btn btn-primary font-weight-bold" id="btn-thanh-toan">Thanh Toán</button>
+                        <div class="text-right">
+                            {% comment %} <button type="button" class="btn btn-primary font-weight-bold" id="btn-thanh-toan">Thanh Toán</button> {% endcomment %}
+                            <button type="button" class="btn btn-light-primary font-weight-bold " onclick="printDiv('hoa_don_dich_vu')">In Hóa Đơn</button>
                         </div>
                     </div>
                 </div>
