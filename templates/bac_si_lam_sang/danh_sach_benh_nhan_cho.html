@@ -188,7 +188,7 @@
 {% block scripts %}
 
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
-<script>var HOST_URL = "http://127.0.0.1:8000";</script>
+<script>var HOST_URL = "https://duockalpharm.vn";</script>
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
@@ -208,7 +208,7 @@ var KTDatatableModal = function() {
                 type: 'remote',
                 source: {
                     read: {
-                        url: HOST_URL + '/api/lich_kham/',
+                        url: HOST_URL + '/api/danh_sach_benh_nhan_cho_lam_sang/',
                         method: "GET",
                         {% comment %} map: function(raw) {
                                 // sample data mapping
@@ -291,7 +291,7 @@ var KTDatatableModal = function() {
                 // callback function support for column rendering
                 template: function(row) {
                     var status = {
-                        1: {
+                        9: {
                             'title': 'Đã Thanh Toán LS',
                             'class': ' label-light-success'
                         },
@@ -299,11 +299,11 @@ var KTDatatableModal = function() {
                             'title': 'Đã đặt trước',
                             'class': ' label-light-success'
                         },
-                        3: {
+                        1: {
                             'title': 'Xác Nhận',
                             'class': ' label-light-primary'
                         },
-                        4: {
+                        3: {
                             'title': 'Success',
                             'class': ' label-light-success'
                         },
@@ -540,11 +540,11 @@ var KTDatatableModal = function() {
                 // callback function support for column rendering
                 template: function(row) {
                     var status = {
-                        8: {
+                        4: {
                             'title': 'Hoàn Thành',
                             'class': ' label-light-primary'
                         },
-                        7: {
+                        3: {
                             'title': 'Đang Thực Hiện',
                             'class': ' label-light-info'
                         },

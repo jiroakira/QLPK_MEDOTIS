@@ -17,6 +17,7 @@ class HoaDonThuoc(models.Model):
     tong_tien = models.DecimalField(decimal_places=0, max_digits=10, null=True, blank=True)
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+    bao_hiem = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -40,6 +41,7 @@ class HoaDonChuoiKham(models.Model):
     tong_tien = models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+    bao_hiem = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -69,6 +71,7 @@ class HoaDonTong(models.Model):
     hoa_don_lam_sang = models.ForeignKey(HoaDonLamSang, on_delete=models.SET_NULL, null=True, blank=True)
     hoa_don_chuoi_kham = models.ForeignKey(HoaDonChuoiKham, on_delete=models.SET_NULL, null=True, blank=True)
     hoa_don_thuoc = models.ForeignKey(HoaDonThuoc, on_delete=models.SET_NULL, null=True, blank=True)
+    bao_hiem = models.BooleanField(default=False)
 
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
@@ -79,6 +82,7 @@ class HoaDonTong(models.Model):
         self.thoi_gian_cap_nhat = timezone.now()
         return super(HoaDonTong, self).save(*args, **kwargs)
 
+# NEW FROM LONG
 class HoaDonVatTu(models.Model):
     nguoi_phu_trach = models.ForeignKey("clinic.User", on_delete=models.SET_NULL, null=True, blank=True)
     tong_tien = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
@@ -92,3 +96,4 @@ class HoaDonVatTu(models.Model):
             self.thoi_gian_tao = timezone.now()
         self.thoi_gian_cap_nhat = timezone.now()
         return super(HoaDonVatTu, self).save(*args, **kwargs)
+# END

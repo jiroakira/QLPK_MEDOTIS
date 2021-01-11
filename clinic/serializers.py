@@ -538,3 +538,14 @@ class DanhSachPhongKhamSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhongKham
         fields = '__all__'
+
+class TinhTrangPhongKhamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TinhTrangPhongKham
+        fields = '__all__'
+
+class PhongKhamSerializer(serializers.ModelSerializer):
+    tinh_trang = TinhTrangPhongKhamSerializer()
+    class Meta:
+        model = PhongKham
+        fields = '__all__'
