@@ -897,6 +897,7 @@ def hoa_don_dich_vu(request, **kwargs):
     tong_tien.clear()
     bao_hiem.clear()
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_kham = PhongKham.objects.all().first()
     
     data = {
         'chuoi_kham'         : chuoi_kham,
@@ -906,7 +907,8 @@ def hoa_don_dich_vu(request, **kwargs):
         'tong_tien'          : total_spent,
         'ap_dung_bao_hiem'   : tong_bao_hiem,
         'thanh_tien'         : thanh_tien,
-        'hoa_don_dich_vu'    : hoa_don_dich_vu
+        'hoa_don_dich_vu'    : hoa_don_dich_vu,
+        'phong_kham'         : phong_kham,
     }
     return render(request, 'phong_tai_chinh/hoa_don_dich_vu.html', context=data)
 
@@ -940,6 +942,8 @@ def hoa_don_thuoc(request, **kwargs):
     bao_hiem.clear()
     
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_kham  = PhongKham.objects.all().first()
+
 
     data = {
         'danh_sach_thuoc': danh_sach_thuoc,
@@ -948,6 +952,7 @@ def hoa_don_thuoc(request, **kwargs):
         'phong_chuc_nang': phong_chuc_nang,
         'thanh_tien'     : thanh_tien,
         'tong_bao_hiem'  : tong_bao_hiem,
+        'phong_kham'     : phong_kham,
     }
     return render(request, 'phong_tai_chinh/hoa_don_thuoc.html', context=data)
 

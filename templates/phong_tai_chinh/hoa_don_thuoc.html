@@ -244,9 +244,9 @@
                 if (response.status == 200) {
                     toastr.success(response.message, "Thành Công")
 
-                    {% comment %} setTimeout(function () {
+                    setTimeout(function () {
                         window.location.href = '/phong_tai_chinh/'; 
-                    }, 1500); {% endcomment %}
+                    }, 1500);
 
                 } else if (response.status == 404) {
                     toastr.warning(response.message, "Xảy Ra Lỗi")
