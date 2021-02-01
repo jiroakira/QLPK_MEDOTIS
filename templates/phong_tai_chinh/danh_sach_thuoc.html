@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-
+ 
 {% load static %}
-
+ 
 {% block content %}
 <!--begin::Content-->
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
@@ -41,13 +41,13 @@
                         </h3>
                     </div>
                     <div class="card-toolbar">
-                        
+ 
                         <!-- begin::Button Thêm Thuốc -->
                         <a href="{% url 'them_thuoc_phong_tai_chinh' %}" class="btn-them-thuoc btn btn-light-primary font-weight-bolder mr-2" id="btn-them-thuoc">
                             Thêm mới thuốc
                         </a>
                         <!-- end::Button Thêm Thuốc -->
-
+ 
                         <!-- begin::Button reload -->
                         <a href="javascript:;" class="btn btn-light-primary font-weight-bolder" id="btn-reload">
                             <span class="svg-icon svg-icon-md">
@@ -97,7 +97,7 @@
                                                 <!--begin::Navigation-->
                                                 <ul class="navi flex-column navi-hover py-2">
                                                     <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Tùy chọn:</li>
-                                                    
+ 
                                                     <li class="navi-item">
                                                         <a href="{% url 'them_thuoc_excel' %}" class="btn-them-thuoc navi-link" id="btn-them-thuoc">
                                                             <span class="navi-icon">
@@ -107,7 +107,7 @@
                                                         </a>
                                                     </li>
                                                     <li class="navi-item">
-                                                        <a href="#" class="navi-link" id="btn-hoa-don-thuoc">
+                                                        <a href="javascript:;" class="navi-link" id="excelExport">
                                                             <span class="navi-icon">
                                                                 <i class="la la-file-excel-o"></i>
                                                             </span>
@@ -123,7 +123,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+ 
                         </div>
                     </div>
                     <!--end::Search Form-->
@@ -139,30 +139,29 @@
     <!--end::Entry-->
 </div>
 <!--end::Content-->
-
+ 
 {% endblock content %}
-
+ 
 {% block scripts %}
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
-
+ 
 <!--begin::Global Theme Bundle(used by all pages)-->
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/xlsx.min.js' %} "></script>
 <script src="{% static 'assets/js/pages/features/miscellaneous/sweetalert29cd7.js' %} "></script>
+<script src="{% static 'assets/js/excelexportjs.js' %} "></script>
 <!--end::Global Theme Bundle-->
-
+ 
 <script>
 "use strict";
 // Class definition
-
+ 
 var KTDatatableRemoteAjaxDemo = function() {
     // Private functions
-
+    let globalData = null;    
     // basic demo
     var demo = function() {
-
+ 
         var datatable = $('#kt_datatable').KTDatatable({
             // datasource definition
             data: {
@@ -179,6 +178,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                             if (typeof raw.data !== 'undefined') {
                                 dataSet = raw.data;
                             }
+                            globalData = null;
+                            globalData = dataSet;
                             return dataSet;
                         },
                     },
@@ -188,23 +189,23 @@ var KTDatatableRemoteAjaxDemo = function() {
                 //serverFiltering: true,
                 //serverSorting: true,
             },
-
+ 
             // layout definition
             layout: {
                 scroll: false,
                 footer: false,
             },
-
+ 
             // column sorting
             sortable: true,
-
+ 
             pagination: true,
-
+ 
             search: {
                 input: $('#kt_datatable_search_query'),
                 key: 'generalSearch'
             },
-
+ 
             // columns definition
             columns: [{
                 field: 'ma_thuoc',
@@ -239,17 +240,12 @@ var KTDatatableRemoteAjaxDemo = function() {
                 field: 'nhom_thau.ten_nhom_thau',
                 title: 'Nhóm Thầu',
             }, {
-                field: 'so_luong_kha_dung',
-                title: 'Khả Dụng',
-                autoHide: false,
-                width: 80
-            }, {
                 field: 'ngay_san_xuat',
                 title: 'Ngày Sản Xuất',
                 width: 80,
                 template: function(row){
                     var date = new Date(Date.parse(row.ngay_san_xuat))
-
+ 
                     if(!row.ngay_san_xuat){
                         return '<span class="label font-weight-bold label-lg label-light-info label-inline">Chưa Có Thông Tin</span>';
                     } else {
@@ -262,11 +258,22 @@ var KTDatatableRemoteAjaxDemo = function() {
                 width: 80,
                 template: function(row){
                     var date = new Date(Date.parse(row.han_su_dung))
-
+ 
                     if(!row.han_su_dung){
                         return '<span class="label font-weight-bold label-lg label-light-info label-inline">Chưa Có Thông Tin</span>';
                     } else {
                         return date.toLocaleDateString('vi-VN')
+                    }
+                }
+            }, {
+                field: 'sap_het_han',
+                title: 'Sắp Hết Hạn',
+                width: 80,
+                template: function(row){
+                    if(row.sap_het_han == true){
+                        return '<span class="label font-weight-bold label-lg label-light-danger label-inline">Sắp hết hạn</span>';
+                    }else{
+                        return '<span class="label font-weight-bold label-lg label-light-success label-inline">Chưa hết hạn</span>';
                     }
                 }
             }, {
@@ -318,20 +325,31 @@ var KTDatatableRemoteAjaxDemo = function() {
                     `;
                 },
             },],
-
+ 
         });
-
+ 
+        $('#excelExport').on('click', function(){
+            $('#kt_datatable').excelexportjs({
+                containerid: "kt_datatable",
+                datatype: 'json',
+                dataset: globalData,
+                columns: getColumns(globalData),
+                locale: 'vi-VN',
+                filename: 'abc'
+            })
+        })
+ 
         $('#btn-reload').on('click', function() {
 			// datatable.reload();
 			$('#kt_datatable').KTDatatable('reload');
 		});
     };
-
+ 
     var deleteThuoc = function() {
         $('#kt_datatable').on('click', '.btn_delete', function() {
             var id = $(this).attr('data-id')
             var ten_thuoc = $(this).attr('data-ten')
-            
+ 
             Swal.fire({
                 title: "Xóa Thuốc " +ten_thuoc+ " khỏi danh sách",
                 text: "Bạn sẽ không thể hoàn tác lại thuốc này!",
@@ -345,7 +363,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                     var formData = new FormData()
                     formData.append('id', id)
                     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
-
+ 
                     $.ajax({
                         type: "POST",
                         url: "{% url 'xoa_thuoc' %}",
@@ -372,10 +390,10 @@ var KTDatatableRemoteAjaxDemo = function() {
 					)
 				}
             });
-            
+ 
         });
     }
-
+ 
     return {
         // public functions
         init: function() {
@@ -384,11 +402,11 @@ var KTDatatableRemoteAjaxDemo = function() {
         },
     };
 }();
-
+ 
 jQuery(document).ready(function() {
     KTDatatableRemoteAjaxDemo.init();
 });
-
+ 
 </script>
-
+ 
 {% endblock scripts %}

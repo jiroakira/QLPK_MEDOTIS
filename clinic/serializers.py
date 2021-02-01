@@ -13,7 +13,7 @@ from .models import (
     FileKetQuaTongQuat, 
     KetQuaChuyenKhoa, 
     KetQuaTongQuat, 
-    LichHenKham, 
+    LichHenKham, MauPhieu, 
     PhanKhoaKham, 
     PhongChucNang, 
     PhongKham, 
@@ -23,9 +23,9 @@ from .models import (
     TrangThaiLichHen, 
     ChuoiKham, 
     BacSi,
-    TinhTrangPhongKham,
+    TinhTrangPhongKham, send_func_room_info,
 )
-from medicine.models import DonThuoc, NhomVatTu, VatTu
+from medicine.models import DonThuoc, KeDonThuoc, NhomVatTu, VatTu
 
 User = get_user_model()
 
@@ -549,3 +549,161 @@ class PhongKhamSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhongKham
         fields = '__all__'
+
+
+# class BenhNhanBaoHiemSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ('ma_benh_nhan', 'ho_ten', 'ngay_sinh', 'gioi_tinh', 'dia_chi', 'ma_so_bao_hiem', 'ma_dkbd', 'gt_the_tu', 'gt_the_den', 'mien_cung_ct', )
+
+class FilterChuoiKhamSerializer(serializers.ModelSerializer):
+    ma_benh_nhan = serializers.CharField(source='benh_nhan.ma_benh_nhan')
+    ho_ten = serializers.CharField(source='benh_nhan.ho_ten')
+    ngay_sinh = serializers.CharField(source='benh_nhan.ngay_sinh')
+    gioi_tinh = serializers.CharField(source='benh_nhan.gioi_tinh')
+    dia_chi = serializers.CharField(source='benh_nhan.dia_chi')
+    ma_the = serializers.CharField(source='benh_nhan.ma_so_bao_hiem')
+    ma_dkbd = serializers.CharField(source='benh_nhan.ma_dkbd')
+    gt_the_tu = serializers.CharField(source='benh_nhan.gt_the_tu')
+    gt_the_den = serializers.CharField(source='benh_nhan.gt_the_den')
+    mien_cung_ct = serializers.CharField(source='benh_nhan.mien_cung_ct')
+    ly_do_vvien = serializers.CharField(source='lich_hen.ly_do_vvien')
+    ma_benh = serializers.CharField(source='get_ma_benh')
+    ten_benh = serializers.CharField(source='get_ten_benh')
+    ngay_vao = serializers.CharField(source='lich_hen.thoi_gian_bat_dau')
+    ngay_ra = serializers.CharField(source='lich_hen.thoi_gian_ket_thuc')
+    so_ngay_dieu_tri = serializers.CharField(source='get_so_ngay_dieu_tri')
+    ket_qua_dieu_tri = serializers.CharField(source='get_ket_qua_dieu_tri')
+    ngay_ttoan = serializers.CharField(source='get_ngay_ttoan')
+    t_thuoc = serializers.CharField(source='get_tien_thuoc')
+    nam_qt = serializers.CharField(source='get_nam_qt')
+    thang_qt = serializers.CharField(source='get_thang_qt')
+    ma_loai_kcb = serializers.CharField(source='get_ma_loai_kcb')
+    ma_khuvuc = serializers.CharField(source='benh_nhan.ma_khuvuc')
+    ma_pttt_qt = serializers.CharField(source='get_ma_pttt_qt')
+    can_nang = serializers.CharField(source='benh_nhan.can_nang')
+
+    class Meta:
+        model = ChuoiKham
+        fields = (
+            'ma_lk', 
+            'ma_benh_nhan',
+            'ho_ten', 
+            'ngay_sinh',
+            'gioi_tinh',
+            'dia_chi',
+            'ma_the', 
+            'ma_dkbd',
+            'gt_the_tu',
+            'gt_the_den',
+            'mien_cung_ct',  
+            'ten_benh',
+            'ma_benh',
+            'ly_do_vvien',
+            'ngay_vao',
+            'ngay_ra',
+            'so_ngay_dieu_tri', 
+            'ket_qua_dieu_tri',
+            'ngay_ttoan',
+            't_thuoc',
+            'nam_qt', 
+            'thang_qt',
+            'ma_loai_kcb',
+            'ma_khuvuc',
+            'ma_pttt_qt',
+            'can_nang'
+        )
+
+class FilterDonThuocSerializer(serializers.ModelSerializer):
+    ma_lk = serializers.CharField(source='don_thuoc.chuoi_kham.ma_lk')
+    ma_thuoc = serializers.CharField(source='thuoc.ma_thuoc')
+    ten_thuoc = serializers.CharField(source='thuoc.ten_thuoc')
+    ma_nhom = serializers.CharField(source='thuoc.nhom_chi_phi.ma_nhom')
+    don_vi_tinh = serializers.CharField(source='thuoc.don_vi_tinh')
+    ham_luong = serializers.CharField(source='thuoc.ham_luong')
+    duong_dung = serializers.CharField(source='thuoc.duong_dung')
+    lieu_dung = serializers.CharField(source='ghi_chu')
+    so_dang_ky = serializers.CharField(source='thuoc.so_dang_ky')
+    tt_thau = serializers.CharField(source='thuoc.quyet_dinh')
+    pham_vi = serializers.CharField(source='thuoc.pham_vi')
+    tyle_tt = serializers.CharField(source='thuoc.tyle_tt')
+    don_gia = serializers.CharField(source='thuoc.don_gia')
+    thanh_tien = serializers.CharField(source='gia_ban')
+    muc_huong = serializers.CharField(source='thuoc.muc_huong')
+    t_nguonkhac = serializers.CharField(source='get_tt_nguon_khac')
+    t_ngoaids = serializers.CharField(source='get_t_ngoaids')
+    ngay_yl = serializers.CharField(source='get_ngay_yl')
+    ma_pttt = serializers.CharField(source='get_ma_pttt')
+
+    class Meta:
+        model = KeDonThuoc
+        fields = (
+            'ma_lk',
+            'ma_thuoc',
+            'ma_nhom',
+            'ten_thuoc',
+            'don_vi_tinh',
+            'ham_luong',
+            'duong_dung',
+            'lieu_dung',
+            'so_dang_ky',
+            'tt_thau',
+            'pham_vi',
+            'tyle_tt',
+            'so_luong',
+            'don_gia',
+            'thanh_tien',
+            'muc_huong',
+            't_nguonkhac',
+            't_ngoaids',
+            'ngay_yl',
+            'ma_pttt'
+        )
+
+class FilterDichVuSerializer(serializers.ModelSerializer):
+    ma_lk = serializers.CharField(source='chuoi_kham.ma_lk')
+    ma_dich_vu = serializers.CharField(source='dich_vu_kham.ma_dvkt')
+    ma_vat_tu = serializers.CharField(source='get_ma_vat_tu')
+    ma_nhom = serializers.CharField(source='dich_vu_kham.nhom_chi_phi.ma_nhom')
+    ten_dich_vu = serializers.CharField(source='dich_vu_kham.ten_dvkt')
+    so_luong = serializers.CharField(source='get_so_luong')
+    don_gia = serializers.CharField(source='dich_vu_kham.don_gia')
+    tyle_tt = serializers.CharField(source='dich_vu_kham.tyle_tt')
+    thanh_tien = serializers.CharField(source='dich_vu_kham.don_gia')
+    ma_benh = serializers.CharField(source='chuoi_kham.get_ma_benh')
+    ngay_yl = serializers.CharField(source='get_ngay_yl')
+    ngay_kq = serializers.CharField(source='get_ngay_kq')
+    t_nguonkhac = serializers.CharField(source='get_t_nguonkhac')
+    t_ngoaids = serializers.CharField(source='get_t_ngoaids')
+    ma_pttt = serializers.CharField(source='get_ma_pttt')
+
+    class Meta:
+        model = PhanKhoaKham
+        fields = (
+            'ma_lk',
+            'ma_dich_vu',
+            'ma_vat_tu',
+            'ma_nhom',
+            'ten_dich_vu',
+            'so_luong',
+            'don_gia',
+            'tyle_tt',
+            'thanh_tien',
+            't_nguonkhac',
+            't_ngoaids',
+            'ma_benh',
+            'ngay_yl',
+            'ngay_kq',
+            'ma_pttt'
+        )
+
+class MauPhieuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MauPhieu
+        fields = '__all__'
+
+class TatCaLichHenSerializer(serializers.ModelSerializer):
+    trang_thai = TrangThaiLichHenSerializer()
+    class Meta:
+        model = LichHenKham
+        fields = ('id', 'ma_lich_hen', 'thoi_gian_bat_dau', 'thoi_gian_ket_thuc', 'trang_thai')

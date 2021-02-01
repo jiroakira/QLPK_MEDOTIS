@@ -1,12 +1,13 @@
+from clinic.models import DuongDungThuoc, GoiThau, NhomChiPhi
 from datetime import time
 import decimal
 from finance.models import HoaDonVatTu
 from django.db import models
 import uuid
-from django.db.models.deletion import SET_NULL
-# from django.contrib.auth import get_user_model
 from django.utils import timezone
 from bulk_update_or_create import BulkUpdateOrCreateQuerySet
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 
 # User = get_user_model()
 
@@ -45,6 +46,12 @@ class NhomThau(models.Model):
         return self.ten_nhom_thau
 
 class Thuoc(models.Model):
+
+    PHAM_VI = (
+        ("1", "Thuốc trong phạm vi hưởng BHYT"),
+        ("2", "Thuốc ngoài phạm vi hưởng BHTY"),
+    )
+
     TYPE_CHOICES_LOAI_THUOC = (
         ('1', 'Tân Dược'),
         ('2', 'Chế phẩm YHCT'),
@@ -56,11 +63,14 @@ class Thuoc(models.Model):
         ('1', 'Thầu tập trung'),
         ('2', 'Thầu riêng tại BV')
     )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     ma_thuoc = models.CharField(max_length=50, unique=True, blank=True, null=True)
     ma_hoat_chat = models.CharField(max_length=15, null=True, blank=True, verbose_name="Mã hoạt chất")
     ten_hoat_chat = models.CharField(max_length=255, null=True, blank=True, verbose_name="Tên hoạt chất")
     duong_dung = models.CharField(max_length=255, null=True, blank=True, verbose_name="Đường dùng")
+    # duong_dung = models.ForeignKey(DuongDungThuoc, on_delete=models.SET_NULL, null=True, blank=True)
+
     ham_luong = models.CharField(max_length=50, null=True, blank=True, verbose_name="Hàm lượng")
     ten_thuoc = models.CharField(max_length=255, null=True, blank=True, verbose_name="Tên thuốc")    
     # ma_thuoc = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mã thuốc") # mã thuốc được sử dụng khi tồn tại 2 loại thuốc giống nhau nhưng khác công ty
@@ -90,7 +100,13 @@ class Thuoc(models.Model):
     # mo_ta = models.CharField(max_length=255, verbose_name="Mô tả")
     # tac_dung_phu = models.CharField(max_length=255, verbose_name="Tác dụng phụ")
     # quy_cach = models.IntegerField(verbose_name="Quy cách đóng gói") # số lượng đóng gói
-    # qty_in_strip=models.IntegerField()
+    # qty_in_strip=models.IntegerField() 
+
+    nhom_chi_phi = models.ForeignKey(NhomChiPhi, on_delete=models.SET_NULL, null=True, blank=True)
+    pham_vi = models.CharField(max_length=5, choices=PHAM_VI, null=True, blank=True)
+    tyle_tt = models.IntegerField(null=True, blank=True)
+    muc_huong = models.IntegerField(null=True, blank=True)
+
     ngay_gio_tao = models.DateTimeField(auto_now_add=True, verbose_name="Ngày giờ tạo")
     thoi_gian_cap_nhat = models.DateTimeField(auto_now=True)
     objects = BulkUpdateOrCreateQuerySet.as_manager()
@@ -109,6 +125,18 @@ class Thuoc(models.Model):
     @property
     def kha_dung(self):
         return self.so_luong_kha_dung > 0
+
+    @property
+    def check_expiration(self):
+        six_months_later = date.today() + relativedelta(months=+6)
+        if not self.han_su_dung:
+            return False
+        else:
+            expiration = datetime.strptime(str(self.han_su_dung), '%Y-%m-%d').date()
+            if expiration <= six_months_later:
+                return True 
+            else: 
+                return False
    
 # def get_sentinel_user():
 #     return User.objects.get_or_create(ho_ten='deleted')[0]
@@ -180,7 +208,7 @@ class LichSuTrangThaiDonThuoc(models.Model):
     thoi_gian_tao = models.DateTimeField(auto_now_add=True)
 
 class KeDonThuoc(models.Model):
-    don_thuoc = models.ForeignKey(DonThuoc, on_delete=models.PROTECT, null=True, related_name="ke_don")
+    don_thuoc = models.ForeignKey(DonThuoc, on_delete=models.CASCADE, null=True, related_name="ke_don")
     # bac_si_lam_sang = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="bac_si_lam_sang")
     # benh_nhan = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="don_thuoc_benh_nhan")
     thuoc = models.ForeignKey(Thuoc, on_delete=models.SET(get_sentinel_thuoc))
@@ -214,6 +242,19 @@ class KeDonThuoc(models.Model):
         gia_ban = self.thuoc.don_gia_tt
         tong_tien = int(gia_ban) * self.so_luong
         return tong_tien
+
+    def get_tt_nguon_khac(self):
+        return 0
+
+    def get_t_ngoaids(self):
+        return 0
+
+    def get_ma_pttt(self):
+        return 1
+
+    def get_ngay_yl(self):
+        return self.don_thuoc.thoi_gian_tao.strftime("%Y%m%d%H%M")
+
 
 class ThuocLog(models.Model):
 
@@ -294,12 +335,16 @@ class NhomVatTu(models.Model):
     class Meta:
         verbose_name = 'Nhóm Vật Tư'
         verbose_name_plural = 'Nhóm Vật Tư'
-
     
     def nhom_vat_tu(self):
         return self.ten_nhom_vtyt
 
 class VatTu(models.Model):
+    PHAM_VI = (
+        ("1", "Vật tư trong phạm vi hưởng BHYT"),
+        ("2", "Vật tư ngoài phạm vi hưởng BHTY"),
+    )
+
     TYPE_CHOICES_LOAI_THAU = (
         ('1', 'Thầu tập trung'),
         ('2', 'Thầu riêng tại BV')
@@ -322,6 +367,11 @@ class VatTu(models.Model):
     dinh_muc = models.CharField(max_length=10, null=True, blank=True)
     so_luong_kha_dung = models.IntegerField(verbose_name="Số lượng khả dụng")
     loai_thau = models.CharField(max_length=255, choices=TYPE_CHOICES_LOAI_THAU, null=True, blank=True)
+
+    pham_vi = models.CharField(max_length=5, choices=PHAM_VI, null=True, blank=True)
+    goi_vtyt = models.ForeignKey(GoiThau, on_delete=models.SET_NULL, null=True, blank=True)
+    tyle_tt = models.IntegerField(null=True, blank=True)
+    muc_huong = models.IntegerField( null=True, blank=True)
 
     ngay_gio_tao = models.DateTimeField(auto_now_add=True, verbose_name="Ngày giờ tạo")
     thoi_gian_cap_nhat = models.DateTimeField(auto_now=True)

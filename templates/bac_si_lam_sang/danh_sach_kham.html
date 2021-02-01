@@ -229,7 +229,7 @@
 {% block scripts %}
  
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
+
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
@@ -394,6 +394,21 @@ var KTDatatableModal = function() {
                                     </g>
                                 </svg>
                             </span>
+                        </a>
+                    `;
+                },
+            }, {
+                field: 'Tai Kham',
+                width: 50,
+                title: 'Tái Khám',
+                sortable: false,
+                overflow: 'visible',
+                textAlign: 'center',
+                autoHide: false,
+                template: function(row) {
+                    return `
+                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-tai-kham" title="Đặt lịch tái khám cho bệnh nhân" data-ten="${row.benh_nhan.ho_ten}" data-id="${row.benh_nhan.id}">
+                            <i class="fa far fa-calendar-alt text-primary"></i>
                         </a>
                     `;
                 },
@@ -737,6 +752,46 @@ var KTDatatableModal = function() {
         $(document).on('click', '.ket_qua_chuoi_kham', function(){
             $('#kt_datatable').KTDatatable('destroy');
             initDatatable()
+        })
+    }
+
+    var initTaiKham = function(){
+        $(document).on('click', '.btn-tai-kham', function(){
+            var id  = $(this).attr('data-id')
+            var ten = $(this).attr('data-ten')
+            console.log(id)
+
+            $('#taiKhamModal').modal('show')
+            $('#taiKhamModal').find('#ten_benh_nhan').html(ten)
+            $('#taiKhamModal').find('#btn_add_lich_hen').attr("data-id", id)
+
+            $('#taiKhamModal').on('click', '#btn_add_lich_hen', function(){
+                var user_id = $(this).attr('data-id')
+                var thoi_gian_bat_dau = $(".thoi_gian_bat_dau").val()
+                console.log(user_id)
+                var formData = new FormData()
+
+                formData.append('user_id', user_id)
+                formData.append('thoi_gian_bat_dau', thoi_gian_bat_dau)
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+
+                $.ajax({
+                    type       : "POST",
+                    url        : "{% url 'create_lich_tai_kham' %}",
+                    data       : formData,
+                    cache      : false,
+                    processData: false,
+                    contentType: false,
+                    success: function(response){
+                        toastr.success(response.message, "Thành Công")
+                        $('#taiKhamModal').modal('hide')
+                        $('#taiKhamModal').find("input").val("");
+                    },
+                    error: function(response){
+                        toastr.warning('Có Lỗi Xảy Ra')
+                    }
+                })
+            })
         })
     }
  

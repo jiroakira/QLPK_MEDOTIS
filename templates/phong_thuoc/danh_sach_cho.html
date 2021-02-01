@@ -41,6 +41,12 @@
                         </h3>
                     </div>
                     <div class="card-toolbar">
+                        <!--begin::Button-->
+                        <a href="{% url 'create_don_thuoc_rieng' %}" class="btn btn-light-info font-weight-bolder mr-2" id="btn-add-don-thuoc">
+                            <i class="la la-folder-plus icon-md"></i>
+                            Thêm Đơn Thuốc Mới
+                        </a>
+                        <!--end::Button-->
                         
                         <!--begin::Button-->
                         <a href="#" class="btn btn-primary font-weight-bolder" id="btn-reload">
@@ -105,7 +111,6 @@
 {% endblock content %}
 
 {% block scripts %}
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 <!--begin::Global Theme Bundle(used by all pages)-->
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
