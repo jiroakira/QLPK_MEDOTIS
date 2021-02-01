@@ -261,7 +261,7 @@
 <!--end::Global Theme Bundle-->
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 {% comment %} <script src="{% static 'assets/js/pages/crud/ktdatatable/base/data-ajax9cd7.js' %} "></script> {% endcomment %}
-<script>
+{% comment %} <script>
     $(document).ajaxStart(function() {
         KTApp.blockPage({
             overlayColor: '#000000',
@@ -273,7 +273,7 @@
     $(document).ajaxStop(function() {
         KTApp.unblockPage();
     })
-</script>
+</script> {% endcomment %}
 
 <script>
 
