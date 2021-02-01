@@ -11068,11 +11068,11 @@ var KTLayoutSearch = function() {
 
         setTimeout(function() {
             $.ajax({
-                url: HOST_URL + '/api/quick_search.php',
+                url: HOST_URL + '/api/tim_kiem/',
                 data: {
                     query: _query
                 },
-                dataType: 'html',
+                dataType: 'json',
                 success: function(res) {
                     _hasResult = true;
                     _hideProgress();
@@ -11085,7 +11085,7 @@ var KTLayoutSearch = function() {
                     _hasResult = false;
                     _hideProgress();
                     KTUtil.addClass(_target, _resultClass);
-                    KTUtil.setHTML(_resultWrapper, '<span class="font-weight-bold text-muted">Connection error. Please try again later..</div>');
+                    KTUtil.setHTML(_resultWrapper, '<span class="font-weight-bold text-muted">Lỗi kết nối. Vui lòng thử lại sau..</div>');
                     _showDropdown();
                     KTUtil.scrollUpdate(_resultWrapper);
                 }
@@ -11106,7 +11106,6 @@ var KTLayoutSearch = function() {
         if (_input.value.length < _minLength) {
             _hideProgress();
             _hideDropdown();
-
             return;
         }
 

@@ -23,6 +23,7 @@ class ThuocSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['cong_ty'] = CongTySerializer(instance.cong_ty).data
         response['nhom_thau'] = NhomThauSerializer(instance.nhom_thau).data
+        response['sap_het_han'] = instance.check_expiration
         return response
 
 # class KeDonThuocSerializer(serializers.ModelSerializer):

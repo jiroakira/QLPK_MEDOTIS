@@ -2,7 +2,7 @@ from .models import (
     FileKetQua, 
     FileKetQuaTongQuat, 
     GiaDichVu, 
-    KetQuaTongQuat, 
+    KetQuaTongQuat, MauPhieu, 
     PhongChucNang, PhongKham, 
     User,
     DichVuKham,
@@ -11,7 +11,7 @@ from .models import (
 )
 
 from django.forms import fields
-from medicine.models import CongTy, Thuoc
+from medicine.models import CongTy, Thuoc, VatTu
 from django import forms
 from django.forms.widgets import PasswordInput
 # from clinic.models import FileKetQua, FileKetQuaChuyenKhoa, FileKetQuaTongQuat, KetQuaChuyenKhoa, KetQuaTongQuat, User, LichHenKham, DichVuKham, GiaDichVu, BaoHiem, PhongChucNang
@@ -98,6 +98,16 @@ class PhongKhamForm(forms.ModelForm):
     class Meta:
         model = PhongKham
         fields = '__all__'
-
-
 # END NEW
+
+# NEW 13/1
+class VatTuForm(forms.ModelForm):
+    class Meta:
+        model = VatTu
+        fields = '__all__'
+# END NEW 13/1
+
+class MauPhieuForm(forms.ModelForm):
+    class Meta:
+        model = MauPhieu
+        fields = ('dich_vu', 'ten_mau', 'noi_dung')

@@ -29,7 +29,7 @@ SECRET_KEY = '%=m%a_se_mvr^a&)4xyc@04(@cik9j9=9rq(4(a!xsfhwwk3zp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['duockalpharm.vn', '162.0.231.234']
+ALLOWED_HOSTS = ['duockalpharm.vn', '162.0.231.234', '127.0.0.1']
 
 
 
@@ -64,7 +64,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://duockalpharm.vn"
+    "http://127.0.0.1:8000"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True

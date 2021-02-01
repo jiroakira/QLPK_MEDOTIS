@@ -5,8 +5,8 @@ from django.views.generic import RedirectView
 from medicine.api import ThuocViewSet, CongTyViewSet
 from django.urls import path, include
 from rest_framework import routers
-from .api import (ChuoiKhamGanNhat, ChuoiKhamNguoiDung, ChuoiKhamViewSet,DangKiAPI, DangKiLichHen, DanhSachBacSi, DanhSachBacSi1, DanhSachBaiDang, DanhSachBenhNhan, DanhSachBenhNhanChoLamSang,DanhSachBenhNhanTheoPhong, DanhSachBenhNhanTheoPhongChucNang,DanhSachChuoiKhamBenhNhan, DanhSachDichVuKhamTheoPhong,DanhSachDichVuTheoPhongChucNang, DanhSachDoanhThuTheoThoiGian,DanhSachDoanhThuDichVu, DanhSachDoanhThuThuoc, DanhSachDonThuocBenhNhan,DanhSachDonThuocDaKe,DanhSachDonThuocPhongThuoc, DanhSachHoaDonDichVu,DanhSachHoaDonThuoc, DanhSachKhamTrongNgay, DanhSachLichHenTheoBenhNhan,DanhSachPhongChucNang, DanhSachVatTu, DanhSachThanhToanLamSang,DanhSachThuocBenhNhan, DanhSachThuocTheoCongTy, DieuPhoiPhongChucNangView,DonThuocGanNhat, FileKetQuaViewSet, KetQuaChuoiKhamBenhNhan,KetQuaChuoiKhamBenhNhan2, LichHenKhamViewSet, ListNguoiDungDangKiKham,PhanKhoaKhamBenhNhan, PhongChucNangTheoDichVu, SetChoThanhToan,SetXacNhanKham, TatCaLichHenBenhNhan, ThongTinBenhNhanTheoMa,ThongTinPhongChucNang, ThongTinPhongKham, UserInfor, UserViewSet, DichVuKhamViewSet,PhongChucNangViewSet,LichHenKhamSapToi, UserUpdateInfo,UserUpdateInfoRequest, UploadAvatarView,UpdateAppointmentDetail,CapNhatLichHen, HoaDonChuoiKhamNguoiDung, HoaDonChuoiKhamCanThanhToan,HoaDonThuocCanThanhToan, DichVuTheoPhongChucNang, DonThuocCuaChuoiKham, HoaDonThuocCuaChuoiKham, HoaDonDichVuCuaChuoiKham, HoaDonLamSangChuoiKham, HoaDonLamSangGanNhat, DanhSachHoaDonDichVuBaoHiem, DanhSachDoanhThuLamSang)
-from .views import BatDauChuoiKhamToggle, KetThucChuoiKhamToggle, LoginView, ThanhToanHoaDonDichVuToggle, add_lich_hen, bat_dau_chuoi_kham, cap_nhat_thong_tin_bac_si, cap_nhat_thong_tin_benh_nhan, cap_nhat_user, chi_tiet_bai_dang, chinh_sua_don_thuoc, chinh_sua_nguon_cung, chinh_sua_phong_chuc_nang, chinh_sua_thuoc, chinh_sua_thuoc_phong_thuoc, create_bac_si, create_dich_vu, create_user, danh_sach_bac_si, danh_sach_bai_dang, danh_sach_benh_nhan, danh_sach_benh_nhan_cho, danh_sach_dich_vu_kham, danh_sach_kham, danh_sach_phong_chuc_nang, danh_sach_thuoc, danh_sach_thuoc_phong_tai_chinh, danh_sach_vat_tu, doanh_thu_phong_kham, don_thuoc, dung_kham, dung_kham_chuyen_khoa, files_upload_view, hoa_don_dich_vu, hoa_don_thuoc, import_dich_vu_excel, import_thuoc_excel, import_vat_tu_excel, index, login, nhan_don_thuoc, phan_khoa_kham, phong_chuyen_khoa, phong_tai_chinh_danh_sach_cho, phong_thuoc_danh_sach_cho, store_cong_ty, store_ke_don, store_phan_khoa, store_thanh_toan_lam_sang, store_update_dich_vu_kham, them_bai_dang, them_dich_vu_kham, them_dich_vu_kham_excel, them_phong_chuc_nang, them_thuoc_excel, them_vat_tu_excel, update_bac_si, update_benh_nhan, update_dich_vu_kham, update_don_thuoc, update_nguon_cung, update_phong_chuc_nang, update_thuoc, update_thuoc_phong_thuoc, update_user, upload_bai_dang, upload_files_chuyen_khoa, upload_files_lam_sang, upload_view, them_moi_thuoc_phong_tai_chinh, create_thuoc, cong_ty, update_lich_hen, danh_sach_lich_hen, store_update_lich_hen, ThanhToanHoaDonThuocToggle, thanh_toan_hoa_don_thuoc, them_thuoc_phong_tai_chinh, upload_view_lam_sang, xoa_dich_vu, xoa_lich_hen, xoa_thuoc, xoa_vat_tu, them_pcn_kem_dich_vu, xoa_lich_hen, xuat_bao_hiem, upload_ket_qua_lam_sang, upload_ket_qua_chuyen_khoa
+from .api import (ChuoiKhamGanNhat, ChuoiKhamNguoiDung, ChuoiKhamViewSet,DangKiAPI, DangKiLichHen, DanhSachBacSi, DanhSachBacSi1, DanhSachBaiDang, DanhSachBenhNhan, DanhSachBenhNhanChoLamSang,DanhSachBenhNhanTheoPhong, DanhSachBenhNhanTheoPhongChucNang,DanhSachChuoiKhamBenhNhan, DanhSachDichVuKhamTheoPhong,DanhSachDichVuTheoPhongChucNang, DanhSachDoanhThuTheoThoiGian,DanhSachDoanhThuDichVu, DanhSachDoanhThuThuoc, DanhSachDonThuocBenhNhan,DanhSachDonThuocDaKe,DanhSachDonThuocPhongThuoc, DanhSachHoaDonDichVu,DanhSachHoaDonThuoc, DanhSachKhamTrongNgay, DanhSachLichHenTheoBenhNhan, DanhSachLichSuKhamBenhNhan, DanhSachMauPhieu,DanhSachPhongChucNang, DanhSachVatTu, DanhSachThanhToanLamSang,DanhSachThuocBenhNhan, DanhSachThuocTheoCongTy, DieuPhoiPhongChucNangView,DonThuocGanNhat, FileKetQuaViewSet, FilterBaoHiem, KetQuaChuoiKhamBenhNhan,KetQuaChuoiKhamBenhNhan2, LichHenKhamViewSet, ListNguoiDungDangKiKham,PhanKhoaKhamBenhNhan, PhongChucNangTheoDichVu, SetChoThanhToan,SetXacNhanKham, TatCaLichHenBenhNhan, ThongTinBenhNhanTheoMa,ThongTinPhongChucNang, ThongTinPhongKham, TimKiemKetQuaBenhNhan, UserInfor, UserViewSet, DichVuKhamViewSet,PhongChucNangViewSet,LichHenKhamSapToi, UserUpdateInfo,UserUpdateInfoRequest, UploadAvatarView,UpdateAppointmentDetail,CapNhatLichHen, HoaDonChuoiKhamNguoiDung, HoaDonChuoiKhamCanThanhToan,HoaDonThuocCanThanhToan, DichVuTheoPhongChucNang, DonThuocCuaChuoiKham, HoaDonThuocCuaChuoiKham, HoaDonDichVuCuaChuoiKham, HoaDonLamSangChuoiKham, HoaDonLamSangGanNhat, DanhSachHoaDonDichVuBaoHiem, DanhSachDoanhThuLamSang)
+from .views import BatDauChuoiKhamToggle, KetThucChuoiKhamToggle, LoginView, ThanhToanHoaDonDichVuToggle, add_lich_hen, bat_dau_chuoi_kham, cap_nhat_thong_tin_bac_si, cap_nhat_thong_tin_benh_nhan, cap_nhat_user, chi_tiet_bai_dang, chi_tiet_ket_qua_xet_nghiem, chi_tiet_lich_hen_benh_nhan, chi_tiet_mau_phieu, chinh_sua_don_thuoc, chinh_sua_nguon_cung, chinh_sua_phong_chuc_nang, chinh_sua_thuoc, chinh_sua_thuoc_phong_thuoc, create_bac_si, create_dich_vu, create_don_thuoc_rieng, create_lich_tai_kham, create_mau_phieu, create_user, create_user_index, danh_sach_bac_si, danh_sach_bai_dang, danh_sach_benh_nhan, danh_sach_benh_nhan_cho, danh_sach_dich_vu_kham, danh_sach_kham, danh_sach_mau_phieu, danh_sach_phong_chuc_nang, danh_sach_thuoc, danh_sach_thuoc_phong_tai_chinh, danh_sach_vat_tu, doanh_thu_phong_kham, don_thuoc, dung_kham, dung_kham_chuyen_khoa, files_upload_view, hoa_don_dich_vu, hoa_don_thuoc, import_dich_vu_excel, import_ma_benh_excel, import_thuoc_excel, import_vat_tu_excel, index, login, nhan_don_thuoc, phan_khoa_kham, phong_chuyen_khoa, phong_tai_chinh_danh_sach_cho, phong_thuoc_danh_sach_cho, store_cong_ty, store_don_thuoc_rieng, store_ke_don, store_ket_qua_xet_nghiem, store_phan_khoa, store_thanh_toan_lam_sang, store_update_dich_vu_kham, store_update_vat_tu, tat_ca_lich_hen_banh_nhan, test_mau_phieu, them_bai_dang, them_dich_vu_kham, them_dich_vu_kham_excel, them_ma_benh_excel, them_mau_phieu, them_phong_chuc_nang, them_thuoc_excel, them_vat_tu_excel, update_bac_si, update_benh_nhan, update_dich_vu_kham, update_don_thuoc, update_mau_phieu, update_nguon_cung, update_phong_chuc_nang, update_thuoc, update_thuoc_phong_thuoc, update_user, update_vat_tu, upload_bai_dang, upload_files_chuyen_khoa, upload_files_lam_sang, upload_view, them_moi_thuoc_phong_tai_chinh, create_thuoc, cong_ty, update_lich_hen, danh_sach_lich_hen, store_update_lich_hen, ThanhToanHoaDonThuocToggle, thanh_toan_hoa_don_thuoc, them_thuoc_phong_tai_chinh, upload_view_lam_sang, view_ket_qua_xet_nghiem, xoa_bac_si, xoa_dich_vu, xoa_lich_hen, xoa_thuoc, xoa_vat_tu, them_pcn_kem_dich_vu, xoa_lich_hen, xuat_bao_hiem, upload_ket_qua_lam_sang, upload_ket_qua_chuyen_khoa
 
 from medicine.views import ke_don_thuoc_view
 from clinic.views import create_vat_tu, hoa_don_dich_vu_bao_hiem, hoa_don_thuoc_bao_hiem, loginUser, store_thong_ke_vat_tu, store_update_phong_kham, them_vat_tu, thong_ke_vat_tu, thong_tin_phong_kham, update_phong_kham
@@ -156,8 +156,8 @@ urlpatterns = [
     path('bac_si_lam_sang/danh_sach_benh_nhan_cho/', danh_sach_benh_nhan_cho, name='danh_sach_benh_nhan_cho'),
     path('dang_nhap/', LoginView.as_view(), name='dang_nhap'),
     path('dang_ki/', create_user, name="dang_ki_nguoi_dung"),
-    path('phong_chuyen_khoa/<int:id_phong_chuc_nang>', phong_chuyen_khoa, name='phong_chuyen_khoa'),
-    path('phong_chuyen_khoa/<int:id_phong_chuc_nang>/benh_nhan/<int:id>/upload/', upload_view, name='upload_ket_qua_chuyen_khoa'),
+    path('phong_chuyen_khoa/<int:id_phong_chuc_nang>/', phong_chuyen_khoa, name='phong_chuyen_khoa'),
+    path('phong_chuyen_khoa/<int:id_dich_vu>/benh_nhan/<int:id>/upload/<int:id_phan_khoa>/', view_ket_qua_xet_nghiem, name='upload_ket_qua_chuyen_khoa'),
     path('danh_sach_benh_nhan_cho/phan_khoa_kham/<int:id_lich_hen>/', phan_khoa_kham, name='phan_khoa_kham'),
     path('bac_si_lam_sang/ket_qua_kham/', danh_sach_kham, name='danh_sach_kham'),
     path('bac_si_lam_sang/benh_nhan/<int:id>/upload/', upload_view_lam_sang, name='upload_ket_qua_lam_sang'),
@@ -169,6 +169,7 @@ urlpatterns = [
     path('chinh_sua_ke_don/', chinh_sua_don_thuoc, name='chinh_sua_don_thuoc'),
     path('ke_don_thuoc/', ke_don_thuoc_view, name='ke_don_thuoc'),
     path('upload_files/', files_upload_view, name='upload_files'),
+
     # path('upload/<int:id>/', upload_view, name='upload'),
     path('upload_files_chuyen_khoa/', upload_files_chuyen_khoa, name="upload_files_chuyen_khoa"),
     path('upload_files_lam_sang/', upload_files_lam_sang, name='upload_files_lam_sang'),
@@ -204,6 +205,24 @@ urlpatterns = [
     path('api/hoa_don_thuoc/chuoi_kham/', HoaDonThuocCuaChuoiKham.as_view(), name='hoa_don_thuoc_cua_chuoi_kham'),
     path('api/hoa_don_lam_sang/', HoaDonLamSangChuoiKham.as_view(), name='hoa_don_lam_sang'),
     path('api/hoa_don_lam_sang_gan_nhat/', HoaDonLamSangGanNhat.as_view(), name='hoa_don_lam_sang_gan_nhat'),
+
+    path('api/get_so_phieu_cls/', FilterBaoHiem.as_view(), name='get_so_phieu_cls'),
+    path('store_ket_qua_xet_nghiem/', store_ket_qua_xet_nghiem, name='store_ket_qua_xet_nghiem'),
+
+    path('them_mau_phieu/', them_mau_phieu, name='them_mau_phieu'),
+    path('mau_phieu/<int:id>/', chi_tiet_mau_phieu, name='chi_tiet_mau_phieu'),
+    path('create_mau_phieu/', create_mau_phieu, name='create_mau_phieu'),
+    path('update_mau_phieu/', update_mau_phieu, name='update_mau_phieu'),
+    path('danh_sach_mau_phieu/', danh_sach_mau_phieu, name='danh_sach_mau_phieu'),
+    path('api/danh_sach_mau_phieu/', DanhSachMauPhieu.as_view(), name='api_danh_sach_mau_phieu'),
+    path('test_mau_phieu/', test_mau_phieu),
+
+
+    path('api/benh_nhan/lich_hen/', TatCaLichHenBenhNhan.as_view(), name='api_tat_ca_lich_hen_benh_nhan'),
+    path('api/tim_kiem/', TimKiemKetQuaBenhNhan.as_view(), name="tim_kiem_ket_qua_benh_nhan"),
+    path('benh_nhan/<int:id>/tat_ca_lich_hen/', tat_ca_lich_hen_banh_nhan, name='tat_ca_lich_hen_benh_nhan'),
+    path('benh_nhan/lich_hen/<int:id>/', chi_tiet_lich_hen_benh_nhan, name='chi_tiet_lich_hen_benh_nhan'),
+    path('benh_nhan/ket_qua_chuyen_khoa/<int:id>/', chi_tiet_ket_qua_xet_nghiem, name='chi_tiet_ket_qua_xet_nghiem'),
 
     path('phong_tai_chinh/', phong_tai_chinh_danh_sach_cho, name='phong_tai_chinh'),
     path('phong_thuoc/', phong_thuoc_danh_sach_cho, name='phong_thuoc'),
@@ -245,8 +264,12 @@ urlpatterns = [
     path('thanh_toan_lam_sang/', store_thanh_toan_lam_sang, name="store_thanh_toan_lam_sang"),
     path('don_thuoc/chinh_sua/<int:id>/', update_don_thuoc, name="update_don_thuoc"),
     path('nhan_don_thuoc/', nhan_don_thuoc, name="nhan_don_thuoc"),
+
+    # * update -- 22/01 --
+    path('them_benh_excel/', them_ma_benh_excel, name="them_benh_excel"),
+    path('import_benh_excel/', import_ma_benh_excel, name="import_ma_benh_excel"),
  
-    path('them_pcn_kem_dich_vu/', them_pcn_kem_dich_vu, name='them_pcn_kem_dich_vu'),
+    path('them_pcn/_kem_dich_vu/', them_pcn_kem_dich_vu, name='them_pcn_kem_dich_vu'),
     path('them_bai_dang/', them_bai_dang, name="them_bai_dang"),
     path('upload_bai_dang/', upload_bai_dang, name="upload_bai_dang"),
     path('bai_dang/<int:id>/', chi_tiet_bai_dang, name="chi_tiet_bai_dang"),
@@ -294,4 +317,18 @@ urlpatterns = [
     path('xuat_bao_hiem/dich_vu/<int:id>', hoa_don_dich_vu_bao_hiem, name="hoa_don_dich_vu_bao_hiem"),
     path('xuat_bao_hiem/thuoc/<int:id>', hoa_don_thuoc_bao_hiem, name="hoa_don_thuoc_bao_hiem"),
     # END
+
+    # update 13/1
+    path("create_user_index/", create_user_index, name="create_user_index"),
+    path("phong_tai_chinh/danh_sach_vat_tu/<int:id>/chinh_sua", update_vat_tu, name="update_vat_tu"),
+    path("update_vat_tu/", store_update_vat_tu, name="store_update_vat_tu"),
+
+    # UPDATE BY LONG
+    path("xoa_bac_si/", xoa_bac_si, name="xoa_bac_si"),
+    path('create_lich_tai_kham/', create_lich_tai_kham, name="create_lich_tai_kham"),
+    path('phong_thuoc/tao_don_thuoc/', create_don_thuoc_rieng, name="create_don_thuoc_rieng"),
+    path('store_don_thuoc_rieng/', store_don_thuoc_rieng, name="store_don_thuoc_rieng"),
+    path('api/danh_sach_lich_su_kham_benh_nhan/', DanhSachLichSuKhamBenhNhan.as_view(), name="danh_sach_lich_su_kham_benh_nhan"),
+
+    # END UPDATE
 ]

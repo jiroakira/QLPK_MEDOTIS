@@ -19,7 +19,7 @@ from clinic.models import (
     DichVuKham, 
     FileKetQua, 
     KetQuaTongQuat, 
-    LichHenKham, 
+    LichHenKham, MauPhieu, 
     PhanKhoaKham, 
     PhongChucNang, 
     PhongKham, 
@@ -32,7 +32,7 @@ from clinic.models import (
 )
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DonThuocSerializer, FileKetQuaSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer)
+from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -1050,6 +1050,31 @@ class DanhSachPhongChucNang(APIView):
         return Response({"error":False, "message": "Danh Sach Phong Chuc Nang", "data": phong_chuc_nang_data})
         
 # UPDATE NGAY 4/1
+# class DanhSachDoanhThuDichVu(APIView):
+#     def get(self, request, format=None):
+#         range_start = self.request.query_params.get('range_start', None)
+#         range_end   = self.request.query_params.get('range_end', None)
+
+#         start = datetime.strptime(range_start, "%d-%m-%Y")
+#         tomorrow_start = start + timedelta(1)
+        
+#         if range_end == '':
+#             danh_sach_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start))
+
+#             serializer = HoaDonChuoiKhamSerializer(danh_sach_dich_vu, many=True, context={'request': request})
+#             data = serializer.data
+
+#             return Response(data)
+#         else: 
+#             end = datetime.strptime(range_end, "%d-%m-%Y")
+#             tomorrow_end = end + timedelta(1)
+
+#             danh_sach_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start))
+
+#             serializer = HoaDonChuoiKhamSerializer(danh_sach_dich_vu, many=True, context={'request': request})
+#             data = serializer.data
+
+#             return Response(data)
 class DanhSachDoanhThuDichVu(APIView):
     def get(self, request, format=None):
         range_start = self.request.query_params.get('range_start', None)
@@ -1059,23 +1084,29 @@ class DanhSachDoanhThuDichVu(APIView):
         tomorrow_start = start + timedelta(1)
         
         if range_end == '':
-            danh_sach_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start))
+            danh_sach_dich_vu = PhanKhoaKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)).values('id', 'dich_vu_kham__ten_dvkt').annotate(count=Count('id')).annotate(tong_tien=Sum('dich_vu_kham__don_gia'))
+            list_dich_vu = []
+            for i in danh_sach_dich_vu:
+                list_dich_vu.append(i)
+            response = {
+                'data' : list_dich_vu,
+            }
 
-            serializer = HoaDonChuoiKhamSerializer(danh_sach_dich_vu, many=True, context={'request': request})
-            data = serializer.data
-
-            return Response(data)
+            return Response(response)
         else: 
             end = datetime.strptime(range_end, "%d-%m-%Y")
             tomorrow_end = end + timedelta(1)
 
-            danh_sach_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start))
-
-            serializer = HoaDonChuoiKhamSerializer(danh_sach_dich_vu, many=True, context={'request': request})
-            data = serializer.data
-
-            return Response(data)
-
+            danh_sach_dich_vu = PhanKhoaKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start)).values('dich_vu_kham__ten_dvkt', 'thoi_gian_tao').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__ten_dvkt').annotate(Count('dich_vu_kham__ten_dvkt'))
+            list_dich_vu = []
+            for i in danh_sach_dich_vu:
+                list_dich_vu.append(i)
+            
+            response = {
+                'data' : list_dich_vu
+            }
+            return Response(response)
+    
 class DanhSachDoanhThuLamSang(APIView):
     def get(self, request, format=None):
         range_start = self.request.query_params.get('range_start', None)
@@ -2257,13 +2288,113 @@ class ThongTinPhongKham(APIView):
             'data': data
         }
         return Response(response)
-        
 
+class FilterBaoHiem(APIView):
+    def get(self, request, format=None):
+        ma_lk = self.request.query_params.get('ma_lk', None)      
+        tu_ngay = self.request.query_params.get('tu_ngay', None)
+        den_ngay = self.request.query_params.get('den_ngay', None)
 
+        if ma_lk:
+            chuoi_kham = ChuoiKham.objects.filter(ma_lk=ma_lk)[0]
+            don_thuoc = chuoi_kham.don_thuoc_chuoi_kham.all()[0]
+            danh_sach_thuoc = don_thuoc.ke_don.all().filter(bao_hiem=True)
+            danh_sach_dich_vu = chuoi_kham.phan_khoa_kham.all().filter(bao_hiem=True)
+            danh_sach_chi_so = chuoi_kham.ket_qua_tong_quat.all()[0].ket_qua_chuyen_khoa.all()
 
+            serializer_1 = FilterChuoiKhamSerializer(chuoi_kham, context={'request': request})
+            serializer_2 = FilterDonThuocSerializer(danh_sach_thuoc, many=True, context={'request': request})
+            serializer_3 = FilterDichVuSerializer(danh_sach_dich_vu, many=True, context={'request': request})
+            
+            response = {
+                'benh_nhan': serializer_1.data,
+                'thuoc': serializer_2.data,
+                'dich_vu': serializer_3.data,
+            }
+            return Response(response)
+        elif tu_ngay and den_ngay:
+            pass
 
+class DanhSachMauPhieu(APIView):
+    def get(self, request, format=None):
+        danh_sach_mau_phieu = MauPhieu.objects.all()
+        serializer = MauPhieuSerializer(danh_sach_mau_phieu, many=True, context={'request': request})
+        data = serializer.data
+        response = {
+            'data': data
+        }
+        return Response(response)
 
+class TimKiemKetQuaBenhNhan(APIView):
+    def get(self, request, format=None):
+        _query = self.request.query_params.get('query')
+        user = User.objects.filter(
+            Q(so_dien_thoai__icontains=_query) | Q(ma_benh_nhan__icontains=_query) | 
+            Q(cmnd_cccd__icontains=_query) | Q(ho_ten__icontains=_query) |
+            Q(ma_so_bao_hiem__icontains=_query)
+        )
+        html_string_body = ""
+        html_string_start = "\
+            <html>\
+            <head></head>\
+            <body>\
+                <div class='quick-search-result'>\
+                    <div class='text-muted d-none'>\
+                        Không có kết quả\
+                    </div>\
+                    <div class='font-size-sm text-primary font-weight-bolder text-uppercase mb-2'>\
+                        Thành viên\
+                    </div>\
+                    <div class='mb-10'>\
+        "
+        html_string_end = "\
+                    </div>\
+                </div>\
+            </body>\
+            </html>\
+            "
 
+        for u in user:
+            html_string_row = f"\
+                <div class='d-flex align-items-center flex-grow-1 mb-2'>\
+                    <div class='symbol symbol-30  flex-shrink-0'>\
+                        <div class='symbol-label' style='background-image:url('https://preview.keenthemes.com/metronic/theme/html/demo1/dist/assets/media/users/300_20.jpg')'>\
+                            </div>\
+                        </div>\
+                    <div class='d-flex flex-column ml-3 mt-2 mb-2'>\
+                        <a href='/benh_nhan/{u.id}/tat_ca_lich_hen/' class='font-weight-bold text-dark text-hover-primary'>\
+                            {u.ho_ten}\
+                        </a>\
+                        <span class='font-size-sm font-weight-bold text-muted'>\
+                            {u.so_dien_thoai}\
+                        </span>\
+                    </div>\
+                </div>"
+            html_string_body += html_string_row
 
+        html = html_string_start + html_string_body + html_string_end
+        return Response(html)
+    
+class TatCaLichHenBenhNhan(APIView):
+    def get(self, request, format=None):
+        id_benh_nhan = self.request.query_params.get('id')
+        user = User.objects.get(id=id_benh_nhan)
+        tat_ca_lich_hen = user.benh_nhan_hen_kham.all()
+        serializer = TatCaLichHenSerializer(tat_ca_lich_hen, many=True, context={'request': request})
+        response = {
+            'data': serializer.data
+        }
+        return Response(response)
 
-
+# UPDATE BY LONG 
+class DanhSachLichSuKhamBenhNhan(APIView):
+    def get(self, request, format=None):
+        user_id = self.request.query_params.get("user_id")
+        lich_su_kham = ChuoiKham.objects.filter(benh_nhan = user_id)
+        serializer = ChuoiKhamSerializerSimple(lich_su_kham, many=True, context={'request': request})
+        response = {
+            'user_id': user_id,
+            'data': serializer.data
+        }
+        return Response(response)
+# END UPDATE

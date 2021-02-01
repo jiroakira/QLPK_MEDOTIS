@@ -19,6 +19,10 @@ django-bulk-update-or-create = "*"
 websockets = "*"
 channels-redis = "*"
 python-decouple = "*"
+python-dateutil = "*"
+pandas = "*"
+xlrd = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.8"

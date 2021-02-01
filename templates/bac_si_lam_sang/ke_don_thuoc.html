@@ -169,7 +169,6 @@
 {% block scripts %}
 
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
 <!--begin::Global Theme Bundle(used by all pages)-->
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
@@ -516,6 +515,11 @@ var KTDatatableRecordSelectionDemo = function() {
                         toastr.success(response.message, "Thành Công")
                         setTimeout(function () {
                             window.location.href = '/bac_si_lam_sang/ket_qua_kham/'; //redirect về danh sách chờ lâm sàng
+                        }, 1500);
+                    } else if (response.status == 404){
+                        toastr.warning(response.message, "Cảnh Báo")
+                        setTimeout(function () {
+                            window.location.reload();
                         }, 1500);
                     }
 

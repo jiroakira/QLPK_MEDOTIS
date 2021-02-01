@@ -270,7 +270,6 @@
 {% comment %} <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datepicker9cd7.js' %} "></script> {% endcomment %}
 <script src="{% static 'assets/js/excelexportjs.js' %} "></script>
 <!--end::Global Theme Bundle-->
-<script>var HOST_URL = "https://duockalpharm.vn";</script>
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 {% comment %} <script src="{% static 'assets/js/pages/crud/ktdatatable/base/data-ajax9cd7.js' %} "></script> {% endcomment %}
 <script>
@@ -278,12 +277,25 @@
 "use strict";
 // Class definition
 
+$(document).ajaxStart(function() {
+    KTApp.blockPage({
+        overlayColor: '#000000',
+        state: 'primary',
+        message: 'Đang xử lý...'
+    });
+})
+
+$(document).ajaxStop(function() {
+    KTApp.unblockPage();
+})
+
 var KTDatatableRemoteAjaxDemo = function() {
     // Private functions
     //set global data
 
     let globalData = null;
     // basic demo
+
     var demo = function() {
         
         var datatable = $('#kt_datatable').KTDatatable({

@@ -66,6 +66,18 @@
 
 <script>
     
+    $(document).ajaxStart(function() {
+        KTApp.blockPage({
+            overlayColor: '#000000',
+            state: 'primary',
+            message: 'Đang thực hiện...'
+        });
+    })
+
+    $(document).ajaxStop(function() {
+        KTApp.unblockPage();
+    })
+
     $(document).ready(function(){
         var lstObj = "";
         $("#fileUploader").change(function(evt){
