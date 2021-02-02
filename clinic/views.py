@@ -3216,6 +3216,11 @@ def create_lich_tai_kham(request):
             'message': "Thêm lịch tái khám thành công!"
         }
         return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+    else:
+        response = {
+            'message': "Có Lỗi Xảy Ra!"
+        }
+        return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
 
 def create_don_thuoc_rieng(request):
     phong_chuc_nang = PhongChucNang.objects.all()

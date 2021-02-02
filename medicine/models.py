@@ -211,7 +211,7 @@ class KeDonThuoc(models.Model):
     don_thuoc = models.ForeignKey(DonThuoc, on_delete=models.CASCADE, null=True, related_name="ke_don")
     # bac_si_lam_sang = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="bac_si_lam_sang")
     # benh_nhan = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="don_thuoc_benh_nhan")
-    thuoc = models.ForeignKey(Thuoc, on_delete=models.SET(get_sentinel_thuoc))
+    thuoc = models.ForeignKey(Thuoc, on_delete=models.SET_NULL, null=True, blank=True)
     cach_dung = models.TextField()
     so_luong = models.PositiveIntegerField()
     ghi_chu = models.TextField()
