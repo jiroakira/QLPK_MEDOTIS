@@ -109,7 +109,11 @@ $('#user_form').on('click', '#submitData', function(){
         processData: false,
         contentType: false,
         success: function(response){
-            alert('thanhcong')
+            toastr.success(response.message, "Thành Công!")
+
+            setTimeout(function(){
+                window.location.href = "/trang_chu/"
+            }, 2000)
         },
         error: function(response){
             console.log("error")
