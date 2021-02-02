@@ -153,7 +153,7 @@
                 <div class="card card-custom">
                     <div class="card-header flex-wrap border-0 pb-0">
                         <div class="card-title">
-                            <h3 class="card-label">Danh Sách Các Hóa Đơn Chuỗi Khám
+                            <h3 class="card-label">Danh Sách Các Dịch Vụ Khám
                             </h3>
                         </div>
                     </div>
@@ -283,20 +283,16 @@ var KTDatatableRemoteAjaxDemo = function() {
 
             // columns definition
             columns: [{
-                field: 'ma_hoa_don',
-                title: 'Mã HĐ',
+                field: 'id',
+                title: 'Mã',
                 sortable: 'asc',
                 width: 100,
                 selector: false,
                 textAlign: 'center',
             }, {
-                field: 'chuoi_kham.benh_nhan.ho_ten',
-                title: 'Bệnh Nhân',
+                field: 'dich_vu_kham__ten_dvkt',
+                title: 'Dịch Vụ Khám',
                 
-            }, {
-                field: 'chuoi_kham.bac_si_dam_nhan.ho_ten',
-                title: 'Bác Sĩ',
-
             }, {
                 field: 'tong_tien',
                 title: 'Tổng Tiền',
