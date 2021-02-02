@@ -3018,7 +3018,8 @@ def chi_tiet_mau_phieu(request, **kwargs):
     form = MauPhieuForm(request.POST or None, instance=instance)
     context = {
         'mau_phieu': instance,
-        'form': form
+        'form': form,
+        'id_mau_phieu': id
     }
     return render(request, 'le_tan/update_mau_phieu.html', context=context)
 
@@ -3048,18 +3049,6 @@ def create_mau_phieu(request):
             'message': 'Xảy ra lỗi'
         }
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
-
-def chi_tiet_mau_phieu(request, **kwargs):
-    id = kwargs.get('id')
-    # mau_phieu = MauPhieu.objects.get(id=id)
-    instance = get_object_or_404(MauPhieu, id=id)
-    form = MauPhieuForm(request.POST or None, instance=instance)
-    context = {
-        'mau_phieu': instance,
-        'form': form,
-        'id_mau_phieu': id
-    }
-    return render(request, 'le_tan/update_mau_phieu.html', context=context)
 
 def update_mau_phieu(request):
     if request.method == "POST":
