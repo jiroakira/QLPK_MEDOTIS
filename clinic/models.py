@@ -319,6 +319,12 @@ class DichVuKham(models.Model):
         verbose_name = "Dịch Vụ Khám"
         verbose_name_plural = "Dịch Vụ Khám"
 
+<<<<<<< HEAD
+=======
+    def __str__(self):
+        return str(self.ten_dvkt)
+
+>>>>>>> d61f581cb16a7f7c76540046deb237936e58bce8
     @property
     def check_chi_so(self):
         if self.chi_so == True:
