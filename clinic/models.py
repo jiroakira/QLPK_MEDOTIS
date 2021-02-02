@@ -731,8 +731,8 @@ class ChiSoXetNghiem(models.Model):
         verbose_name = "Chỉ Số Xét Nghiệm"
         verbose_name_plural = "Chỉ Số Xét Nghiệm"
 
-    def __str__(self):
-        return f"({self.ma_chi_so}){self.ten_chi_so}/{self.doi_tuong_xet_nghiem}"
+    # def __str__(self):
+    #     return f"({self.ma_chi_so}){self.ten_chi_so}/{self.doi_tuong_xet_nghiem}"
 
 class ChiTietChiSoXetNghiem(models.Model):
     chi_so_binh_thuong_min = models.CharField(null=True, blank=True, max_length=10)
@@ -948,9 +948,6 @@ class MauPhieu(models.Model):
     class Meta:
         verbose_name = "Mẫu Phiếu"
         verbose_name_plural = "Mẫu Phiếu"
-
-    def __str__(self):
-        return self.ten_mau
 
     def save(self, *args, **kwargs):
         if not self.id:
