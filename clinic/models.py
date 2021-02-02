@@ -312,12 +312,12 @@ class DichVuKham(models.Model):
     chi_so = models.BooleanField(default=False)
     objects = BulkUpdateOrCreateQuerySet.as_manager()
 
+    def __str__(self):
+        return str(self.ten_dvkt)
+
     class Meta:
         verbose_name = "Dịch Vụ Khám"
         verbose_name_plural = "Dịch Vụ Khám"
-
-    def __str__(self):
-        return self.ten_dvkt
 
     @property
     def check_chi_so(self):
@@ -730,9 +730,8 @@ class ChiSoXetNghiem(models.Model):
     class Meta:
         verbose_name = "Chỉ Số Xét Nghiệm"
         verbose_name_plural = "Chỉ Số Xét Nghiệm"
-
-    # def __str__(self):
-    #     return f"({self.ma_chi_so}){self.ten_chi_so}/{self.doi_tuong_xet_nghiem}"
+    def __str__(self):
+        return f"({self.ma_chi_so}){self.ten_chi_so}/{self.doi_tuong_xet_nghiem}"
 
 class ChiTietChiSoXetNghiem(models.Model):
     chi_so_binh_thuong_min = models.CharField(null=True, blank=True, max_length=10)
@@ -899,6 +898,8 @@ class NhomTaiNan(models.Model):
     class Meta:
         verbose_name = "Nhóm Tai Nạn"
         verbose_name_plural = "Nhóm Tai Nạn"
+    def __str__(self):
+        return self.ten_nhom
 
 class DanhMucKhoa(models.Model):
     stt = models.IntegerField(null=True, blank=True)
@@ -908,6 +909,9 @@ class DanhMucKhoa(models.Model):
     class Meta:
         verbose_name = "Danh Mục Khoa"
         verbose_name_plural = "Danh Mục Khoa"
+    def __str__(self):
+        return self.ten_khoa
+
 
 class ThietBi(models.Model):
     ma_may = models.CharField(max_length=50, null=True, blank=True)
@@ -917,6 +921,9 @@ class ThietBi(models.Model):
     class Meta:
         verbose_name = "Thiết Bị"
         verbose_name_plural = "Thiết Bị"
+
+    def __str__(self):
+        return self.ten_may
 
 class GoiThau(models.Model):
     ma_goi = models.CharField(max_length=5, null=True, blank=True)
@@ -944,6 +951,9 @@ class MauPhieu(models.Model):
 
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.ten_mau
 
     class Meta:
         verbose_name = "Mẫu Phiếu"
