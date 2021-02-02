@@ -2752,7 +2752,7 @@ def create_user_index(request):
         if User.objects.filter(cmnd_cccd=cmnd_cccd).exists():
             return HttpResponse(json.dumps({'message': "Số chứng minh thư đã tồn tại", 'status': '403'}), content_type = 'application/json; charset=utf-8')
  
-        user = User.objects.create_nguoi_dung(
+        user = User.objects.create_user(
             ho_ten         = ho_ten, 
             so_dien_thoai  = so_dien_thoai, 
             password       = password,
