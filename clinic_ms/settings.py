@@ -64,7 +64,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://68.183.227.19:8000"
+    "http://68.183.227.19"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
