@@ -2375,7 +2375,7 @@ class TimKiemKetQuaBenhNhan(APIView):
         html = html_string_start + html_string_body + html_string_end
         return Response(html)
     
-class TatCaLichHenBenhNhan(APIView):
+class TatCaLichHenBenhNhanList(APIView):
     def get(self, request, format=None):
         id_benh_nhan = self.request.query_params.get('id')
         user = User.objects.get(id=id_benh_nhan)
