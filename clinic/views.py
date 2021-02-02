@@ -3192,7 +3192,7 @@ def create_lich_tai_kham(request):
         thoi_gian_bat_dau = datetime.strptime(thoi_gian_bat_dau, format_2)
         thoi_gian = thoi_gian_bat_dau.strftime("%Y-%m-%d %H:%M")
         
-        trang_thai = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Chờ Xác Nhận")[0]
+        trang_thai = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Đã Đặt Trước")[0]
         lich_hen = LichHenKham.objects.create(
             benh_nhan = user,
             nguoi_phu_trach = request.user,
