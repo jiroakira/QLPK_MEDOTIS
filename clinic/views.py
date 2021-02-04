@@ -35,7 +35,7 @@ from django.db.models import Count, F, Sum, Q
 from django.db import models
 from clinic.models import (
     BacSi, 
-    BaiDang, ChiSoXetNghiem, 
+    BaiDang, ChiSoXetNghiem, ChiTietChiSoXetNghiem, 
     ChuoiKham, DanhMucBenh, DanhMucChuongBenh, DanhMucLoaiBenh, DanhMucNhomBenh, 
     DichVuKham, DoTuoiXetNghiem, DoiTuongXetNghiem, 
     FileKetQua, 
@@ -3256,3 +3256,113 @@ def store_don_thuoc_rieng(request):
     return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
 
 # END UPDATE
+
+def dang_ki_tieu_chuan_view(request):
+    dich_vu = DichVuKham.objects.all()
+    doi_tuong = DoiTuongXetNghiem.objects.all()
+
+    context = {
+        'range': range(5),
+        'dich_vu': dich_vu,
+        'doi_tuong_xet_nghiem': doi_tuong 
+    }
+    return render(request, 'le_tan/dang_ki_tieu_chuan.html', context=context)
+
+def create_tieu_chuan(request):
+    if request.method == "POST":
+        id_dich_vu = request.POST.get('id_dich_vu')
+        id_doi_tuong = request.POST.get('id_doi_tuong')
+        data = request.POST.get('data')
+        list_data = json.loads(data)
+
+        dich_vu = get_object_or_404(DichVuKham, id=id_dich_vu)
+        dich_vu.chi_so = True
+        dich_vu.save()
+        doi_tuong = get_object_or_404(DoiTuongXetNghiem, id=id_doi_tuong)
+        list_bulk_create = []
+
+        for i in list_data:
+            if i[0]['value'] != '' and i[1]['value'] != '':
+                ma_chi_so = i[0]['value']
+                ten_chi_so = i[1]['value']
+                chi_so_min = i[2]['value']
+                chi_so_max = i[3]['value']
+                don_vi = i[4]['value']
+                ghi_chu = i[5]['value']
+
+                chi_tiet = ChiTietChiSoXetNghiem.objects.create(
+                    chi_so_binh_thuong_min = chi_so_min,
+                    chi_so_binh_thuong_max = chi_so_max,
+                    don_vi_do = don_vi,
+                    ghi_chu = ghi_chu
+                )
+
+                model = ChiSoXetNghiem(
+                    dich_vu_kham = dich_vu,
+                    doi_tuong_xet_nghiem = doi_tuong,
+                    ma_chi_so = ma_chi_so,
+                    ten_chi_so = ten_chi_so,
+                    chi_tiet = chi_tiet
+                )
+
+                list_bulk_create.append(model)
+
+            else:
+                response = {
+                    'status': 404, 
+                    'message': 'Hãy Xóa Những Vùng Dữ Liệu Trống'
+                }
+                return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+
+        ChiSoXetNghiem.objects.bulk_create(list_bulk_create)
+
+        response = {
+            'status': 200, 
+            'message': 'Đăng kí tiêu chuẩn thành công'
+        }
+    else:
+        response = {
+            'status': 404, 
+            'message': 'Không thể gửi lên dữ liệu'
+        }
+    return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+    
+def list_tieu_chuan_dich_vu(request):
+    return render(request, 'le_tan/danh_sach_tieu_chuan_dich_vu.html')
+
+def chi_tiet_tieu_chuan_dich_vu(request, **kwargs):
+    id_dich_vu = kwargs.get('id')
+    dich_vu = get_object_or_404(DichVuKham, id=id_dich_vu)
+    tieu_chuan_dich_vu = dich_vu.chi_so_xet_nghiem.all()
+    all_dich_vu = DichVuKham.objects.all()
+    all_doi_tuong = DoiTuongXetNghiem.objects.all()
+
+    doi_tuong = dich_vu.chi_so_xet_nghiem.all()[0].doi_tuong_xet_nghiem
+
+    context = {
+        'dich_vu': dich_vu,
+        'tieu_chuan_dich_vu': tieu_chuan_dich_vu,
+        'all_dich_vu': all_dich_vu,
+        'all_doi_tuong': all_doi_tuong,
+        'doi_tuong': doi_tuong,
+    }
+    return render(request, 'le_tan/chi_tiet_tieu_chuan.html', context=context)
+
+def chinh_sua_tieu_chuan_dich_vu(request):
+    if request.method == "POST":
+        data = request.POST.get('data')
+        list_data = json.loads(data)
+        id_dich_vu = request.POST.get('id_dich_vu')
+        id_doi_tuong = request.POST.get('id_doi_tuong')
+
+        print(list_data)
+
+        response = {
+            'status': 200,
+        }
+    else: 
+        response = {
+            'status': 404,
+        }
+    return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+    

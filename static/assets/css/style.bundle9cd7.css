@@ -56635,7 +56635,7 @@ code {
     width: auto; }
 
 .content .bootstrap-select .dropdown-menu {
-  z-index: 93; }
+  z-index: 1000; }
 
 #session-timeout-dialog .modal-header .close {
   position: absolute;

@@ -2302,7 +2302,9 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.focus {
 select.bs-select-hidden,
 .bootstrap-select > select.bs-select-hidden,
 select.selectpicker {
-  display: none !important; }
+  /* z-index: 1000 !important; */
+  display: none !important;
+}
 
 .bootstrap-select {
   width: 220px \0;
