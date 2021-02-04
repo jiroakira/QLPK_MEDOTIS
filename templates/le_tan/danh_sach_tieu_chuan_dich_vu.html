@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block content %}
+
 <!-- begin::Content -->
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
     <!--begin::Subheader-->
@@ -13,7 +14,7 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">Danh Sách Mẫu Phiếu</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">Tiêu Chuẩn Dịch Vụ Kĩ Thuật</h5>
                     <!--end::Page Title-->
                 </div>
                 <!--end::Page Heading-->
@@ -31,13 +32,13 @@
             <div class="card card-custom gutter-b">
                 <div class="card-header flex-wrap border-0 pt-6 pb-0">
                     <div class="card-title">
-                        <h3 class="card-label">Danh Sách Các Mẫu Phiếu Trong Phòng Khám</h3>
+                        <h3 class="card-label">Danh Sách Các Dịch Vụ Kĩ Thuật Đã Được Đăng Kí Tiêu Chuẩn</h3>
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
-                        <a href="{% url 'them_mau_phieu' %}" class="btn btn-light-primary font-weight-bolder mr-3">
+                        <a href="{% url 'dang_ki_tieu_chuan_view' %}" class="btn btn-light-primary font-weight-bolder mr-3">
                             <i class="la la-plus icon-md"></i>
-                            Thêm Mẫu Phiếu
+                            Đăng Kí Tiêu Chuẩn
                         </a>
                         <!--end::Button-->
                         
@@ -86,8 +87,9 @@
     </div>
     <!-- end::Entry -->
 </div>
-<!-- end::Content -->
+
 {% endblock content %}
+
 
 {% block scripts %}
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
@@ -108,17 +110,9 @@ var KTDatatableModal = function() {
                 type: 'remote',
                 source: {
                     read: {
-                        url: HOST_URL + '/api/danh_sach_mau_phieu/',
+                        url: HOST_URL + '/api/danh_sach_tieu_chuan/',
                         method: "GET",
-                        {% comment %} map: function(raw) {
-                                // sample data mapping
-                                var dataSet = raw;
-                                if (typeof raw.data !== 'undefined') {
-                                    dataSet = raw.data;
-                                }
-                                console.log(dataSet)
-                                return dataSet;
-                            }, {% endcomment %}
+                    
                     },
                     
                 },
@@ -139,7 +133,7 @@ var KTDatatableModal = function() {
             // column sorting
             sortable: true,
 
-            pagination: false,
+            pagination: true,
 
             search: {
                 input: $('#kt_datatable_search_query'),
@@ -154,32 +148,20 @@ var KTDatatableModal = function() {
                 width: 30,
                 textAlign: 'center',
             }, {
-                field: 'ten_mau',
-                title: 'Tên Mẫu',
+                field: 'ma_dvkt',
+                title: 'Mã DVKT',
             }, {
-                field: 'thoi_gian_tao',
-                title: 'Thời gian tạo',
-                template: function(row) {
-                    var date = new Date(Date.parse(row.thoi_gian_tao))
-
-                    if(!row.thoi_gian_tao){
-                        return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
-                    } else {
-                        return date.toLocaleString('vi-VN')
-                    }
-                }
+                field: 'ten_dvkt',
+                title: 'Tên DVKT',
+                
             }, {
-                field: 'thoi_gian_cap_nhat',
-                title: 'Thời gian cập nhật',
-                template: function(row) {
-                    var date = new Date(Date.parse(row.thoi_gian_cap_nhat))
-
-                    if(!row.thoi_gian_cap_nhat){
-                        return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa cập nhật' + '</span>';
-                    } else {
-                        return date.toLocaleString('vi-VN')
-                    }
-                }
+                field: 'quyet_dinh',
+                title: 'Quyết Định',
+                
+            },  {
+                field: 'cong_bo',
+                title: 'Công Bố',
+                
             }, {
                 field: 'actions',
                 width: 130,
@@ -190,7 +172,7 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
-                        <a href="/mau_phieu/${row.id}" class="btn btn-sm btn-clean" title="Xem Chi Tiết">
+                        <a href="/chi_tiet_tieu_chuan/${row.id}/" class="btn btn-sm btn-clean" title="Xem Chi Tiết">
                             Xem chi tiết
                         </a>
                         {% comment %} <a href="#" class="btn btn-sm btn-clean btn-icon" title="Lịch Sử Khám" data-record-id="${row.benh_nhan.id}">
@@ -233,3 +215,5 @@ jQuery(document).ready(function() {
 </script>
 
 {% endblock scripts %}
+
+
