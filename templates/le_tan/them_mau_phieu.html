@@ -65,6 +65,18 @@
                                     <label>Tên Mẫu Phiếu <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control input" id="tieu_de" name="text" placeholder="Nhập tên mẫu phiếu" />
                                 </div>
+
+                                <div class="form-group">
+                                    <label>Mã hóa dạng HTML <span class="text-danger">*</span></label>
+                                    <div class="col-3">
+                                    <span class="switch switch-sm switch-icon">
+                                        <label>
+                                            <input id='select_html' value="1" type="checkbox" unchecked="unchecked" name="select_html"/>
+                                            <span></span>
+                                        </label>
+                                    </span>
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <label>Nội Dung Mẫu Phiếu <span class="text-danger">*</span></label>
                                     {% comment %} <div id="kt-ckeditor-1-toolbar"></div> {% endcomment %}
@@ -218,34 +230,36 @@
             $('#submitData').on('click', function() {
                 var id_dich_vu = $('#kt_select2_4').val()
                 var ten_mau_phieu = $('#tieu_de').val()
+                var html = $('#select_html:checked').val()
                 var noi_dung = CKEDITOR.instances.noi_dung.getData()
                 var formData = new FormData()
                 formData.append('id_dich_vu', id_dich_vu)
                 formData.append('ten_mau_phieu', ten_mau_phieu)
                 formData.append('noi_dung', noi_dung)
+                formData.append('html', html)
                 formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
                 $.ajax({
-                type: "POST",
-                url: "{% url 'create_mau_phieu' %}", 
-                data: formData,
-                cache: false,
-                processData: false,
-                contentType: false,
-                success: function(response){
-                    if (response.status == 200) {
-                        toastr.success(response.message, "Thành Công")
-                        setTimeout(function () {
-                            window.location.href = '/danh_sach_mau_phieu/'; //redirect về danh sách chờ lâm sàng
-                        }, 1500)
-                    } else if (response.status == 404) {
-                        toastr.warning(response.message, "Thất Bại")
+                    type: "POST",
+                    url: "{% url 'create_mau_phieu' %}", 
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function(response){
+                        if (response.status == 200) {
+                            toastr.success(response.message, "Thành Công")
+                            setTimeout(function () {
+                                window.location.href = '/danh_sach_mau_phieu/'; //redirect về danh sách chờ lâm sàng
+                            }, 1500)
+                        } else if (response.status == 404) {
+                            toastr.warning(response.message, "Thất Bại")
+                        }
+                    },
+                    error: function(response){
+                        toastr.warning("Xảy ra lỗi khi gửi dữ liệu, vui lòng kiểm tra lại", "Thất Bại")
                     }
-                },
-                error: function(response){
-                    toastr.warning("Xảy ra lỗi khi gửi dữ liệu, vui lòng kiểm tra lại", "Thất Bại")
-                }
-            })
+                })
             })
         }
 
