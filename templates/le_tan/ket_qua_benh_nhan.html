@@ -180,7 +180,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                         method: 'GET',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
-                        map: function(raw) {
+                        {% comment %} map: function(raw) {
                             // sample data mapping
                             var dataSet = raw;
                             if (typeof raw.data !== 'undefined') {
@@ -190,7 +190,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                             globalData = dataSet;
                             console.log(dataSet)
                             return dataSet;
-                        }
+                        } {% endcomment %}
                     },
                 },
                 pageSize: 10,
@@ -296,7 +296,7 @@ var KTDatatableRemoteAjaxDemo = function() {
         var id_benh_nhan = id
         var el = $('#kt_datatable_sub');
         var modal = $('#kt_datatable_modal');
-        var datatable = el.KTDatatable({
+        var datatable = $('#kt_datatable_sub').KTDatatable({
             data: {
                 type: 'remote',
                 source: {
@@ -321,8 +321,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                 },
                 pageSize: 10,
                 serverPaging: true,
-                // serverFiltering: true,
-                // serverSorting: true,
+                serverFiltering: true,
+                serverSorting: true,
             },
  
             // layout definition
@@ -343,7 +343,7 @@ var KTDatatableRemoteAjaxDemo = function() {
  
             // columns definition
             columns: [{
-                field: 'ma_lk',
+                field: 'id',
                 title: 'Mã LK',
                 width: 120,
             }, {
@@ -399,7 +399,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
-                        <a href="#" class="btn btn-lg btn-clean btn-icon btn_delete" title=" Xóa kết quả khám của bệnh nhân ${row.benh_nhan.ho_ten}" data-id-benh-nhan="${row.id}" data-ma-lk='${row.ma_lk}'>
+                        <a href="#" class="btn btn-lg btn-clean btn-icon btn_delete" title=" Xóa kết quả khám của bệnh nhân ${row.benh_nhan.ho_ten}" data-id-chuoi-kham="${row.id}" data-ma-lk='${row.ma_lk}'>
                             <span class="svg-icon svg-icon-primary svg-icon-2x"><!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2020-10-29-133027/theme/html/demo1/dist/../src/media/svg/icons/Home/Trash.svg--><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                     <rect x="0" y="0" width="24" height="24"/>
@@ -449,7 +449,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             var modalContent = $(this).find('.modal-content');
 
             datatable.spinnerCallback(true, modalContent);
-            datatable.reload();
+            datatable.load();
 
             datatable.on('datatable-on-layout-updated', function() {
                 datatable.show();
@@ -465,15 +465,12 @@ var KTDatatableRemoteAjaxDemo = function() {
             var id_chuoi_kham = $(this).data('id-chuoi-kham')
             window.open(HOST_URL + `/ket_qua_benh_nhan/chuoi_kham/${id_chuoi_kham}/`, "_blank")
         })
-        
-    };
 
-    var deleteChuoiKham = function() {
-        $('#kt_datatable_sub').on('click', '.btn_delete', function() {
-            var ma_lk = $(this).data('ma-lk')
+        datatable.on('click', '.btn_delete', function() {
+            var id_chuoi_kham = $(this).data('id-chuoi-kham')
  
             Swal.fire({
-                title: "Xóa Chuỗi Khám " +ma_lk+ " khỏi danh sách",
+                title: "Xóa Chuỗi Khám " +id_chuoi_kham+ " khỏi danh sách",
                 text: "Bạn sẽ không thể hoàn tác",
                 icon: "warning",
                 showCancelButton: true,
@@ -482,7 +479,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             }).then(function(result) {
                 if (result.value) {
                     var formData = new FormData()
-                    formData.append('ma_lk', ma_lk)
+                    formData.append('id_chuoi_kham', id_chuoi_kham)
                     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
  
                     $.ajax({
@@ -513,13 +510,13 @@ var KTDatatableRemoteAjaxDemo = function() {
             });
  
         });
+        
+    };
 
-    }
 
     return {
         init: function() {
             demo();
-            deleteChuoiKham();
         },
     };
 }();
