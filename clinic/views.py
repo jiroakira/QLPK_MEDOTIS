@@ -3508,8 +3508,8 @@ def chi_tiet_chuoi_kham_benh_nhan(request, **kwargs):
     return render(request, 'le_tan/chi_tiet_ket_qua_chuoi_kham.html', context=context)
 
 def xoa_chuoi_kham(request):
-    ma_lk = request.POST.get('ma_lk')
-    chuoi_kham = ChuoiKham.objects.filter(ma_lk=ma_lk).first()
+    id_chuoi_kham = request.POST.get('id_chuoi_kham')
+    chuoi_kham = ChuoiKham.objects.filter(id=id_chuoi_kham).first()
     chuoi_kham.delete()
 
     response = {
