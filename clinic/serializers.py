@@ -1,5 +1,5 @@
 from finance.models import HoaDonChuoiKham, HoaDonThuoc, HoaDonLamSang
-from medicine.serializers import CongTySerializer, ThuocSerializer
+from medicine.serializers import CongTySerializer, ThuocSerializer, ThuocSerializerSimple
 # from finance.serializers import HoaDonChuoiKhamSerializer, HoaDonThuocSerializer
 from os import set_inheritable
 from django.http.request import validate_host
@@ -707,3 +707,43 @@ class TatCaLichHenSerializer(serializers.ModelSerializer):
     class Meta:
         model = LichHenKham
         fields = ('id', 'ma_lich_hen', 'thoi_gian_bat_dau', 'thoi_gian_ket_thuc', 'trang_thai')
+
+class FilterHoaDonChuoiKhamBaoHiemSerializer(serializers.ModelSerializer):
+    benh_nhan = serializers.CharField(source='chuoi_kham.benh_nhan.ho_ten')
+    nam_sinh = serializers.CharField(source='chuoi_kham.benh_nhan.ngay_sinh')
+    gioi_tinh = serializers.CharField(source='chuoi_kham.benh_nhan.gioi_tinh')
+    ma_bhyt = serializers.CharField(source='chuoi_kham.benh_nhan.ma_so_bao_hiem')
+    ma_dkbd = serializers.CharField(source='chuoi_kham.benh_nhan.ma_dkbd')
+    ma_benh = serializers.CharField(source='get_ma_benh')
+    tong_cong_1 = serializers.CharField(source='get_tong_cong')
+    tien_kham = serializers.CharField(source='get_tong_cong')
+    tu_chi_tra = serializers.CharField(source='tong_tien')
+    tong_cong_2 = serializers.CharField(source='get_tong_cong_2')
+
+    class Meta:
+        model = HoaDonChuoiKham
+        fields = (
+            'benh_nhan',
+            'gioi_tinh',
+            'nam_sinh',
+            'ma_bhyt',
+            'ma_dkbd',
+            'ma_benh',
+            'tong_cong_1',
+            'tien_kham',
+            'tu_chi_tra',
+            'tong_cong_2'
+        )
+
+class DanhSachKetQuaChuoiKhamSerializer(serializers.ModelSerializer):
+    benh_nhan = UserSerializerSimple()
+    trang_thai = TrangThaiChuoiKhamSerializer()
+    class Meta:
+        model = ChuoiKham
+        fields = '__all__'
+
+class DanhSachThuocSerializerSimple(serializers.ModelSerializer):
+    thuoc = ThuocSerializerSimple()
+    class Meta:
+        model = KeDonThuoc
+        fields = '__all__'

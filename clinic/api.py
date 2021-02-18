@@ -32,7 +32,7 @@ from clinic.models import (
 )
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer)
+from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -1393,6 +1393,18 @@ class DanhSachChuoiKhamBenhNhan(APIView):
         }
         return Response(response)
 
+class DanhSachKetQuaChuoiKhamBenhNhan(APIView):
+    def get(self, request, format=None):
+        user_id = self.request.query_params.get('user_id')
+        user = User.objects.get(id=user_id)
+        danh_sach_lich_hen = user.chuoi_kham.all()
+        serializer = DanhSachKetQuaChuoiKhamSerializer(danh_sach_lich_hen, many=True, context={'request': request})
+        response = {
+            'benh_nhan': user_id,
+            'data': serializer.data
+        }
+        return Response(response)
+
 class ChuoiKhamGanNhat(APIView):
     def get(self, request, format=None):
         user_id = self.request.query_params.get('user_id')
@@ -2218,7 +2230,6 @@ class DanhSachHoaDonDichVuBaoHiem(APIView):
             tomorrow_end = end + timedelta(1)
             hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(bao_hiem=True).filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start))
         
-
         serializer = HoaDonChuoiKhamSerializer(hoa_don_dich_vu, many=True, context={'request': request})
 
         response = {
@@ -2407,3 +2418,22 @@ class ListTieuChuanDichVu(APIView):
             'data': serializer.data
         }
         return Response(response)
+
+# class DanhSachKetQuaChuoiKhamBenhNhan(APIView):
+#     def get(self, request, format=None):
+#         id_benh_nhan = self.request.query_params.get('id_benh_nhan')
+#         user = User.objects.filter(id=id_benh_nhan).first()
+#         danh_sach_ket_qua = ChuoiKham.objects.filter(benh_nhan=user, trang_thai__trang_thai_chuoi_kham="Hoàn Thành")
+
+class XemDonThuoc(APIView):
+    def get(self, request, format=None):
+        id_don_thuoc = self.request.query_params.get('id_don_thuoc', None)
+        if id_don_thuoc is not None:
+            don_thuoc = DonThuoc.objects.filter(id=id_don_thuoc).first()
+            danh_sach_thuoc = don_thuoc.ke_don.all()
+            serializer = DanhSachThuocSerializerSimple(danh_sach_thuoc, many=True, context={"request": request})
+            data = serializer.data
+            response = {
+                'data': data
+            }
+            return Response(response)

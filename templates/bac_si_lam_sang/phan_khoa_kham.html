@@ -122,7 +122,7 @@
                         <h3 class="card-label">Bảng phân khoa</h3>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id='tablePhanKhoa'>
                     <!--begin: Datatable-->
                     <table class="table table-bordered table-hover table-checkable" id="kt_datatable_3" style="margin-top: 13px !important;">
                         <thead>
@@ -142,10 +142,15 @@
                 <div class="card-footer">
                     <div class="card-toolbar text-right">
                         <!--begin::Button-->
+                        <a href="javascript:;" class="btn btn-light-primary font-weight-bolder" onclick='printDiv();' >
+                            <i class="la la-plus"></i>
+                            In DS Phân Khoa
+                        </a>
                         <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="get-table-data" data-id="{{ id_lich_hen }}" data-user-id = {{ lich_hen.benh_nhan.id }} >
                             <i class="la la-plus"></i>
                             Phân khoa khám
                         </a>
+                        
                         <!--end::Button-->
                     </div>
                 </div>
@@ -174,6 +179,23 @@
 
 "use strict";
 // Class definition
+
+function printDiv() 
+{
+
+  var divToPrint=document.getElementById('tablePhanKhoa');
+
+  var newWin=window.open('','Print-Window');
+
+  newWin.document.open();
+
+  newWin.document.write('<html><body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
+
+  newWin.document.close();
+
+  setTimeout(function(){newWin.close();},10);
+
+}
 
 var KTDatatableRecordSelectionDemo = function() {
     // Private functions

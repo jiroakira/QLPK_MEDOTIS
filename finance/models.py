@@ -41,6 +41,7 @@ class HoaDonChuoiKham(models.Model):
     tong_tien = models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
     bao_hiem = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -48,6 +49,24 @@ class HoaDonChuoiKham(models.Model):
             self.thoi_gian_tao = timezone.now()
         self.thoi_gian_cap_nhat = timezone.now()
         return super(HoaDonChuoiKham, self).save(*args, **kwargs)
+
+    def get_ma_benh(self):
+        try:
+            return self.chuoi_kham.ket_qua_tong_quat.all()[0].ma_benh.ma_benh
+        except:
+            return ''
+
+    def get_tong_cong(self):
+        ds_dich_vu = self.chuoi_kham.phan_khoa_kham.all()
+        tong_tien = []
+        for phan_khoa in ds_dich_vu:
+            gia = phan_khoa.dich_vu_kham.don_gia
+            tong_tien.append(gia)
+        return sum(tong_tien)
+
+    def get_tong_cong_2(self):
+        tong_cong_2 = float(self.get_tong_cong()) - float(self.tong_tien)
+        return tong_cong_2
 
     # TODO: trường tổng tiền có trong 2 hóa đơn sẽ được update sau khi bệnh nhân đóng tiền (transaction atomic update)
 

@@ -76,6 +76,38 @@
                                             <span class="navi-text">Thuốc</span>
                                         </a>
                                     </li>
+                                    <li class="navi-item">
+                                        <a href="javascript:;" class="navi-link" id="btn-bao-hiem-kcb">
+                                            <span class="navi-icon">
+                                                <i class="la la-copy"></i>
+                                            </span>
+                                            <span class="navi-text">BHYT MC79a</span>
+                                        </a>
+                                    </li>
+                                    <li class="navi-item">
+                                        <a href="javascript:;" class="navi-link" id="btn-bao-hiem-kcb">
+                                            <span class="navi-icon">
+                                                <i class="la la-copy"></i>
+                                            </span>
+                                            <span class="navi-text">BHYT MC19</span>
+                                        </a>
+                                    </li>
+                                    <li class="navi-item">
+                                        <a href="javascript:;" class="navi-link" id="btn-bao-hiem-kcb">
+                                            <span class="navi-icon">
+                                                <i class="la la-copy"></i>
+                                            </span>
+                                            <span class="navi-text">BHYT MC20</span>
+                                        </a>
+                                    </li>
+                                    <li class="navi-item">
+                                        <a href="javascript:;" class="navi-link" id="btn-bao-hiem-kcb">
+                                            <span class="navi-icon">
+                                                <i class="la la-copy"></i>
+                                            </span>
+                                            <span class="navi-text">BHYT MC21</span>
+                                        </a>
+                                    </li>
                                 </ul>
                                 <!--end::Navigation-->
                             </div>
@@ -190,7 +222,8 @@
 
 var KTDatatableRemoteAjaxDemo = function() {
     // Private functions
-
+    var startDate;
+    var endDate;
 
     var hoa_don_dich_vu = function(range_start, range_end) {
         var range_start = range_start
@@ -288,6 +321,12 @@ var KTDatatableRemoteAjaxDemo = function() {
                     return `
                         <a href="/xuat_bao_hiem/dich_vu/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Chi Tiết">
                             Hóa Đơn
+                        </a>
+                        <a href="/xuat_bao_hiem/dich_vu/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Chi Tiết">
+                            Excel
+                        </a>
+                        <a href="/xuat_bao_hiem/dich_vu/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Chi Tiết">
+                            XML
                         </a>
                     `;
                 },
@@ -448,6 +487,9 @@ var KTDatatableRemoteAjaxDemo = function() {
     };
 
     var _initDaterangepicker = function () {
+
+
+
         if ($('#kt_dashboard_daterangepicker').length == 0) {
             return;
         }
@@ -481,7 +523,10 @@ var KTDatatableRemoteAjaxDemo = function() {
             $('#kt_datatable').KTDatatable('destroy');
             _initDatatable(range_start, range_end);
             hoa_don_dich_vu(range_start, range_end);
-            hoa_don_thuoc(range_start, range_end)
+            hoa_don_thuoc(range_start, range_end);
+
+            startDate = range_start
+            endDate = range_end
 
             $('#kt_dashboard_daterangepicker_date').html(range);
             $('#kt_dashboard_daterangepicker_title').html(title);
@@ -516,7 +561,7 @@ var KTDatatableRemoteAjaxDemo = function() {
         }, cb);
 
         cb(start, end, '');
-        //console.log(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'))
+        // console.log(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'))
 
     }
 
@@ -545,6 +590,69 @@ var KTDatatableRemoteAjaxDemo = function() {
         });
     }
 
+    var exportExcel = function() {
+        $('#btn-bao-hiem-kcb').on('click', function() {
+            console.log(startDate, endDate)
+            var formData = new FormData()
+
+            formData.append('startDate', startDate)
+            formData.append('endDate', endDate)
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'export_excel' %}",
+                data: formData,
+                cache      : false,
+                processData: false,
+                contentType: false,
+                xhrFields: {
+                    responseType: 'blob' // to avoid binary data being mangled on charset conversion
+                },
+                success: function(blob, status, xhr) {
+                    // check for a filename
+                    var filename = "";
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                    }
+
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
+
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === 'undefined') {
+                                window.location.href = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                        } else {
+                            window.location.href = downloadUrl;
+                        }
+
+                        setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+                    }
+                },
+                error: function(response){
+                    toastr.warning("Xảy ra lỗi", 'Lỗi')
+                }
+            })
+        })
+    }
+
+
     return {
         // public functions
         init: function() {
@@ -552,6 +660,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             _initDaterangepicker();
             hoa_don_dich_vu();
             formatMoney();
+            exportExcel();
         },
     };
 }();

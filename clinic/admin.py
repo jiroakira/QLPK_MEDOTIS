@@ -6,7 +6,7 @@ from .models import (
     DichVuKham, DoTuoiXetNghiem, DoiTuongXetNghiem, 
     FileKetQua, 
     FileKetQuaChuyenKhoa, 
-    FileKetQuaTongQuat, FilePhongKham, GoiThau,  
+    FileKetQuaTongQuat, FilePhongKham, GoiThau, HtmlKetQua,  
     KetQuaChuyenKhoa, 
     KetQuaTongQuat, KetQuaXetNghiem, 
     LichHenKham, MauPhieu, NhomChiPhi, NhomTaiNan,
@@ -56,4 +56,5 @@ admin.site.register(NhomTaiNan)
 admin.site.register(DanhMucKhoa)
 admin.site.register(GoiThau)
 admin.site.register(MauPhieu)
+admin.site.register(HtmlKetQua)
 

@@ -308,8 +308,9 @@ class DichVuKham(models.Model):
     # bac_si_phu_trach = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="bac_si_phu_trach", null=True, blank=True)
     # khoa_kham = models.ForeignKey(KhoaKham, on_delete=models.SET_NULL, related_name="khoa_kham", null=True, blank=True)
     phong_chuc_nang = models.ForeignKey(PhongChucNang, on_delete=models.SET_NULL, null=True, blank=True, related_name="dich_vu_kham_theo_phong")
-
+    
     chi_so = models.BooleanField(default=False)
+    html = models.BooleanField(default=False)
     objects = BulkUpdateOrCreateQuerySet.as_manager()
 
     def __str__(self):
@@ -319,18 +320,20 @@ class DichVuKham(models.Model):
         verbose_name = "Dịch Vụ Khám"
         verbose_name_plural = "Dịch Vụ Khám"
 
-<<<<<<< HEAD
-=======
-    def __str__(self):
-        return str(self.ten_dvkt)
-
->>>>>>> d61f581cb16a7f7c76540046deb237936e58bce8
     @property
     def check_chi_so(self):
         if self.chi_so == True:
             return True
         else:
             return False
+
+    @property
+    def check_html(self):
+        if self.html == True:
+            return True
+        else:
+            return False
+    
 class GiaDichVu(models.Model):
     """ Bảng giá sẽ lưu trữ tất cả giá của dịch vụ khám và cả thuốc """
     id_dich_vu_kham = models.OneToOneField(DichVuKham, null=True, blank=True, on_delete=models.PROTECT, related_name="gia_dich_vu_kham")
@@ -442,7 +445,6 @@ class LichHenKham(models.Model):
             self.ma_lich_hen = ma_lich_hen
         return super(LichHenKham, self).save(*args, **kwargs)
 
-    
 
     # objects = LichHenKhamManager()
 
@@ -489,8 +491,8 @@ class ChuoiKham(models.Model):
     """ Mỗi bệnh nhân khi tới phòng khám để sau khi khám tổng quát thì đều sẽ có một chuỗi khám.
     Do chuỗi khám này có tính tích lũy nên bệnh nhân có thể dễ dàng xem lại được lịch sử khám của mình kết hợp với các kết quả khám tại phòng khám """
     ma_lk = models.CharField(max_length=100, null=True, blank=True)
-    benh_nhan = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="chuoi_kham")
-    bac_si_dam_nhan = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="bac_si_chuoi_kham", null=True, blank=True)
+    benh_nhan = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chuoi_kham")
+    bac_si_dam_nhan = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="bac_si_chuoi_kham", null=True, blank=True)
     lich_hen = models.ForeignKey(LichHenKham, on_delete=models.SET_NULL, null=True, blank=True, related_name='danh_sach_chuoi_kham')
     thoi_gian_bat_dau = models.DateTimeField(null=True, blank=True)
     thoi_gian_ket_thuc = models.DateTimeField(null=True, blank=True)
@@ -537,6 +539,51 @@ class ChuoiKham(models.Model):
     def get_ma_pttt_qt(self):
         return ""
 
+    def get_chi_phi_dich_vu(self):
+        if (hasattr(self, 'hoa_don_dich_vu')):
+            tong_tien = "{:,}".format(int(self.hoa_don_dich_vu.tong_tien))
+        else:
+            tong_tien = "-"
+        return tong_tien
+    
+    def get_chi_phi_lam_sang(self):
+        lich_hen = self.lich_hen
+        if lich_hen is not None:
+            hoa_don_lam_sang = self.lich_hen.hoa_don_lam_sang.all().first()
+            if hoa_don_lam_sang is not None:
+                tong_tien = "{:,}".format(int(hoa_don_lam_sang.tong_tien))
+            else:
+                tong_tien = '-'
+            return tong_tien
+        else: 
+            return '-'
+
+    def get_chi_phi_thuoc(self):
+        don_thuoc = self.don_thuoc_chuoi_kham.all().first()
+        if don_thuoc is not None:
+            if (hasattr(don_thuoc, 'hoa_don_thuoc')):
+                hoa_don_thuoc = don_thuoc.hoa_don_thuoc
+                tong_tien = "{:,}".format(int(hoa_don_thuoc.tong_tien))
+            else:
+                tong_tien = '-'
+        else:
+            tong_tien = '-'
+        return tong_tien
+
+    @property
+    def check_don_thuoc_exist(self):
+        don_thuoc = self.don_thuoc_chuoi_kham.all().first()
+        if don_thuoc is not None:
+            return True
+        else:
+            return False
+
+    def get_id_don_thuoc(self):
+        don_thuoc = self.don_thuoc_chuoi_kham.all().first()
+        id_don_thuoc = don_thuoc.id 
+        return id_don_thuoc
+    
+
 
 class PhanKhoaKham(models.Model):
     benh_nhan = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -557,8 +604,6 @@ class PhanKhoaKham(models.Model):
     class Meta:
         verbose_name = "Phân Khoa Khám"
         verbose_name_plural = "Phân Khoa Khám"
-
-    
 
     def gia_dich_vu_theo_bao_hiem(self):
         gia = self.dich_vu_kham.gia_dich_vu_kham.gia 
@@ -624,6 +669,7 @@ class LichSuChuoiKham(models.Model):
 
 class KetQuaTongQuat(models.Model):
     """ Kết quả tổng quát của người dùng sau một lần đến thăm khám tại phòng khám """
+
     RESULT_CHOICES = (
         ("1", "Khỏi"),
         ("2", "Đỡ"), 
@@ -645,6 +691,16 @@ class KetQuaTongQuat(models.Model):
         verbose_name = "Kết Quả Tổng Quát"
         verbose_name_plural = "Kết Quả Tổng Quát"
 
+    def get_mo_ta(self):
+        if not self.mo_ta:
+            return "Không có mô tả"
+        return self.mo_ta
+    
+    def get_ket_luan(self):
+        if not self.ket_luan:
+            return "Không có kết luận"
+        return self.ket_luan
+
 class KetQuaChuyenKhoa(models.Model):
     """ Kết quả của khám chuyên khoa mà người dùng có thể nhận được """ 
     ma_ket_qua = models.CharField(max_length=50, null=True, blank=True, unique=True)
@@ -654,10 +710,21 @@ class KetQuaChuyenKhoa(models.Model):
     ket_luan = models.TextField(null=True, blank=True)
 
     chi_so = models.BooleanField(default = False)
+    html = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Kết Quả Chuyên Khoa"
         verbose_name_plural = "Kết Quả Chuyên Khoa"
+
+    def get_mo_ta(self):
+        if not self.mo_ta:
+            return "Không có mô tả"
+        return self.mo_ta
+    
+    def get_ket_luan(self):
+        if not self.ket_luan:
+            return "Không có kết luận"
+        return self.ket_luan
 
 key_store = FileSystemStorage()
 
@@ -822,6 +889,15 @@ class KetQuaXetNghiem(models.Model):
         verbose_name = "Kết Quả Xét Nghiệm"
         verbose_name_plural = "Kết Quả Xét Nghiệm"
 
+class HtmlKetQua(models.Model):
+    phan_khoa_kham = models.ForeignKey(PhanKhoaKham, on_delete=models.CASCADE, null=True, blank=True)
+    ket_qua_chuyen_khoa = models.ForeignKey(KetQuaChuyenKhoa, on_delete=models.CASCADE, null=True, blank=True, related_name="html_ket_qua")
+    noi_dung = models.TextField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Kết Quả Dạng HTML"
+        verbose_name_plural = "Kết Quả Dạng HTML"
+
 class DanhMucChuongBenh(models.Model):
     stt = models.CharField(max_length=5, null=True, blank=True)
     ma_chuong = models.CharField(max_length=15, null=True, blank=True)
@@ -951,6 +1027,7 @@ class DuongDungThuoc(models.Model):
         verbose_name_plural = "Đường Dùng Thuốc"
 
 class MauPhieu(models.Model):
+
     dich_vu = models.ForeignKey(DichVuKham, on_delete=models.SET_NULL, null=True, blank=True, related_name="mau_phieu")
     ten_mau = models.CharField(max_length=255, null=True, blank=True)
     noi_dung = models.TextField()

@@ -23,6 +23,7 @@ python-dateutil = "*"
 pandas = "*"
 xlrd = "*"
 openpyxl = "*"
+xlsxwriter = "*"
 
 [requires]
 python_version = "3.8"

@@ -1,4 +1,5 @@
 
+from clinic.excelUtils import WriteToExcel
 from finance.models import (
     HoaDonChuoiKham, 
     HoaDonLamSang, 
@@ -40,7 +41,7 @@ from clinic.models import (
     DichVuKham, DoTuoiXetNghiem, DoiTuongXetNghiem, 
     FileKetQua, 
     FileKetQuaChuyenKhoa, 
-    FileKetQuaTongQuat, FilePhongKham, 
+    FileKetQuaTongQuat, FilePhongKham, HtmlKetQua, 
     KetQuaChuyenKhoa, 
     KetQuaTongQuat, KetQuaXetNghiem, 
     LichHenKham, 
@@ -66,12 +67,12 @@ from django.contrib import messages
 from datetime import datetime, timedelta
 import decimal
 from django.db.models import Max
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
 from django.contrib.auth import authenticate, views as auth_views
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-
+from clinic.serializers import FilterHoaDonChuoiKhamBaoHiemSerializer, HoaDonChuoiKhamSerializer
 
 from datetime import datetime
 format = '%m/%d/%Y %H:%M %p'
@@ -2465,7 +2466,7 @@ def upload_ket_qua_lam_sang(request):
             HttpResponse({'status': 404, 'message': 'Kết Luận Không Được Để Trống'})
 
         chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
-        ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham)[0]
+        ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham).first()
         ket_qua_tong_quat.ma_ket_qua = ma_ket_qua
         ket_qua_tong_quat.mo_ta      = mo_ta
         ket_qua_tong_quat.ket_luan   = ket_luan
@@ -2494,7 +2495,7 @@ def upload_ket_qua_chuyen_khoa(request):
         if ket_luan == '':
             HttpResponse({'status': 404, 'message': 'Kết Luận Không Được Để Trống'})
 
-        chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
+        chuoi_kham = ChuoiKham.objects.filter(id=id_chuoi_kham).first()
         ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham)[0]
         ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.create(ket_qua_tong_quat=ket_qua_tong_quat, ma_ket_qua=ma_ket_qua, mo_ta=mo_ta, ket_luan=ket_luan)
 
@@ -2868,6 +2869,29 @@ def view_ket_qua_xet_nghiem(request, **kwargs):
                 'id_phan_khoa': id_phan_khoa
             }
             return render(request, 'bac_si_chuyen_khoa/chi_so_xet_nghiem.html', context=context)
+        elif dich_vu.check_html:
+            id_phong_chuc_nang = dich_vu.phong_chuc_nang.id
+            phong_chuc_nang = PhongChucNang.objects.all()
+            ho_ten_benh_nhan = benh_nhan.ho_ten
+            now       = datetime.now()
+            date_time = now.strftime("%m%d%y%H%M%S")
+            mau_phieu = dich_vu.mau_phieu.all()[0]
+
+            ma_ket_qua = str(id_phong_chuc_nang) +'-'+ getSubName(ho_ten_benh_nhan) + '-' + str(date_time)
+            context = {
+                'benh_nhan': [benh_nhan.ho_ten],
+                'dia_chi': [benh_nhan.dia_chi],
+                'gioi_tinh': ['Nam' if benh_nhan.gioi_tinh == "1" else 'KXD' if benh_nhan.gioi_tinh == "1" else "Nữ"],
+                'tuoi': [str(benh_nhan.tuoi())],
+                'ma_ket_qua': ma_ket_qua,
+                'id_chuoi_kham': id_chuoi_kham,
+                'id_phong_chuc_nang': id_phong_chuc_nang,
+                'phong_chuc_nang': phong_chuc_nang,
+                'id_phan_khoa': id_phan_khoa,
+                'dich_vu': dich_vu,
+                'mau_phieu': mau_phieu,
+            }
+            return render(request, 'bac_si_chuyen_khoa/upload_phieu_ket_qua.html', context=context)
         else:
             id_phong_chuc_nang = dich_vu.phong_chuc_nang.id
             phong_chuc_nang = PhongChucNang.objects.all()
@@ -2899,8 +2923,8 @@ def store_ket_qua_xet_nghiem(request):
         ket_qua = request.POST.get('ket_qua')
         data = request.POST.get('data')
         list_data = json.loads(data)
-        chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
-        phan_khoa_kham = PhanKhoaKham.objects.get(id=id_phan_khoa)
+        chuoi_kham = ChuoiKham.objects.filter(id=id_chuoi_kham).first()
+        phan_khoa_kham = PhanKhoaKham.objects.filter(id=id_phan_khoa).first()
 
         ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham)[0]
         ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.create(
@@ -2939,6 +2963,52 @@ def store_ket_qua_xet_nghiem(request):
             'message': 'Có Lỗi Xảy Ra'
         }
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def store_ket_qua_chuyen_khoa_html(request):
+    if request.method == "POST":
+        id_phan_khoa = request.POST.get('id_phan_khoa')
+        id_chuoi_kham = request.POST.get("id_chuoi_kham")
+        noi_dung = request.POST.get('noi_dung')
+        mo_ta = request.POST.get('mo_ta')
+        ma_ket_qua    = request.POST.get('ma_ket_qua')
+
+        if noi_dung == "":
+            response = {
+                'status': 404,
+                'message': 'Vui lòng kiểm tra lại phiếu kết quả'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+        
+        phan_khoa = PhanKhoaKham.objects.filter(id=id_phan_khoa).first()
+        chuoi_kham = ChuoiKham.objects.filter(id=id_chuoi_kham).first()
+
+        ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham)[0]
+        ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.create(
+            ma_ket_qua = ma_ket_qua,
+            phan_khoa_kham = phan_khoa,
+            ket_qua_tong_quat = ket_qua_tong_quat,
+            mo_ta = mo_ta,
+            html = True,
+        )
+        HtmlKetQua.objects.create(
+            phan_khoa_kham = phan_khoa,
+            ket_qua_chuyen_khoa = ket_qua_chuyen_khoa,
+            noi_dung = noi_dung
+        )
+
+        response = {
+            'status': 200,
+            'message': 'Lưu Dữ Liệu Thành Công'
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+    else:
+        response = {
+            'status': 404,
+            'message': 'Có Lỗi Xảy Ra'
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+
  
 def them_ma_benh_excel(request):
     return render(request, 'phong_tai_chinh/them_benh_excel.html')
@@ -3028,8 +3098,13 @@ def create_mau_phieu(request):
         id_dich_vu = request.POST.get('id_dich_vu')
         ten_mau_phieu = request.POST.get('ten_mau_phieu')
         noi_dung = request.POST.get('noi_dung')
+        html = request.POST.get("html")
+       
         try:
             dich_vu = DichVuKham.objects.get(id=id_dich_vu)
+            if html == '1':
+                dich_vu.html = True
+                dich_vu.save()
             mau_phieu = MauPhieu.objects.create(dich_vu=dich_vu, ten_mau=ten_mau_phieu, noi_dung=noi_dung)
         except DichVuKham.DoesNotExist:
             response = {
@@ -3134,7 +3209,7 @@ def chi_tiet_lich_hen_benh_nhan(request, **kwargs):
 
 def chi_tiet_ket_qua_xet_nghiem(request, **kwargs):
     id_ket_qua_chuyen_khoa = kwargs.get('id')
-    ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.get(id=id_ket_qua_chuyen_khoa)
+    ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.filter(id=id_ket_qua_chuyen_khoa).first()
     ket_qua_xet_nghiem = ket_qua_chuyen_khoa.ket_qua_xet_nghiem.all()
     phan_khoa_kham = ket_qua_xet_nghiem[0].phan_khoa_kham
     dich_vu = phan_khoa_kham.dich_vu_kham
@@ -3143,7 +3218,7 @@ def chi_tiet_ket_qua_xet_nghiem(request, **kwargs):
     benh_nhan = [phan_khoa_kham.benh_nhan.ho_ten]
     dia_chi = [phan_khoa_kham.benh_nhan.dia_chi]
     tuoi = [str(phan_khoa_kham.benh_nhan.tuoi())]
-    gioi_tinh = ['Nam' if phan_khoa_kham.benh_nhan.gioi_tinh == "1" else 'Nữ    ']
+    gioi_tinh = ['Nam' if phan_khoa_kham.benh_nhan.gioi_tinh == "1" else 'KXD' if phan_khoa_kham.benh_nhan.gioi_tinh == "1" else "Nữ"]
     bac_si_chi_dinh = [phan_khoa_kham.bac_si_lam_sang.ho_ten]
     chan_doan = [ket_qua_chuyen_khoa.ket_luan]
 
@@ -3167,6 +3242,15 @@ def chi_tiet_ket_qua_xet_nghiem(request, **kwargs):
     }
     return render(request, 'mau_phieu.html', context=context)
 
+def chi_tiet_phieu_ket_qua(request, **kwargs):
+    id_ket_qua_chuyen_khoa = kwargs.get('id')
+    ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.filter(id=id_ket_qua_chuyen_khoa).first()
+    html_ket_qua = ket_qua_chuyen_khoa.html_ket_qua.all().first()
+    noi_dung = html_ket_qua.noi_dung
+    context = {
+        'noi_dung': noi_dung,
+    }
+    return render(request, 'phieu_ket_qua.html', context=context)
 
 # UPDATE BY LONG
 def xoa_bac_si(request):
@@ -3365,4 +3449,70 @@ def chinh_sua_tieu_chuan_dich_vu(request):
             'status': 404,
         }
     return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
-    
+
+from django.views.decorators.csrf import csrf_exempt
+from io import BytesIO
+import xlsxwriter
+
+@csrf_exempt
+def export_excel(request):
+    if request.method == 'POST':
+        startDate = request.POST.get('startDate')
+        endDate = request.POST.get('endDate')
+        print(startDate)
+        print(endDate)
+
+        start = datetime.strptime(startDate, "%d-%m-%Y")
+        tomorrow_start = start + timedelta(1)
+        if endDate == '':
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)).filter(bao_hiem=True)
+        else:
+            end = datetime.strptime(endDate, "%d-%m-%Y")
+            tomorrow_end = end + timedelta(1)
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start)).filter(bao_hiem=True)
+
+        serializer = FilterHoaDonChuoiKhamBaoHiemSerializer(hoa_don_dich_vu, many=True, context={'request': request})
+        excel_data = serializer.data
+
+        xlsx_data = WriteToExcel(excel_data)
+        response = HttpResponse(
+            content_type='application/ms-excel'
+        )
+        response['Content-Disposition'] = 'attachment; filename="Report.xlsx"'
+        response.write(xlsx_data)
+       
+    else:
+        response = HttpResponse(json.dumps({'message': "It's not gonna happen"}), content_type='application/json; charset=utf-8')
+    return response
+       
+def ket_qua_benh_nhan_view(request):
+    return render(request, 'le_tan/ket_qua_benh_nhan.html')
+
+def chi_tiet_chuoi_kham_benh_nhan(request, **kwargs):
+    id_chuoi_kham = kwargs.get('id_chuoi_kham')
+    chuoi_kham = ChuoiKham.objects.filter(id=id_chuoi_kham).first()
+    if chuoi_kham is not None:
+        benh_nhan = chuoi_kham.benh_nhan
+    else:
+        return render(request, '404.html')
+   
+    ket_qua_tong_quat = chuoi_kham.ket_qua_tong_quat.all().first()
+    ket_qua_chuyen_khoa = ket_qua_tong_quat.ket_qua_chuyen_khoa.all()
+
+    context = {
+        'benh_nhan': benh_nhan,
+        'chuoi_kham': chuoi_kham,
+        'ket_qua_tong_quat': ket_qua_tong_quat,
+        'ket_qua_chuyen_khoa': ket_qua_chuyen_khoa
+    }
+    return render(request, 'le_tan/chi_tiet_ket_qua_chuoi_kham.html', context=context)
+
+def xoa_chuoi_kham(request):
+    ma_lk = request.POST.get('ma_lk')
+    chuoi_kham = ChuoiKham.objects.filter(ma_lk=ma_lk).first()
+    chuoi_kham.delete()
+
+    response = {
+        'message' : "Xóa Chuỗi Khám Thành Công"
+    }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
