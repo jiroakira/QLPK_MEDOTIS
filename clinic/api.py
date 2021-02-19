@@ -1445,7 +1445,7 @@ class KetQuaChuoiKhamBenhNhan2(APIView):
     def get(self, request, format=None):
         chuoi_kham_id = self.request.query_params.get('id_chuoi_kham')
         chuoi_kham = ChuoiKham.objects.get(id=chuoi_kham_id)
-        ket_qua_tong_quat = chuoi_kham.ket_qua_tong_quat.all()[0]
+        ket_qua_tong_quat = chuoi_kham.ket_qua_tong_quat.all().first()
         ket_qua_chuyen_khoa = ket_qua_tong_quat.ket_qua_chuyen_khoa.all()
         serializer = KetQuaChuyenKhoaSerializer(ket_qua_chuyen_khoa, many=True, context={'request': request})
         response = {

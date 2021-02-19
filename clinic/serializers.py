@@ -257,7 +257,16 @@ class KetQuaChuyenKhoaSerializer(serializers.ModelSerializer):
     file_chuyen_khoa = FileKetQuaChuyenKhoaSerializer(many=True, source='file_ket_qua_chuyen_khoa')
     class Meta:
         model = KetQuaChuyenKhoa
-        fields = ('id', 'ma_ket_qua', 'mo_ta', 'ket_luan', 'file_chuyen_khoa')
+        fields = (
+            'id', 
+            'ma_ket_qua', 
+            'mo_ta', 
+            'ket_luan', 
+            'file_chuyen_khoa',
+            'chi_so',
+            'html'
+
+        )
 
 class FileKetQuaTongQuatSerializer(serializers.ModelSerializer):
     file_ket_qua = FileKetQuaSerializer(source='file')
