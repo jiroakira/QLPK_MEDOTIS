@@ -109,8 +109,8 @@ def index(request):
 
     phong_chuc_nang = PhongChucNang.objects.all()
     # * danh sách bệnh nhân chưa được khám
-    trang_thai = TrangThaiLichHen.objects.get_or_create(ten_trang_thai="Xác Nhận")[0]
-    da_dat_truoc = TrangThaiLichHen.objects.get_or_create(ten_trang_thai="Đã đặt trước")[0]
+    trang_thai = TrangThaiLichHen.objects.get_or_create(ten_trang_thai="Đã Đặt Trước")[0]
+    da_dat_truoc = TrangThaiLichHen.objects.get_or_create(ten_trang_thai="Đã Đặt Trước")[0]
     danh_sach_benh_nhan = LichHenKham.objects.select_related("benh_nhan").filter(trang_thai = trang_thai)
     danh_sach_lich_hen_chua_xac_nhan = LichHenKham.objects.select_related("benh_nhan").filter(trang_thai=da_dat_truoc)
 
@@ -163,9 +163,6 @@ def index(request):
     
     data = {
         'user': request.user,
-        # 'tong_so_benh_nhan': tong_so_benh_nhan,
-        # 'tong_so_hoa_don': tong_so_hoa_don,
-        # 'tong_so_don_thuoc': tong_so_don_thuoc,
         'danh_sach_benh_nhan': danh_sach_benh_nhan,
         'lich_hen_chua_xac_nhan': danh_sach_lich_hen_chua_xac_nhan,
         'upcoming_events': upcoming_events,

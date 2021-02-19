@@ -425,25 +425,7 @@ var KTDatatableRemoteAjaxDemo = function() {
  
         // fix datatable layout after modal shown
         //datatable.hide();
-        
-        {% comment %} var alreadyReloaded = false;
-        modal.on('shown.bs.modal', function() {
-            if (!alreadyReloaded) {
-                var modalContent = $(this).find('.modal-content');
-                datatable.spinnerCallback(true, modalContent);
-
-                datatable.reload();
-
-                datatable.on('datatable-on-layout-updated', function() {
-                    datatable.show();
-                    datatable.spinnerCallback(false, modalContent);
-                    datatable.redraw();
-                });
-
-                alreadyReloaded = true;
-            } 
-        }); {% endcomment %}
-
+    
         datatable.hide();
         modal.on('shown.bs.modal', function() {
             var modalContent = $(this).find('.modal-content');
