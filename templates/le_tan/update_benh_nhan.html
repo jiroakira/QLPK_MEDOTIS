@@ -84,10 +84,41 @@
                                 {{ form.ma_so_bao_hiem|attr:"class:form-control"|attr:"name:ma_so_bao_hiem"}}
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <div class="col-lg-4">
+                                <label>Tỉnh/Thành Phố<span class="text-danger">*</span></label>
+                                {% comment %} <input type="text" class="form-control" id="inputCmtModal" placeholder="Nhập CMND/CCCD"/> {% endcomment %}
+                                <select class="form-control selectpicker" id="kt_select2_1" data-live-search="true" name="param">
+                                    <option value="" selected disabled>Chọn Tỉnh/Thành phố</option>
+                                    {% for p in province %}
+                                        <option value="{{p.id}}">{{p.name}}</option>
+                                    {% endfor %}      
+                                </select>
+                            </div>
+                            <div class="col-lg-4">
+                                <label>Quận/Huyện</label>
+                                {% comment %} <input class="form-control" id="inputNgaySinhModal" type="text" /> {% endcomment %}
+                                {% comment %} {{ form.huyen|attr:"class:form-control"|attr:"class:selectpicker"|attr:"id:kt_select2_2"|attr:"data-live-search:true"|attr:"name:param"}} {% endcomment %}
+                                <select class="form-control selectpicker" id="kt_select2_2" data-live-search="true" name="param">
+                                    
+                                </select>
+                            </div>
+                            <div class="col-lg-4">
+                                <label>Phường/Xã</label>
+                                {% comment %} <input class="form-control" id="inputNgaySinhModal" type="text" /> {% endcomment %}
+                                {% comment %} {{ form.xa|attr:"class:form-control"|attr:"class:selectpicker"|attr:"id:kt_select2_3"|attr:"data-live-search:true"|attr:"name:param"}} {% endcomment %}
+                                <select class="form-control selectpicker" id="kt_select2_3" data-live-search="true" name="param">
+                                    
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label>Địa chỉ <span class="text-danger">*</span></label>
                             {{ form.dia_chi|attr:"class:form-control"|attr:"name:dia_chi"|attr:"rows:3"|attr:"placeholder:Nhập Mã Số Bảo Hiểm Y Tế Của Bệnh Nhân"}}
                         </div>
+
                         <div class="row">
                             <div class="col-lg-12 text-center">
                                 <button data-id="{{ id_benh_nhan }}" type="button" class="btn btn-primary font-weight-bold mr-2" id="submitData" name="submitButton">Xác nhận</button>
@@ -122,11 +153,101 @@
             "placeholder": "ng/th/nam ",
             autoUnmask: false
         });
-    }
-    else{
+    } else {
         ngay_sinh
     }
+    
     $('#inputNgaySinhModal').val(ngay_sinh)
+
+    // initialize data for user's address
+    $('#kt_select2_1').val(`{{ benh_nhan.tinh.id }}`)
+
+    $.when($.ajax({
+        url        : HOST_URL + '/api/province/',
+        data       : {'id': `{{ benh_nhan.tinh.id }}`},
+        success: function(response){
+            console.log(response.data)
+            $('#kt_select2_2').empty()
+            var selectHtml = "";
+            selectHtml += `<option value="" selected disabled>Chọn Quận/Huyện</option>`
+            $.each(response.data, function(index, item) {
+                selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
+            });
+            $('#kt_select2_2').html(selectHtml)
+            $('#kt_select2_2').val(`{{ benh_nhan.huyen.id }}`)
+            $('#kt_select2_2').selectpicker('refresh')
+        },
+        error: function(response){
+            
+        }
+    })).then(function() {
+        $.ajax({
+            url        : HOST_URL + '/api/district/',
+            data       : {'id': `{{ benh_nhan.huyen.id }}`},
+            success: function(response){
+                console.log(response.data)
+                $('#kt_select2_3').empty()
+                var selectHtml = "";
+                selectHtml += `<option value="" selected disabled>Chọn Phường/Xã</option>`
+                $.each(response.data, function(index, item) {
+                    selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
+                });
+                $('#kt_select2_3').html(selectHtml)
+                $('#kt_select2_3').val(`{{ benh_nhan.xa.id }}`)
+                $('#kt_select2_3').selectpicker('refresh')
+            },
+            error: function(response){
+                
+            }
+        })
+    })
+
+    $('#kt_select2_1').on('changed.bs.select', function(e, clickedIndex, newValue, oldValue) {
+        console.log(this.value, clickedIndex, newValue, oldValue)
+        var id_province = this.value
+        $.ajax({
+            url        : HOST_URL + '/api/province/',
+            data       : {'id': id_province},
+            success: function(response){
+                console.log(response.data)
+                $('#kt_select2_2').empty()
+                var selectHtml = "";
+                selectHtml += `<option value="" selected disabled>Chọn Quận/Huyện</option>`
+                $.each(response.data, function(index, item) {
+                    selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
+                });
+                $('#kt_select2_2').html(selectHtml)
+                $('#kt_select2_2').selectpicker('refresh')
+            },
+            error: function(response){
+                
+            }
+        })
+    })
+
+    $('#kt_select2_2').on('changed.bs.select', function(e, clickedIndex, newValue, oldValue) {
+        console.log(this.value, clickedIndex, newValue, oldValue)
+        var id_district = this.value
+        $.ajax({
+            url        : HOST_URL + '/api/district/',
+            data       : {'id': id_district},
+            success: function(response){
+                console.log(response.data)
+                $('#kt_select2_3').empty()
+                var selectHtml = "";
+                selectHtml += `<option value="" selected disabled>Chọn Phường/Xã</option>`
+                $.each(response.data, function(index, item) {
+                    selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
+                });
+                $('#kt_select2_3').html(selectHtml)
+                $('#kt_select2_3').selectpicker('refresh')
+            },
+            error: function(response){
+                
+            }
+        })
+    })
+
 
     $(document).on('click', '#submitData', function(){
         var gioi_tinh = $('[name=gioi_tinh]').val()
@@ -144,6 +265,9 @@
 
         formData.append('gioi_tinh', gioi_tinh)
         formData.append('id_benh_nhan', id_benh_nhan)
+        formData.append('tinh', $('#kt_select2_1').val())
+        formData.append('huyen', $('#kt_select2_2').val())
+        formData.append('xa', $('#kt_select2_3').val())
         formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
         $.ajax({

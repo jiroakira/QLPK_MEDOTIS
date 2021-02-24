@@ -1,5 +1,7 @@
 
 from typing import Generic
+
+from django.http import response
 from finance.models import (
     HoaDonChuoiKham, 
     HoaDonThuoc, 
@@ -16,23 +18,23 @@ from rest_framework import views
 from rest_framework.views import APIView
 from clinic.models import (
     BaiDang, 
-    DichVuKham, 
+    DichVuKham, District, 
     FileKetQua, 
     KetQuaTongQuat, 
     LichHenKham, MauPhieu, 
     PhanKhoaKham, 
     PhongChucNang, 
-    PhongKham, 
+    PhongKham, Province, 
     TrangThaiChuoiKham, 
     TrangThaiKhoaKham, 
     TrangThaiLichHen, 
     ChuoiKham, 
     KetQuaChuyenKhoa, 
-    BacSi
+    BacSi, Ward
 )
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple)
+from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -2437,3 +2439,86 @@ class XemDonThuoc(APIView):
                 'data': data
             }
             return Response(response)
+    
+class FilterDistrict(APIView):
+    def get(self, request, format=None):
+        id_province = self.request.query_params.get('id')
+        province = Province.objects.filter(id=id_province).first()
+        district = District.objects.filter(province=province)
+        serializer = DistrictSerializer(district, many=True, context={'request': request})
+        data = serializer.data
+        response = {
+            'data': data
+        }
+        return Response(response)
+
+class FilterWard(APIView):
+    def get(self, request, format=None):
+        id_district = self.request.query_params.get('id')
+        district = District.objects.filter(id=id_district).first()
+        ward = Ward.objects.filter(district=district)
+        serializer = WardSerializer(ward, many=True, context={'request': request})
+        data = serializer.data
+        response = {
+            'data': data
+        }
+        return Response(response)
+
+class KetQuaXetNghiemMobile(APIView):
+    def get(self, request, format=None):
+        id = self.request.query_params.get('id')
+        ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.filter(id=id).first()
+        ket_qua_chi_so = ket_qua_chuyen_khoa.ket_qua_xet_nghiem.all()
+        serializer = KetQuaXetNghiemSerializer(ket_qua_chi_so, many=True, context={'request': request})
+        response = {
+            'data': serializer.data
+        }
+        return Response(response)
+
+class PhieuKetQuaMobile(APIView):
+    def get(self, request, format=None):
+        id = self.request.query_params.get('id')
+        ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.filter(id=id).first()
+        html_ket_qua = ket_qua_chuyen_khoa.html_ket_qua.all().first()
+        serializer = PhieuKetQuaSerializer(html_ket_qua, context={'request':request})
+        response = {
+            'data': serializer.data
+        }
+        return Response(response)
+
+class GetFuncroomInfo(APIView):
+    def get(self, request, format=None):
+        id_dich_vu = self.request.query_params.get('id')
+        dich_vu = DichVuKham.objects.filter(id=id_dich_vu).first()
+        if dich_vu is not None:
+            phong_chuc_nang = dich_vu.phong_chuc_nang
+            id_phong_chuc_nang = phong_chuc_nang.id
+
+            now = timezone.localtime(timezone.now())
+            tomorrow = now + timedelta(1)
+            today_start = now.replace(hour=0, minute=0, second=0)
+            today_end = tomorrow.replace(hour=0, minute=0, second=0)
+            thong_tin = PhanKhoaKham.objects.filter(thoi_gian_tao__lt=today_end, thoi_gian_tao__gte=today_start).values('id', 'dich_vu_kham__ten_dvkt', 'benh_nhan__ho_ten', 'trang_thai__trang_thai_khoa_kham').annotate(count=Count('id', filter=Q(dich_vu_kham__phong_chuc_nang__id=id_phong_chuc_nang)))
+            
+            count_pending = 0
+            count_processing = 0
+            count_finished = 0
+            for i in thong_tin:
+                if i['count'] != 0 and i['trang_thai__trang_thai_khoa_kham'] == "Đang Thực Hiện":
+                    count_processing += 1
+                elif i['count'] != 0 and i['trang_thai__trang_thai_khoa_kham'] == "Hoàn Thành":
+                    count_finished += 1
+                elif i['count'] != 0 and i['trang_thai__trang_thai_khoa_kham'] == None:
+                    count_pending += 1
+            response = {
+                'dang_cho': count_pending,
+                'dang_thuc_hien': count_processing,
+                'hoan_thanh': count_finished,
+            }
+        else:
+            response = {
+                'dang_cho': "Không có thông tin",
+                'dang_thuc_hien': "Không có thông tin",
+                'hoan_thanh': "Không có thông tin",
+            }
+        return Response(response)

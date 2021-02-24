@@ -65,7 +65,7 @@ class UserManager(BaseUserManager):
             gioi_tinh      = gioi_tinh,
             dan_toc        = dan_toc,
             ngay_sinh      = ngay_sinh,
-            ma_so_bao_hiem = ma_so_bao_hiem
+            ma_so_bao_hiem = ma_so_bao_hiem,
         )
 
         user.set_password(password)
@@ -135,6 +135,9 @@ class User(AbstractBaseUser):
     can_nang = models.PositiveIntegerField(null=True, blank=True)
 
     anh_dai_dien = models.FileField(max_length=1000, upload_to=file_url, null=True, blank=True)
+    tinh = models.ForeignKey('Province', on_delete=models.SET_NULL, null=True, blank=True)
+    huyen = models.ForeignKey('District', on_delete=models.SET_NULL, null=True, blank=True)
+    xa = models.ForeignKey('Ward', on_delete=models.SET_NULL, null=True, blank=True)
     dia_chi = models.TextField(max_length=1000, null=True, blank=True)
     dan_toc = models.CharField(max_length=40, null=True, blank=True)
     chuc_nang = models.CharField(choices=ROLE, max_length = 1, default='1')
@@ -210,6 +213,30 @@ class User(AbstractBaseUser):
         now = datetime.date.today()
         days = now - self.ngay_sinh
         return int((days.days / 365))
+
+    def get_dia_chi(self):
+        if self.tinh is not None:
+            tinh = self.tinh.name
+        else:
+            tinh = ""
+        if self.huyen is not None:
+            huyen = self.huyen.name
+        else:
+            huyen = ""
+        if self.xa is not None:
+            xa = self.xa.name
+        else:
+            xa = ""
+        return f'{self.dia_chi}, {xa}, {huyen}, {tinh}'
+
+    def get_gioi_tinh(self):
+        if self.gioi_tinh == '1': 
+            return "Nam"
+        elif self.gioi_tinh == '2':
+            return "Nữ"
+        else: 
+            return "Không xác định"
+
         
 class BacSi(models.Model):
     Type = (
@@ -726,6 +753,12 @@ class KetQuaChuyenKhoa(models.Model):
             return "Không có kết luận"
         return self.ket_luan
 
+    def get_ten_dich_vu(self):
+        if self.phan_khoa_kham is not None:
+            return self.phan_khoa_kham.dich_vu_kham.ten_dvkt
+        else:
+            return "Không xác định"
+
 key_store = FileSystemStorage()
 
 class FileKetQua(models.Model):
@@ -889,6 +922,11 @@ class KetQuaXetNghiem(models.Model):
         verbose_name = "Kết Quả Xét Nghiệm"
         verbose_name_plural = "Kết Quả Xét Nghiệm"
 
+    def get_ten_dvkt(self):
+        return self.phan_khoa_kham.dich_vu_kham.ten_dvkt
+
+    
+
 class HtmlKetQua(models.Model):
     phan_khoa_kham = models.ForeignKey(PhanKhoaKham, on_delete=models.CASCADE, null=True, blank=True)
     ket_qua_chuyen_khoa = models.ForeignKey(KetQuaChuyenKhoa, on_delete=models.CASCADE, null=True, blank=True, related_name="html_ket_qua")
@@ -1027,7 +1065,6 @@ class DuongDungThuoc(models.Model):
         verbose_name_plural = "Đường Dùng Thuốc"
 
 class MauPhieu(models.Model):
-
     dich_vu = models.ForeignKey(DichVuKham, on_delete=models.SET_NULL, null=True, blank=True, related_name="mau_phieu")
     ten_mau = models.CharField(max_length=255, null=True, blank=True)
     noi_dung = models.TextField()
@@ -1047,3 +1084,29 @@ class MauPhieu(models.Model):
             self.thoi_gian_tao = timezone.now()
         self.thoi_gian_cap_nhat = timezone.now()
         return super(MauPhieu, self).save(*args, **kwargs)
+
+class Province(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    type = models.CharField(max_length=255, null=True, blank=True)
+
+class District(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
+    province = models.ForeignKey(Province, on_delete=models.CASCADE, related_name="district")
+    name = models.CharField(max_length=255, null=True, blank=True)
+    type = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Ward(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
+    district = models.ForeignKey(District, on_delete=models.CASCADE, related_name="ward")
+    name = models.CharField(max_length=255, null=True, blank=True)  
+    type = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    
+
