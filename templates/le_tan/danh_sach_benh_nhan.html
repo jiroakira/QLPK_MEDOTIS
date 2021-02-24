@@ -501,6 +501,20 @@ var KTDatatableRemoteAjaxDemo = function() {
                         </a>
                     `;
                 },
+            }, {
+                field: 'xoa_benh_nhan',
+                title: 'Xóa',
+                sortable: false,
+                width: 60,
+                textAlign: 'center',
+                autoHide: false,
+                template: function(row) {
+                    return `
+                        <a href="javascript:;" class="btn-xoa-benh-nhan btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ho_ten}" title="Xóa bệnh nhân ${row.ho_ten}">
+                            <i class="la la-trash-alt icon-lg text-danger"></i>
+                        </a>
+                    `;
+                },
             }],
 
         });
@@ -681,12 +695,67 @@ var KTDatatableRemoteAjaxDemo = function() {
         })
     }
 
+    var deleteBenhNhan = function() {
+        $('#kt_datatable').on('click', '.btn-xoa-benh-nhan', function() {
+            var id = $(this).attr('data-id')
+            console.log(id)
+            var ten_benh_nhan = $(this).attr('data-ten')
+ 
+            Swal.fire({
+                title: "Xóa Bệnh Nhân " +ten_benh_nhan+ " khỏi danh sách",
+                text: "Bạn sẽ không thể hoàn tác!",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: "Hủy",
+                confirmButtonText: "Xác Nhận!"
+            }).then(function(result) {
+                if (result.value) {
+                    console.log(id)
+                    var formData = new FormData()
+                    formData.append('id', id)
+                    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+ 
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'xoa_benh_nhan' %}",
+                        data: formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function(response){
+                            if( response.status == 200 ){
+                                Swal.fire(
+                                    'Đã Xóa!',
+                                    'Bệnh Nhân Đã Được Xóa.',
+                                    'success'
+                                )
+                                $('#kt_datatable').KTDatatable('reload');
+                            } else if (response.status == 400) {
+                                toastr.warning(response.message, "Lỗi")
+                            }
+                        },
+                        error: function(response){
+                        }
+                    })
+                }else if (result.dismiss === 'cancel') {
+					Swal.fire(
+						'Đã Hủy',
+						'Bệnh Nhân Vẫn An Toàn Nhé! :)',
+						'error'
+					)
+				}
+            });
+ 
+        });
+    }
+
     return {
         init: function() {
             demo();
             _initRegister();
             _registerUser();
             themLichHenKham();
+            deleteBenhNhan();
         },
     };
 }();
