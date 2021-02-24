@@ -35,7 +35,7 @@
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
                         <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted">Bệnh Nhân: {{ lich_hen.benh_nhan.ho_ten }}</a>
+                            <a href="javascript:;" class="text-muted">Bệnh Nhân: {{ benh_nhan.ho_ten }}</a>
                         </li>
                         <li class="breadcrumb-item">
                             <a href="javascript:;" class="text-muted">Phân khoa khám</a>
@@ -139,10 +139,171 @@
                     </table>
                     <!--end: Datatable-->
                 </div>
+
+                <div id="divPrintPhanKhoa" style="display: none;">
+                    <table id='table_phan_khoa' cellspacing="0" style="border-collapse:collapse; width:802px">
+                        <tbody>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap; width:202px"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">SỞ Y TẾ H&Agrave; Đ&Ocirc;NG</span></span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:20px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:86px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:81px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:64px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:122px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:122px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:48px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:43px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:70px">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap; width:64px">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">PH&Ograve;NG KH&Aacute;M ĐA KHOA MEDOTIS</span></span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td colspan="3" style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; text-align:right; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Khoa kh&aacute;m bệnh</span></span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td colspan="3" style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:15px; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="11" style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:34px; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><strong><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Danh S&aacute;ch Ph&acirc;n Khoa</span></span></strong></span></td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Họ v&agrave; t&ecirc;n:</span></span></span></td>
+                                <td colspan="5" style="border-color:initial; border-style:none; border-width:initial; vertical-align:bottom; white-space:nowrap"><strong><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">{{ benh_nhan.ho_ten }}</span></span></strong></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Tuổi:</span></span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">{{benh_nhan.tuoi}}</span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Giới t&iacute;nh:</span></span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">{{benh_nhan.get_gioi_tinh}}</span></span></td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Địa chỉ:</span></span></span></td>
+                                <td colspan="5" style="border-color:initial; border-style:none; border-width:initial; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">{{benh_nhan.get_dia_chi}}</span></span></td>
+                                <td colspan="3" style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">BS chỉ định:</span></span></span></td>
+                                <td colspan="5" style="border-color:initial; border-style:none; border-width:initial; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">{{ request.user.ho_ten }}</span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap"><span style="font-size:19px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Danh S&aacute;ch:</span></span></span></td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:14px; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" rowspan="1" style="border-bottom:1px solid black; border-left:1px solid black; border-right:.7px solid black; border-top:1px solid black; height:46px; text-align:center; vertical-align:middle; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px"><strong>T&ecirc;n Dịch Vụ</strong></span></span></td>
+                                <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:middle; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px"><strong>Ph&ograve;ng Chức Năng</strong></span></span></td>
+                                <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:middle; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman, serif"><span style="font-size:16px"><strong>Đang Chờ</strong></span></span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" rowspan="1" style="border-bottom:1px solid black; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black; height:28px; text-align:left; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">{ten_dich_vu}</span></span></td>
+                                <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">{phong_chuc_nang}</span></span></span></td>
+                                <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">{dang_cho}</span></span></span></td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:21px; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:27px; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td colspan="5" style="border-bottom:none; border-left:none; border-right:none; border-top:none; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><strong><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">Ng&agrave;y: {% now "SHORT_DATETIME_FORMAT" %}</span></span></strong></span></td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; height:26px; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td style="border-bottom:none; border-left:none; border-right:none; border-top:none; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                                <td colspan="5" style="border-bottom:none; border-left:none; border-right:none; border-top:none; text-align:center; vertical-align:bottom; white-space:nowrap">&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="card-footer">
                     <div class="card-toolbar text-right">
                         <!--begin::Button-->
-                        <a href="javascript:;" class="btn btn-light-primary font-weight-bolder" onclick='printDiv();' >
+                        <a href="javascript:;" id='printPhanKhoa' class="btn btn-light-primary font-weight-bolder" >
                             <i class="la la-plus"></i>
                             In DS Phân Khoa
                         </a>
@@ -183,7 +344,7 @@
 function printDiv() 
 {
 
-  var divToPrint=document.getElementById('tablePhanKhoa');
+  var divToPrint=document.getElementById('divPrintPhanKhoa');
 
   var newWin=window.open('','Print-Window');
 
@@ -199,6 +360,9 @@ function printDiv()
 
 var KTDatatableRecordSelectionDemo = function() {
     // Private functions
+
+    var phanKhoaHtml = ""
+    var so_luong_dang_cho = ""
 
     var options = {
         // datasource definition
@@ -372,41 +536,6 @@ var KTDatatableRecordSelectionDemo = function() {
                 }
             });
 
-        // datatable.on('mouseenter', 'tbody tr', function(){
-        //     var id = $(this).find('.tooltip-ajax').attr('data-id')
-        //     var text = phong_chuc_nang_details(id)
-        //     $(this).find('[data-toggle="tooltip"]').tooltip({
-        //         delay: 300,
-        //         title: text,
-        //         html: true,
-        //     });
-        // })
-
-        // function phong_chuc_nang_details(id){
-        //     var id_dich_vu = id;
-        //     var tooltipText = "";
-        //     $.ajax({
-        //         url: '{% url 'thong_tin_phong_chuc_nang' %}',
-        //         type: 'get',
-        //         async: false,
-        //         dataType: 'json',
-        //         data: {
-        //             'id_dich_vu':id_dich_vu
-        //         },
-        //         success: function(response){
-        //             if (response.status == 200){
-        //                 tooltipText = response.html
-        //             } else if (response.status == 400) {
-        //                 tooltipText = response.message
-        //             }
-        //         },
-        //         error: function(response){
-        //             tooltipText = "Khong Co Thong Tin" 
-        //         }
-        //     });
-        //     return tooltipText;
-        // }
-
         var lstData = [];
         var lstCheckbox = {};
         var lstQuantity = {};
@@ -421,20 +550,78 @@ var KTDatatableRecordSelectionDemo = function() {
             postData(user_id, id_lich_hen);
         })
 
+        $('#printPhanKhoa').on('click', function() {
+            $('#table_phan_khoa tbody tr').each(function() {
+                if ($(this).find('td').eq(0).text() == '{ten_dich_vu}'){
+                    $(this).replaceWith(phanKhoaHtml) 
+                }
+            })
+            
+            printDiv()
+        })
+
+        var get_funcroom_info = function(data) {
+            $.ajax({
+                url: HOST_URL + "/api/funcroom_info/",
+                type: 'GET',  // http method
+                data: {'id': data.obj.id},
+                dataType: 'json',
+                success: function (response) {
+
+                    phanKhoaHtml += `
+                        <tr class="${data.obj.id}" >
+                            <td colspan="4" rowspan="1" style="border-bottom:1px solid black; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black; height:28px; text-align:left; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">${data.obj.ten_dvkt}</span></span></td>
+                            <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${data.obj.phong_chuc_nang.ten_phong_chuc_nang}</span></span></span></td>
+                            <td class="so-luong-dang-cho" colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${response.dang_cho}</span></span></span></td>
+                        </tr>
+                       
+                    `
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log('Error' + errorMessage);
+                }
+            });
+        }
+
+        var replacePhanKhoaHtml = function(data) {
+            $.ajax({
+                url: HOST_URL + "/api/funcroom_info/",
+                type: 'GET',  // http method
+                data: {'id': data.obj.id},
+                dataType: 'json',
+                success: function (response) {
+                    phanKhoaHtml = phanKhoaHtml.replace(`
+                        <tr class="${data.obj.id}" >
+                            <td colspan="4" rowspan="1" style="border-bottom:1px solid black; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black; height:28px; text-align:left; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman,serif"><span style="font-size:16px">${data.obj.ten_dvkt}</span></span></td>
+                            <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${data.obj.phong_chuc_nang.ten_phong_chuc_nang}</span></span></span></td>
+                            <td class="so-luong-dang-cho" colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${response.dang_cho}</span></span></span></td>
+                        </tr>
+                       
+                    `, "")
+                },
+                error: function (jqXhr, textStatus, errorMessage) {
+                    console.log('Error' + errorMessage);
+                }
+            });
+        }
+
+
     
         datatable.on('click', 'tbody input[type="checkbox"]', function () {
             $(this).toggleClass('selected');
             // console.log($(this).val())
             var objList = [];
+            
             if($(this).is(":checked")){
                 var trVals = $(this).closest('tr').data();
                 
                 lstData.push(trVals)
-                // $('#kt_datatable_3 tbody').empty();
 
                 console.log(lstData)
+                get_funcroom_info(trVals)
 
                 $(trVals).each(function () {
+
                     $('#kt_datatable_3 tbody').append(`
                         <tr class="${trVals.obj.id}" data-id = "${trVals.obj.id}" name="true" data-checked="True" data-unchecked="False">
                             <td>
@@ -455,12 +642,23 @@ var KTDatatableRecordSelectionDemo = function() {
                 
                         </tr>
                     `);
+
+                    
                 })
 
             } else {
                 var trVals = $(this).closest('tr').data();
                 $(`.${trVals.obj.id}`).remove();
                 lstData = lstData.filter((item) => item!==trVals)
+                replacePhanKhoaHtml(trVals)
+                {% comment %} phanKhoaHtml = phanKhoaHtml.replace(`
+                        <tr class="${trVals.obj.id}">
+                            <td colspan="4" rowspan="1" style="border-bottom:1px solid black; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black; height:28px; text-align:left; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman, serif"><span style="font-size:16px">${trVals.obj.ten_dvkt}</span></span></td>
+                            <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${trVals.obj.phong_chuc_nang.ten_phong_chuc_nang}</span></span></span></td>
+                            <td class="so-luong-dang-cho" colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${so_luong_dang_cho}</span></span></span></td>
+                        </tr>
+                        `, "") {% endcomment %}
+
             }
         })
 
@@ -597,7 +795,6 @@ var KTDatatableRecordSelectionDemo = function() {
     return {
         // public functions
         init: function() {
-          
             serverSelectorDemo();
         },
     };

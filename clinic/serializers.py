@@ -6,13 +6,13 @@ from django.http.request import validate_host
 from rest_framework import fields, serializers
 from django.contrib.auth import get_user_model
 from .models import (
-    BaiDang, 
-    DichVuKham, 
+    BaiDang, ChiSoXetNghiem, ChiTietChiSoXetNghiem, 
+    DichVuKham, District, 
     FileKetQua, 
     FileKetQuaChuyenKhoa, 
-    FileKetQuaTongQuat, 
+    FileKetQuaTongQuat, HtmlKetQua, 
     KetQuaChuyenKhoa, 
-    KetQuaTongQuat, 
+    KetQuaTongQuat, KetQuaXetNghiem, 
     LichHenKham, MauPhieu, 
     PhanKhoaKham, 
     PhongChucNang, 
@@ -23,7 +23,7 @@ from .models import (
     TrangThaiLichHen, 
     ChuoiKham, 
     BacSi,
-    TinhTrangPhongKham, send_func_room_info,
+    TinhTrangPhongKham, Ward, send_func_room_info,
 )
 from medicine.models import DonThuoc, KeDonThuoc, NhomVatTu, VatTu
 
@@ -255,10 +255,12 @@ class PhongChucNangSerializerSimple(serializers.ModelSerializer):
 
 class KetQuaChuyenKhoaSerializer(serializers.ModelSerializer):
     file_chuyen_khoa = FileKetQuaChuyenKhoaSerializer(many=True, source='file_ket_qua_chuyen_khoa')
+    ten_dich_vu = serializers.CharField(source="get_ten_dich_vu")
     class Meta:
         model = KetQuaChuyenKhoa
         fields = (
-            'id', 
+            'id',
+            'ten_dich_vu',
             'ma_ket_qua', 
             'mo_ta', 
             'ket_luan', 
@@ -755,4 +757,45 @@ class DanhSachThuocSerializerSimple(serializers.ModelSerializer):
     thuoc = ThuocSerializerSimple()
     class Meta:
         model = KeDonThuoc
+        fields = '__all__'
+
+class DistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = '__all__'
+
+class WardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ward
+        fields = '__all__'
+
+class ChiTietChiSoXetNghiemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChiTietChiSoXetNghiem
+        fields = '__all__'
+
+class ChiSoXetNghiemSerializer(serializers.ModelSerializer):
+    chi_tiet = ChiTietChiSoXetNghiemSerializer()
+    class Meta:
+        model = ChiSoXetNghiem
+        fields = '__all__'
+
+class KetQuaXetNghiemSerializer(serializers.ModelSerializer):
+    # chi_so_xet_nghiem = ChiSoXetNghiemSerializer()
+    dich_vu = serializers.CharField(source='get_ten_dvkt')
+    chi_so_xet_nghiem = ChiSoXetNghiemSerializer()
+    class Meta:
+        model = KetQuaXetNghiem
+        fields = (
+            'dich_vu',
+            'chi_so_xet_nghiem',
+            'ket_qua_xet_nghiem',
+            'danh_gia_chi_so',
+            'danh_gia_ghi_chu',
+
+        )
+
+class PhieuKetQuaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HtmlKetQua
         fields = '__all__'

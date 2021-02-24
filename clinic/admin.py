@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import (
     BaiDang, ChiSoXetNghiem, ChiTietChiSoXetNghiem, 
     ChuoiKham, DanhMucBenh, DanhMucChuongBenh, DanhMucKhoa, DanhMucLoaiBenh, DanhMucNhomBenh, 
-    DichVuKham, DoTuoiXetNghiem, DoiTuongXetNghiem, 
+    DichVuKham, District, DoTuoiXetNghiem, DoiTuongXetNghiem, 
     FileKetQua, 
     FileKetQuaChuyenKhoa, 
     FileKetQuaTongQuat, FilePhongKham, GoiThau, HtmlKetQua,  
@@ -12,12 +12,12 @@ from .models import (
     LichHenKham, MauPhieu, NhomChiPhi, NhomTaiNan,
     PhanKhoaKham, 
     PhongChucNang, 
-    PhongKham, 
+    PhongKham, Province, 
     TrangThaiChuoiKham, 
     TrangThaiKhoaKham, 
     TrangThaiLichHen, 
     User, 
-    BacSi
+    BacSi, Ward
 )
 
 class DichVuKhamAdmin(admin.ModelAdmin):
@@ -57,4 +57,6 @@ admin.site.register(DanhMucKhoa)
 admin.site.register(GoiThau)
 admin.site.register(MauPhieu)
 admin.site.register(HtmlKetQua)
-
+admin.site.register(Province)
+admin.site.register(District)
+admin.site.register(Ward)

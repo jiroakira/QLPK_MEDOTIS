@@ -38,7 +38,7 @@ from clinic.models import (
     BacSi, 
     BaiDang, ChiSoXetNghiem, ChiTietChiSoXetNghiem, 
     ChuoiKham, DanhMucBenh, DanhMucChuongBenh, DanhMucLoaiBenh, DanhMucNhomBenh, 
-    DichVuKham, DoTuoiXetNghiem, DoiTuongXetNghiem, 
+    DichVuKham, District, DoTuoiXetNghiem, DoiTuongXetNghiem, 
     FileKetQua, 
     FileKetQuaChuyenKhoa, 
     FileKetQuaTongQuat, FilePhongKham, HtmlKetQua, 
@@ -49,11 +49,11 @@ from clinic.models import (
     LichSuTrangThaiKhoaKham, MauPhieu, NhomChiPhi, 
     PhanKhoaKham, 
     PhongChucNang, 
-    PhongKham, 
+    PhongKham, Province, 
     TrangThaiChuoiKham, 
     TrangThaiKhoaKham, 
     TrangThaiLichHen, 
-    User
+    User, Ward
 )
 from django.shortcuts import render
 import json
@@ -189,10 +189,12 @@ def danh_sach_benh_nhan(request):
     danh_sach_benh_nhan = User.objects.filter(chuc_nang = 1)
     trang_thai = TrangThaiLichHen.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
+    tinh = Province.objects.all()
     data = {
         'danh_sach_benh_nhan': danh_sach_benh_nhan,
         'trang_thai': trang_thai,
         'phong_chuc_nang' : phong_chuc_nang,
+        'province': tinh
     }
     return render(request, 'le_tan/danh_sach_benh_nhan.html', context=data)
 
@@ -202,10 +204,13 @@ def update_benh_nhan(request, **kwargs):
     instance = get_object_or_404(User, id=id_benh_nhan)
     form = UserForm(request.POST or None, instance=instance)
     phong_chuc_nang = PhongChucNang.objects.all()
+    provinces = Province.objects.all()
     data = {
+        'benh_nhan': instance,
         'form': form,
         'id_benh_nhan': id_benh_nhan,
         'phong_chuc_nang': phong_chuc_nang,
+        'province': provinces
     }
     return render(request, 'le_tan/update_benh_nhan.html', context=data)
 
@@ -222,6 +227,13 @@ def cap_nhat_thong_tin_benh_nhan(request):
         dan_toc        = request.POST.get('dan_toc')
         ma_so_bao_hiem = request.POST.get('ma_so_bao_hiem')
         dia_chi        = request.POST.get('dia_chi')
+        tinh_id = request.POST.get('tinh')
+        huyen_id = request.POST.get('huyen')
+        xa_id = request.POST.get('xa')
+
+        tinh = Province.objects.filter(id=tinh_id).first()
+        huyen = District.objects.filter(id=huyen_id).first()
+        xa = Ward.objects.filter(id=xa_id).first()
 
         ngay_sinh = datetime.strptime(ngay_sinh, format_3)
         ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
@@ -236,6 +248,9 @@ def cap_nhat_thong_tin_benh_nhan(request):
         benh_nhan.gioi_tinh      = gioi_tinh
         benh_nhan.dan_toc        = dan_toc
         benh_nhan.ma_so_bao_hiem = ma_so_bao_hiem
+        benh_nhan.tinh = tinh
+        benh_nhan.huyen = huyen
+        benh_nhan.xa = xa
         benh_nhan.save()
 
         response = {
@@ -312,11 +327,18 @@ def create_user(request):
             gioi_tinh      = request.POST.get("gioi_tinh", None)
             dan_toc        = request.POST.get("dan_toc", None)
             ma_so_bao_hiem = request.POST.get("ma_so_bao_hiem", None)
+            id_tinh = request.POST.get("tinh", None)
+            id_huyen = request.POST.get("huyen", None)
+            id_xa = request.POST.get("xa", None)
 
             ngay_sinh = datetime.strptime(ngay_sinh, format_3)
             ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
             
-            if len(ho_ten) == 0:
+            tinh = Province.objects.filter(id=id_tinh).first()
+            huyen = District.objects.filter(id=id_huyen).first()
+            xa = Ward.objects.filter(id=id_xa).first()
+
+            if ho_ten == '':
                 return HttpResponse(json.dumps({'message': "Họ Tên Không Được Trống", 'status': '400'}), content_type='application/json; charset=utf-8')
 
             if User.objects.filter(so_dien_thoai=so_dien_thoai).exists():
@@ -336,6 +358,9 @@ def create_user(request):
                 dan_toc        = dan_toc,    
                 ma_so_bao_hiem = ma_so_bao_hiem,
             )
+            user.tinh = tinh
+            user.huyen = huyen
+            user.xa = xa
             user.save()
 
             response = {
@@ -352,7 +377,7 @@ def create_user(request):
             )
     else:
         response = {
-            'status': 404,
+            'status': 400,
             'message': "Bạn Không Có Quyền Thêm Người Dùng"
         }
         return HttpResponse(
@@ -592,12 +617,14 @@ def phong_chuyen_khoa(request, *args, **kwargs):
 def phan_khoa_kham(request, **kwargs):
     id_lich_hen = kwargs.get('id_lich_hen', None)
     lich_hen    = LichHenKham.objects.get(id = id_lich_hen)
+    benh_nhan = lich_hen.benh_nhan
     phong_chuc_nang = PhongChucNang.objects.all()
 
     data = {
         'id_lich_hen': id_lich_hen,
         'lich_hen'   : lich_hen,
         'phong_chuc_nang' : phong_chuc_nang,
+        'benh_nhan': benh_nhan,
 
     }
     return render(request, 'bac_si_lam_sang/phan_khoa_kham.html', context=data)
@@ -2463,7 +2490,7 @@ def upload_ket_qua_lam_sang(request):
             HttpResponse({'status': 404, 'message': 'Kết Luận Không Được Để Trống'})
 
         chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
-        ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham).first()
+        ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham)[0]
         ket_qua_tong_quat.ma_ket_qua = ma_ket_qua
         ket_qua_tong_quat.mo_ta      = mo_ta
         ket_qua_tong_quat.ket_luan   = ket_luan
@@ -2475,6 +2502,7 @@ def upload_ket_qua_lam_sang(request):
 
         # return 
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
 
 def upload_ket_qua_chuyen_khoa(request):
     if request.method == "POST":
@@ -3248,6 +3276,16 @@ def chi_tiet_phieu_ket_qua(request, **kwargs):
         'noi_dung': noi_dung,
     }
     return render(request, 'phieu_ket_qua.html', context=context)
+
+def phieu_ket_qua(request, **kwargs):
+    id_ket_qua_chuyen_khoa = kwargs.get('id')
+    ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.filter(id=id_ket_qua_chuyen_khoa).first()
+    html_ket_qua = ket_qua_chuyen_khoa.html_ket_qua.all().first()
+    noi_dung = html_ket_qua.noi_dung
+    context = {
+        'noi_dung': noi_dung,
+    }
+    return render(request, 'phieu_ket_qua_mobile.html', context=context)
 
 # UPDATE BY LONG
 def xoa_bac_si(request):
