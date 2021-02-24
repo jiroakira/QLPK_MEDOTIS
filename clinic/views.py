@@ -214,6 +214,29 @@ def update_benh_nhan(request, **kwargs):
     }
     return render(request, 'le_tan/update_benh_nhan.html', context=data)
 
+def xoa_benh_nhan(request, **kwargs):
+    if request.method == 'POST':
+        if request.user.is_authenticated and request.user.chuc_nang == '2' or request.user.chuc_nang == '7':
+            id_benh_nhan = request.POST.get('id')
+            user = get_object_or_404(User, id=id_benh_nhan)
+            user.delete()
+            response = {
+                'status': 200,
+                'message': "Xóa Bệnh Nhân Thành Công"
+            }
+        else:
+            response = {
+                'status': 400,
+                'message': "Bạn Không Có Quyền Xóa Bệnh Nhân"
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+    else:
+        response = {
+            'status': 400,
+            'message': "Không thể xóa bệnh nhân "
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
 @login_required(login_url='/dang_nhap/')
 def cap_nhat_thong_tin_benh_nhan(request):
     if request.method == "POST":
