@@ -361,6 +361,12 @@ class DichVuKham(models.Model):
         else:
             return False
     
+    def get_don_gia(self):
+        don_gia = "{:,}".format(int(self.don_gia))
+        return don_gia
+
+    gia_dich_vu = property(get_don_gia)
+    
 class GiaDichVu(models.Model):
     """ Bảng giá sẽ lưu trữ tất cả giá của dịch vụ khám và cả thuốc """
     id_dich_vu_kham = models.OneToOneField(DichVuKham, null=True, blank=True, on_delete=models.PROTECT, related_name="gia_dich_vu_kham")
@@ -666,6 +672,7 @@ class PhanKhoaKham(models.Model):
 
     def get_ma_pttt(self):
         return 1
+
     
 
 @receiver(post_save, sender=PhanKhoaKham)

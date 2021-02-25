@@ -25,6 +25,10 @@ class HoaDonThuoc(models.Model):
         self.thoi_gian_cap_nhat = timezone.now()
         return super(HoaDonThuoc, self).save(*args, **kwargs)
 
+    def get_don_gia(self):
+        don_gia = "{:,}".format(int(self.tong_tien))
+        return don_gia
+
 class HoaDonChuoiKham(models.Model):
     """ 
     * Bảng hóa đơn khám sẽ lưu trữ lại hóa đơn sau khi sử dụng các dịch vụ khám của tất cả người dùng 
@@ -68,6 +72,10 @@ class HoaDonChuoiKham(models.Model):
         tong_cong_2 = float(self.get_tong_cong()) - float(self.tong_tien)
         return tong_cong_2
 
+    def get_don_gia(self):
+        don_gia = "{:,}".format(int(self.tong_tien))
+        return don_gia
+
     # TODO: trường tổng tiền có trong 2 hóa đơn sẽ được update sau khi bệnh nhân đóng tiền (transaction atomic update)
 
 class HoaDonLamSang(models.Model):
@@ -81,6 +89,10 @@ class HoaDonLamSang(models.Model):
             self.thoi_gian_tao = timezone.now()
         self.thoi_gian_cap_nhat = timezone.now()
         return super(HoaDonLamSang, self).save(*args, **kwargs)
+
+    def get_don_gia(self):
+        don_gia = "{:,}".format(int(self.tong_tien))
+        return don_gia
 
     # benh_nhan = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
 

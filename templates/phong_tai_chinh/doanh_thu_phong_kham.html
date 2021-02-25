@@ -212,6 +212,32 @@
 </div>
 <!--end::Modal-->
 
+<!--begin::Modal-->
+<div id="doanh_thu_theo_phong" class="modal fade" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-scrollable modal-dialog-centered">
+        <div class="modal-content" style="min-height: 590px;">
+            <div class="modal-header py-5">
+                <h5 class="modal-title">
+                    Chi Tiết Doanh Thu Theo Phòng Chức Năng
+                    <span class="d-block text-muted font-size-sm">Danh Sách Các Phòng Chức Năng</span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--begin: Datatable Dich Vu-->
+                <div class="datatable datatable-bordered datatable-head-custom" id="kt_datatable_sub_phong_chuc_nang"></div>
+                <!--end: Datatable-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold text-uppercase" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end::Modal-->
+
 {% endblock content %}
 
 {% block scripts %}
@@ -234,7 +260,8 @@ var KTDatatableRemoteAjaxDemo = function() {
     var demo = function(range_start, range_end) {
         var range_start = range_start
         var range_end = range_end
-
+        var modal = $("#dich_vu_chi_tiet")
+        var el_1 = $('#kt_datatable_sub_dich_vu')
         var datatable_dich_vu = $('#kt_datatable_sub_dich_vu').KTDatatable({
             // datasource definition
             data: {
@@ -300,7 +327,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                     if(row.tong_tien == null){
                         return "Chưa Thanh Toán!"
                     }else{
-                        return parseInt(row.tong_tien)
+                        return row.tong_tien
                     }
                 }
             }, {
@@ -318,6 +345,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             }],
         });
 
+        var el_2 = $('#kt_datatable_sub_lam_sang')
         var datatable_lam_sang = $('#kt_datatable_sub_lam_sang').KTDatatable({
             data: {
                 type: 'remote',
@@ -379,11 +407,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 field: 'tong_tien',
                 title: 'Tổng Tiền',
                 template: function(row){
-                    var tong_tien = row.tong_tien
+                    
                     if(row.tong_tien == null){
                         return "Chưa Thanh Toán!"
                     }else{
-                        return parseInt(tong_tien)
+                        return row.tong_tien
                     }
                 }
             }, {
@@ -400,12 +428,49 @@ var KTDatatableRemoteAjaxDemo = function() {
                 }
             }],
         });
+
+        datatable_dich_vu.hide();
+        modal.on('shown.bs.modal', function() {
+            var modalContent = $(this).find('.modal-content');
+
+            datatable_dich_vu.spinnerCallback(true, modalContent);
+            datatable_dich_vu.load();
+
+            datatable_dich_vu.on('datatable-on-layout-updated', function() {
+                datatable_dich_vu.show();
+                datatable_dich_vu.spinnerCallback(false, modalContent);
+                datatable_dich_vu.redraw();
+            });
+            
+        }).on('hidden.bs.modal', function() {
+            el_1.KTDatatable('destroy');
+        });
+
+        datatable_lam_sang.hide();
+        modal.on('shown.bs.modal', function() {
+            var modalContent = $(this).find('.modal-content');
+
+            datatable_lam_sang.spinnerCallback(true, modalContent);
+            datatable_lam_sang.load();
+
+            datatable_lam_sang.on('datatable-on-layout-updated', function() {
+                datatable_lam_sang.show();
+                datatable_lam_sang.spinnerCallback(false, modalContent);
+                datatable_lam_sang.redraw();
+            });
+            
+        }).on('hidden.bs.modal', function() {
+            el_2.KTDatatable('destroy');
+        });
+
     };
 
     var demo2 = function(range_start, range_end) {
         var range_start = range_start
         var range_end = range_end
         console.log(range_start, range_end)
+        var el = $('#kt_datatable_sub_thuoc')
+        var modal = $("#thuoc_chi_tiet")
         var datatable_sub_thuoc = $('#kt_datatable_sub_thuoc').KTDatatable({
             // datasource definition
             data: {
@@ -468,7 +533,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 field: 'tong_tien',
                 title: 'Tổng Tiền',
                 template: function(row){
-                    return parseInt(row.tong_tien)
+                    return row.tong_tien
                 }
             }, {
                 field: 'thoi_gian_tao',
@@ -485,6 +550,115 @@ var KTDatatableRemoteAjaxDemo = function() {
             },],
 
         });
+
+        datatable_sub_thuoc.hide();
+        modal.on('shown.bs.modal', function() {
+            var modalContent = $(this).find('.modal-content');
+
+            datatable_sub_thuoc.spinnerCallback(true, modalContent);
+            datatable_sub_thuoc.load();
+
+            datatable_sub_thuoc.on('datatable-on-layout-updated', function() {
+                datatable_sub_thuoc.show();
+                datatable_sub_thuoc.spinnerCallback(false, modalContent);
+                datatable_sub_thuoc.redraw();
+            });
+            
+        }).on('hidden.bs.modal', function() {
+            el.KTDatatable('destroy');
+        });
+
+    };
+
+    var demo3 = function(range_start, range_end) {
+        var range_start = range_start
+        var range_end = range_end
+        console.log(range_start, range_end)
+        var el = $('#kt_datatable_sub_phong_chuc_nang')
+        var modal = $("#doanh_thu_theo_phong")
+        var datatable_sub_phong_chuc_nang = $('#kt_datatable_sub_phong_chuc_nang').KTDatatable({
+            // datasource definition
+            data: {
+                type: 'remote',
+                source: {
+                    read: {
+                        method: "GET",
+                        url: HOST_URL + '/api/danh_sach_doanh_thu_theo_phong_chuc_nang/',
+                        // sample custom headers
+                        // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
+                        map: function(raw) {
+                            // sample data mapping
+                            var dataSet = raw;
+                            if (typeof raw.data !== 'undefined') {
+                                dataSet = raw.data;
+                            }
+                            return dataSet;
+                        },
+                        params: {
+                            'range_start' : range_start,
+                            'range_end' : range_end,
+                        }
+                    },
+                },
+                pageSize: 10,
+                serverPaging: true,
+                //serverFiltering: true,
+                //serverSorting: true,
+            },
+
+            // layout definition
+            layout: {
+                scroll: false,
+                footer: false,
+            },
+
+            // column sorting
+            sortable: true,
+
+            pagination: true,
+
+            search: {
+                input: $('#kt_datatable_search_query'),
+                key: 'generalSearch'
+            },
+
+            // columns definition
+            columns: [{
+                field: 'dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang',
+                title: 'Tên Phòng',
+            }, {
+                field: 'tong_tien',
+                title: 'Tổng Tiền',
+                template: function(row){
+                    return row.tong_tien
+                }
+            }, {
+                field: 'dich_vu_kham_count',
+                title: 'SL Dịch Vụ',
+                template: function(row) {
+                    return row.dich_vu_kham_count
+                }
+            },],
+
+        });
+
+        datatable_sub_phong_chuc_nang.hide();
+        modal.on('shown.bs.modal', function() {
+            var modalContent = $(this).find('.modal-content');
+
+            datatable_sub_phong_chuc_nang.spinnerCallback(true, modalContent);
+            datatable_sub_phong_chuc_nang.load();
+
+            datatable_sub_phong_chuc_nang.on('datatable-on-layout-updated', function() {
+                datatable_sub_phong_chuc_nang.show();
+                datatable_sub_phong_chuc_nang.spinnerCallback(false, modalContent);
+                datatable_sub_phong_chuc_nang.redraw();
+            });
+            
+        }).on('hidden.bs.modal', function() {
+            el.KTDatatable('destroy');
+        });
+
     };
 
     var table = function(range_start, range_end){
@@ -541,7 +715,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             // columns definition
             columns: [{
                 field: 'loai_doanh_thu',
-                title: 'Loai doanh thu',
+                title: 'Loại Doanh Thu',
                 sortable: false,
                 selector: false,
                 textAlign: 'center',
@@ -574,7 +748,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 }
             }, {
                 field: 'tong_tien',
-                title: 'tong_tien',
+                title: 'Tổng Tiền',
                 textAlign: 'center',
             }, {
                 field: 'actions',
@@ -584,19 +758,25 @@ var KTDatatableRemoteAjaxDemo = function() {
                 overflow: 'visible',
                 autoHide: false,
                 template: function(row) {
-                    if(row.loai_doanh_thu == "Tong Doanh Thu Dich Vu"){
+                    if(row.type == "doanh_thu_dich_vu"){
                         return `
                             <a href="javascript:;" class="btn btn-sm btn-clean" id="doanh_thu_dich_vu" title="Xem Chi Tiết">
                                 Chi tiết
                             </a>
                         `;
-                    }else if(row.loai_doanh_thu == "Tong Doanh Thu Thuoc"){
+                    } else if (row.type == "doanh_thu_thuoc"){
                         return `
                             <a href="javascript:;" class="btn btn-sm btn-clean" id="doanh_thu_thuoc" title="Xem Chi Tiết">
                                 Chi tiết
                             </a>
                         `;
-                    }else{
+                    } else if (row.type == "doanh_thu_phong_chuc_nang"){
+                        return `
+                            <a href="javascript:;" class="btn btn-sm btn-clean" id="phong_chuc_nang" title="Xem Chi Tiết">
+                                Chi tiết
+                            </a>
+                        `;
+                    } else {
                         return ``
                     }
                 },
@@ -620,6 +800,13 @@ var KTDatatableRemoteAjaxDemo = function() {
             $('#kt_datatable_sub_thuoc').KTDatatable('destroy');
             demo2(range_start, range_end)
             $('#thuoc_chi_tiet').modal('show')
+        })
+
+        $('#kt_datatable').on('click', '#phong_chuc_nang', function(){
+            console.log(range_start, range_end)
+            $('#kt_datatable_sub_phong_chuc_nang').KTDatatable('destroy');
+            demo3(range_start, range_end)
+            $('#doanh_thu_theo_phong').modal('show')
         })
 
     }

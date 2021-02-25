@@ -1,2 +1,4 @@
 
 *.sqlite3
+templates/base.html
+db.sqlite3
