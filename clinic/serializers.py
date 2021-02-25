@@ -211,6 +211,7 @@ class DonThuocSerializer(serializers.ModelSerializer):
         
 class HoaDonThuocSerializer(serializers.ModelSerializer):
     don_thuoc = DonThuocSerializer()
+    tong_tien = serializers.CharField(source='get_don_gia')
     class Meta:
         model = HoaDonThuoc
         fields = '__all__'
@@ -463,6 +464,7 @@ class DanhSachDichVuSerializer(serializers.ModelSerializer):
 
 class HoaDonLamSangSerializer(serializers.ModelSerializer):
     lich_hen = LichHenKhamSerializer()
+    tong_tien = serializers.CharField(source='get_don_gia')
     class Meta:
         model = HoaDonLamSang
         fields = ('id', 'tong_tien', 'thoi_gian_tao', 'lich_hen')
