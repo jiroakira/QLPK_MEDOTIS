@@ -28,7 +28,7 @@ from medicine.models import (
     CongTy,
     NhomThau,
 )
-from django.http.response import  JsonResponse
+from django.http.response import  HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
 from rest_framework.response import Response
 from django.db.models.functions import TruncDay
@@ -73,6 +73,8 @@ from django.contrib.auth import authenticate, views as auth_views
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from clinic.serializers import FilterHoaDonChuoiKhamBaoHiemSerializer, HoaDonChuoiKhamSerializer
+from django.contrib.auth import logout
+from django.urls import reverse
 
 from datetime import datetime
 format = '%m/%d/%Y %H:%M %p'
@@ -243,24 +245,39 @@ def cap_nhat_thong_tin_benh_nhan(request):
         id_benh_nhan   = request.POST.get('id_benh_nhan')
         ho_ten         = request.POST.get('ho_ten')
         so_dien_thoai  = request.POST.get('so_dien_thoai')
-        email          = request.POST.get('email')
+        email          = request.POST.get('email', None)
         cmnd_cccd      = request.POST.get('cmnd_cccd')
         ngay_sinh      = request.POST.get('ngay_sinh')
         gioi_tinh      = request.POST.get('gioi_tinh')
         dan_toc        = request.POST.get('dan_toc')
         ma_so_bao_hiem = request.POST.get('ma_so_bao_hiem')
         dia_chi        = request.POST.get('dia_chi')
-        tinh_id = request.POST.get('tinh')
-        huyen_id = request.POST.get('huyen')
-        xa_id = request.POST.get('xa')
 
-        tinh = Province.objects.filter(id=tinh_id).first()
+        if email == '':
+            email = ''
+        tinh_id = request.POST.get('tinh')      
+        tinh = Province.objects.filter(id=tinh_id).first()       
+        huyen_id = request.POST.get('huyen')       
         huyen = District.objects.filter(id=huyen_id).first()
+        xa_id = request.POST.get('xa')
         xa = Ward.objects.filter(id=xa_id).first()
+
+        ma_dkbd = request.POST.get('ma_dkbd')
+        gt_the_tu = request.POST.get('gt_the_tu')
+        lien_tuc_5_nam_tu = request.POST.get('lien_tuc_5_nam_tu')
+        can_nang = request.POST.get('can_nang')
+        if can_nang != '':
+            can_nang = request.POST.get('can_nang')
+        else:
+            can_nang = 0
 
         ngay_sinh = datetime.strptime(ngay_sinh, format_3)
         ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
 
+        
+    
+
+    
         benh_nhan = get_object_or_404(User, id=id_benh_nhan)
         benh_nhan.ho_ten         = ho_ten
         benh_nhan.so_dien_thoai  = so_dien_thoai
@@ -274,6 +291,19 @@ def cap_nhat_thong_tin_benh_nhan(request):
         benh_nhan.tinh = tinh
         benh_nhan.huyen = huyen
         benh_nhan.xa = xa
+        benh_nhan.can_nang = can_nang
+        benh_nhan.ma_dkbd = ma_dkbd
+
+        if gt_the_tu != '':
+            gt_the_tu = datetime.strptime(gt_the_tu, format_3)
+            gt_the_tu = gt_the_tu.strftime("%Y-%m-%d")
+            benh_nhan.gt_the_tu = gt_the_tu
+
+        if lien_tuc_5_nam_tu != '':
+            lien_tuc_5_nam_tu = datetime.strptime(lien_tuc_5_nam_tu, format_3)
+            lien_tuc_5_nam_tu = lien_tuc_5_nam_tu.strftime("%Y-%m-%d")
+            benh_nhan.lien_tuc_5_nam_tu = lien_tuc_5_nam_tu
+
         benh_nhan.save()
 
         response = {
@@ -290,9 +320,9 @@ def cap_nhat_thong_tin_benh_nhan(request):
 class LoginView(auth_views.LoginView):
     template_name = 'registration/login.html'
 
-
     def get_success_url(self):
         return resolve_url('trang_chu')
+
 
 # * Chức năng Lễ Tân
 # TODO đăng kí tài khoản cho bệnh nhân tại giao diện dashboard
@@ -1050,6 +1080,10 @@ def danh_sach_kham(request):
 
 def login(request):
     return render(request, 'registration/login.html')
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('dang_nhap'))
 
 class BatDauChuoiKhamToggle(APIView):
     def get(self, request, format=None, **kwargs):

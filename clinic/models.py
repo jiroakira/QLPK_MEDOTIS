@@ -146,16 +146,18 @@ class User(AbstractBaseUser):
     admin = models.BooleanField(default=False) # a superuser
     # notice the absence of a "Password field", that is built in.
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='child')
+    
     ma_so_bao_hiem = models.CharField(max_length=25, null=True, blank=True)
     ma_dkbd = models.CharField(max_length=10, null=True, blank=True)
     ma_khuvuc = models.CharField(max_length=10, null=True, blank=True)
     gt_the_tu = models.DateField(null=True, blank=True)
     gt_the_den = models.DateField(null=True, blank=True)
     mien_cung_ct = models.DateField(null=True, blank=True)
+    lien_tuc_5_nam_tu = models.DateField(null=True, blank=True)
+
     muc_huong = models.PositiveIntegerField(null=True, blank=True)
-
     so_diem_tich = models.PositiveIntegerField(null=True, blank=True)
-
+    
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
 

@@ -203,7 +203,7 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
 LOGIN_REDIRECT_URL = 'trang_chu/'
-LOGOUT_REDIRECT_URL = 'dang_nhap/'
+LOGOUT_REDIRECT_URL = 'trang_chu/'
 
 LANGUAGE_CODE = 'vi'
 

@@ -60,29 +60,61 @@
                                 <label>CMND/CCCD <span class="text-danger">*</span></label>
                                 {{ form.cmnd_cccd|attr:"class:form-control"|attr:"name:cmnd_cccd"|attr:"placeholder:Nhập CCMD/CCCD Của Bệnh Nhân" }}
                             </div>
-                            <div class="col-lg-6">
+                            {% comment %} <div class="col-lg-6">
                                 <label>Ngày sinh</label>
                                 {{ form.ngay_sinh|attr:"class:form-control"|attr:"name:ngay_sinh"|attr:"id:inputNgaySinhModal"}}
                                 <span class="form-text text-muted">Ngày sinh dạng: 
                                 <code>ngày/tháng/năm</code></span>
+                            </div> {% endcomment %}
+                            <div class="col-lg-6">
+                                <label>Ngày sinh</label>
+                                {% comment %} <input type="text" class="form-control" id="kt_datepicker_1" readonly="readonly" placeholder="Select date" /> {% endcomment %}
+                                {{ form.ngay_sinh|attr:"class:form-control"|attr:"name:ngay_sinh"|attr:"id:kt_datepicker_3"|attr:"readonly:readonly"|attr:"placeholder:Chọn ngày sinh"}}
+                                {% comment %} <div class="col-lg-4 col-md-9 col-sm-12">
+                                    <input type="text" class="form-control" readonly placeholder="Select date"/>
+                                </div> {% endcomment %}
                             </div>
+
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-2">
                                 <label>Giới tính</label>
                                 <div class="radio-inline">
-                                    {{ form.gioi_tinh|attr:"class:form-control selectpicker"|attr:"name:gioi_tinh" }}
+                                    {{ form.gioi_tinh|attr:"class:form-control selectpicker"|attr:"name:gioi_tinh"}}
                                 </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <label>Dân tộc <span class="text-danger">*</span></label>
+                                {{ form.dan_toc|attr:"class:form-control"|attr:"name:dan_toc"|attr:"placeholder:Nhập dân tộc"}}
+                            </div>
+                            <div class="col-lg-4">
+                                <label>Cân Nặng <span class="text-danger">*</span></label>
+                                {{ form.can_nang|attr:"class:form-control"|attr:"name:can_nang"|attr:"placeholder:Nhập cân nặng"}}
+                            </div>
+                            <div class="col-lg-4">
+                                <label>Mã số bảo hiểm <span class="text-danger">*</span></label>
+                                {{ form.ma_so_bao_hiem|attr:"class:form-control"|attr:"name:ma_so_bao_hiem"|attr:"placeholder:Nhập mã số bảo hiểm"}}
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-lg-4">
+                                <label>Mã Nơi ĐK KCB BĐ<span class="text-danger">*</span></label>
+                                {{ form.ma_dkbd|attr:"class:form-control"|attr:"name:ma_dkbd"|attr:"placeholder:Nhập mã nơi đăng kí khám chữa bệnh ban đầu"}}
                             </div>
 
                             <div class="col-lg-4">
-                                <label>Dân tộc <span class="text-danger">*</span></label>
-                                {{ form.dan_toc|attr:"class:form-control"|attr:"name:dan_toc"}}
+                                <label>Giá Trị Thẻ Từ</label>
+                                {% comment %} <div class="radio-inline">
+                                    {{ form.gioi_tinh|attr:"class:form-control selectpicker"|attr:"name:gioi_tinh" }}
+                                </div> {% endcomment %}
+                                {{ form.gt_the_tu|attr:"class:form-control"|attr:"name:gt_the_tu"|attr:"id:kt_datepicker_4"|attr:"readonly:readonly"|attr:"placeholder:Chọn thời điểm thẻ có giá trị"}}
                             </div>
-                            <div class="col-lg-6">
-                                <label>Mã số bảo hiểm <span class="text-danger">*</span></label>
-                                {{ form.ma_so_bao_hiem|attr:"class:form-control"|attr:"name:ma_so_bao_hiem"}}
+                            <div class="col-lg-4">
+                                <label>Liên Tiếp 5 Năm Từ<span class="text-danger">*</span></label>
+                                {{ form.lien_tuc_5_nam_tu|attr:"class:form-control"|attr:"name:lien_tuc_5_nam_tu"|attr:"id:kt_datepicker_5"|attr:"readonly:readonly"|attr:"placeholder:Chọn thời điểm 5 năm liên tục từ"}}
                             </div>
+                            
                         </div>
 
                         <div class="form-group row">
@@ -145,9 +177,13 @@
 <!--end::Global Theme Bundle-->
 
 <script>
-    var ngay_sinh = $("input[name=ngay_sinh]").val();
+
+    
+
+    {% comment %} var ngay_sinh = $("input[name=ngay_sinh]").val();
     ngay_sinh = new Date(ngay_sinh)
     ngay_sinh = ngay_sinh.toLocaleDateString('vi-VN')
+    console.log(ngay_sinh)
     if($('#inputNgaySinhModal').length){
         $("#inputNgaySinhModal").inputmask("99/99/9999", {
             "placeholder": "ng/th/nam ",
@@ -155,52 +191,83 @@
         });
     } else {
         ngay_sinh
+    } {% endcomment %}
+    
+    var arrows;
+    if (KTUtil.isRTL()) {
+        arrows = {
+            leftArrow: '<i class="la la-angle-right"></i>',
+            rightArrow: '<i class="la la-angle-left"></i>'
+        }
+    } else {
+        arrows = {
+            leftArrow: '<i class="la la-angle-left"></i>',
+            rightArrow: '<i class="la la-angle-right"></i>'
+        }
+    }
+
+    $('#kt_datepicker_3').datepicker({
+        rtl: KTUtil.isRTL(),
+        todayBtn: "linked",
+        clearBtn: true,
+        orientation: "bottom left",
+        todayHighlight: true,
+        templates: arrows,
+        format: 'dd/mm/yyyy',
+        autoclose:true,
+    });
+
+    $('#kt_datepicker_4').datepicker({
+        rtl: KTUtil.isRTL(),
+        todayBtn: "linked",
+        clearBtn: true,
+        orientation: "bottom left",
+        todayHighlight: true,
+        templates: arrows,
+        format: 'dd/mm/yyyy',
+        autoclose:true,
+    });
+
+    $('#kt_datepicker_5').datepicker({
+        rtl: KTUtil.isRTL(),
+        todayBtn: "linked",
+        clearBtn: true,
+        orientation: "bottom left",
+        todayHighlight: true,
+        templates: arrows,
+        format: 'dd/mm/yyyy',
+        autoclose:true,
+    });
+    
+    var ngay_sinh
+    ngay_sinh = $('#kt_datepicker_3').val()
+    if (ngay_sinh != '') {
+        ngay_sinh = new Date(ngay_sinh)
+        ngay_sinh = ngay_sinh.toLocaleDateString('vi-VN')
+        $('#kt_datepicker_3').val(ngay_sinh)
+    }
+
+    var gt_the_tu
+    gt_the_tu = $('#kt_datepicker_4').val()
+    if (gt_the_tu != '') {
+        gt_the_tu = new Date(gt_the_tu)
+        gt_the_tu = gt_the_tu.toLocaleDateString('vi-VN')
+        $('#kt_datepicker_4').val(gt_the_tu)
+    }
+
+    var lien_tuc_5_nam_tu
+    lien_tuc_5_nam_tu = $('#kt_datepicker_5').val()
+    if (lien_tuc_5_nam_tu != '') {
+        lien_tuc_5_nam_tu = new Date(lien_tuc_5_nam_tu)
+        lien_tuc_5_nam_tu = lien_tuc_5_nam_tu.toLocaleDateString('vi-VN')
+        $('#kt_datepicker_5').val(lien_tuc_5_nam_tu)
     }
     
-    $('#inputNgaySinhModal').val(ngay_sinh)
+    
+    {% comment %} $('#inputNgaySinhModal').val(ngay_sinh) {% endcomment %}
 
     // initialize data for user's address
     $('#kt_select2_1').val(`{{ benh_nhan.tinh.id }}`)
-
-    $.when($.ajax({
-        url        : HOST_URL + '/api/province/',
-        data       : {'id': `{{ benh_nhan.tinh.id }}`},
-        success: function(response){
-            console.log(response.data)
-            $('#kt_select2_2').empty()
-            var selectHtml = "";
-            selectHtml += `<option value="" selected disabled>Chọn Quận/Huyện</option>`
-            $.each(response.data, function(index, item) {
-                selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
-            });
-            $('#kt_select2_2').html(selectHtml)
-            $('#kt_select2_2').val(`{{ benh_nhan.huyen.id }}`)
-            $('#kt_select2_2').selectpicker('refresh')
-        },
-        error: function(response){
-            
-        }
-    })).then(function() {
-        $.ajax({
-            url        : HOST_URL + '/api/district/',
-            data       : {'id': `{{ benh_nhan.huyen.id }}`},
-            success: function(response){
-                console.log(response.data)
-                $('#kt_select2_3').empty()
-                var selectHtml = "";
-                selectHtml += `<option value="" selected disabled>Chọn Phường/Xã</option>`
-                $.each(response.data, function(index, item) {
-                    selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
-                });
-                $('#kt_select2_3').html(selectHtml)
-                $('#kt_select2_3').val(`{{ benh_nhan.xa.id }}`)
-                $('#kt_select2_3').selectpicker('refresh')
-            },
-            error: function(response){
-                
-            }
-        })
-    })
 
     $('#kt_select2_1').on('changed.bs.select', function(e, clickedIndex, newValue, oldValue) {
         console.log(this.value, clickedIndex, newValue, oldValue)
@@ -248,10 +315,46 @@
         })
     })
 
+    $.when($.ajax({
+        url        : HOST_URL + '/api/province/',
+        data       : {'id': `{{ benh_nhan.tinh.id }}`},
+        success: function(response){
+            $('#kt_select2_2').empty()
+            var selectHtml = "";
+            selectHtml += `<option value="" selected disabled>Chọn Quận/Huyện</option>`
+            $.each(response.data, function(index, item) {
+                selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
+            });
+            $('#kt_select2_2').html(selectHtml)
+            $('#kt_select2_2').val(`{{ benh_nhan.huyen.id }}`)
+            $('#kt_select2_2').selectpicker('refresh')
+        },
+        error: function(response){
+            
+        }
+    })).then(function() {
+        $.ajax({
+            url        : HOST_URL + '/api/district/',
+            data       : {'id': `{{ benh_nhan.huyen.id }}`},
+            success: function(response){
+                $('#kt_select2_3').empty()
+                var selectHtml = "";
+                selectHtml += `<option value="" selected disabled>Chọn Phường/Xã</option>`
+                $.each(response.data, function(index, item) {
+                    selectHtml += "<option value='" + item.id + "' " + ">" + item.name + "</option>";
+                });
+                $('#kt_select2_3').html(selectHtml)
+                $('#kt_select2_3').val(`{{ benh_nhan.xa.id }}`)
+                $('#kt_select2_3').selectpicker('refresh')
+            },
+            error: function(response){
+                
+            }
+        })
+    })
 
     $(document).on('click', '#submitData', function(){
         var gioi_tinh = $('[name=gioi_tinh]').val()
-        console.log(gioi_tinh)
         var id_benh_nhan = $(this).data('id')
         var formData = new FormData()
 
@@ -263,31 +366,42 @@
             formData.append($(this).attr("name"), $(this).val())
         });
 
+        var tinh_id = $('#kt_select2_1').val()
+        var huyen_id = $('#kt_select2_2').val()
+        var xa_id = $('#kt_select2_3').val()
+        var ngay_sinh = $('#kt_datepicker_3').val()
+
         formData.append('gioi_tinh', gioi_tinh)
         formData.append('id_benh_nhan', id_benh_nhan)
-        formData.append('tinh', $('#kt_select2_1').val())
-        formData.append('huyen', $('#kt_select2_2').val())
-        formData.append('xa', $('#kt_select2_3').val())
+        formData.append('tinh', tinh_id)
+        formData.append('huyen', huyen_id)
+        formData.append('xa', xa_id)
         formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
-        $.ajax({
-            type: "POST",
-            url: "{% url 'cap_nhat_thong_tin_benh_nhan' %}",
-            data: formData,
-            cache: false,
-            processData: false,
-            contentType: false,
-            success: function(response){
-                toastr.success('Cập Nhật Thành Công', 'Thành Công!')
-                setTimeout(function () {
-                    window.location.href = '/danh_sach_benh_nhan/'; //redirect về danh sách chờ lâm sàng
-                }, 1500); //sau 2 giây (1000 = 1s)
-                //window.location = '/danh_sach_benh_nhan/'
-            },
-            error: function(response){
-                console.log("error")
-            }
-        })
+        if (!ngay_sinh) {
+            toastr.warning('Vui lòng cập nhật ngày tháng năm sinh', 'Cảnh Báo')
+        } else if (!tinh_id || !huyen_id || !xa_id) {
+            toastr.warning('Vui lòng cập nhật đầy đủ địa chỉ', 'Cảnh Báo') 
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'cap_nhat_thong_tin_benh_nhan' %}",
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(response){
+                    toastr.success('Cập Nhật Thành Công', 'Thành Công!')
+                    setTimeout(function () {
+                        window.location.href = '/danh_sach_benh_nhan/'; //redirect về danh sách chờ lâm sàng
+                    }, 1500); //sau 2 giây (1000 = 1s)
+                    //window.location = '/danh_sach_benh_nhan/'
+                },
+                error: function(response){
+                    console.log("error")
+                }
+            })
+        }  
     })
 </script>
 
