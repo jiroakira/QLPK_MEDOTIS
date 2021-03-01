@@ -81,6 +81,7 @@ class ThuocForm(forms.ModelForm):
         fields = '__all__'
 
 class UserForm(forms.ModelForm):
+    ngay_sinh = forms.DateTimeField(input_formats=["%d/%m/%Y"])
     class Meta:
         model = User
         fields = '__all__'
