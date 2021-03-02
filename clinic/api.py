@@ -34,7 +34,7 @@ from clinic.models import (
 )
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
+from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -2611,4 +2611,27 @@ class GetFuncroomInfo(APIView):
                 'dang_thuc_hien': "Không có thông tin",
                 'hoan_thanh': "Không có thông tin",
             }
+        return Response(response)
+
+
+class TestExportExcel(APIView):
+    def get(self, request, format=None):
+        startDate = self.request.query_params.get('range_start')
+        endDate = self.request.query_params.get('range_end')
+        start = datetime.strptime(startDate, "%d-%m-%Y")
+        tomorrow_start = start + timedelta(1)
+        if endDate == '':
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start))
+        else:
+            end = datetime.strptime(endDate, "%d-%m-%Y")
+            tomorrow_end = end + timedelta(1)
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start))
+
+        serializer = FilterHoaDonChuoiKhamBaoHiemSerializer(hoa_don_dich_vu, many=True, context={'request': request})
+        excel_data = serializer.data
+
+        response = {
+            'data': excel_data
+        }
+
         return Response(response)

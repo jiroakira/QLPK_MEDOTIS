@@ -76,6 +76,9 @@ class HoaDonChuoiKham(models.Model):
         don_gia = "{:,}".format(int(self.tong_tien))
         return don_gia
 
+    def get_ngay_kham(self):
+        return self.thoi_gian_tao.strftime('%d-%m-%Y')
+
     # TODO: trường tổng tiền có trong 2 hóa đơn sẽ được update sau khi bệnh nhân đóng tiền (transaction atomic update)
 
 class HoaDonLamSang(models.Model):

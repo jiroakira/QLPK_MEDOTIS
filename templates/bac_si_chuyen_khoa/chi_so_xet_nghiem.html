@@ -208,7 +208,7 @@ var KTDropzoneDemo = function () {
                 var evaluate_value_min = $(this).find('.evaluate_field').data('chi-so-min')
                 var evaluate_value_max = $(this).find('.evaluate_field').data('chi-so-max')
 
-                console.log(isNaN(evaluate_value))
+                
                 if (!isNaN(evaluate_value)) {
                     if (parseFloat(evaluate_value) >= parseFloat(evaluate_value_min) && parseFloat(evaluate_value) <= parseFloat(evaluate_value_max)){
                         $(this).find('.judment_field').css('color', 'green')
@@ -236,7 +236,7 @@ var KTDropzoneDemo = function () {
             var formData = new FormData()
             var chi_so = []
 
-            $('#result').find('input[type=text]').each(function() {
+            $('#result').find('input[type=number], input[type=text]').each(function() {
                 console.log($(this).attr("name"), $(this).val())
                 formData.append($(this).attr("name"), $(this).val())
             })
@@ -245,7 +245,7 @@ var KTDropzoneDemo = function () {
                 formData.append($(this).attr("name"), $(this).val())
             })
 
-            $('.data_field_section').find('input[type=text]').each(function() {
+            $('.data_field_section').find('input[type=text], input[type=number]').each(function() {
                 chi_so.push({
                     key: $(this).attr("name"),
                     value: $(this).val(),

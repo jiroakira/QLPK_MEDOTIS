@@ -3543,8 +3543,6 @@ def chinh_sua_tieu_chuan_dich_vu(request):
     return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
 
 from django.views.decorators.csrf import csrf_exempt
-from io import BytesIO
-import xlsxwriter
 
 @csrf_exempt
 def export_excel(request):
