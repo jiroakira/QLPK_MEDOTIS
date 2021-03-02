@@ -728,6 +728,7 @@ class FilterHoaDonChuoiKhamBaoHiemSerializer(serializers.ModelSerializer):
     ma_bhyt = serializers.CharField(source='chuoi_kham.benh_nhan.ma_so_bao_hiem')
     ma_dkbd = serializers.CharField(source='chuoi_kham.benh_nhan.ma_dkbd')
     ma_benh = serializers.CharField(source='get_ma_benh')
+    ngay_kham = serializers.CharField(source='get_ngay_kham')
     tong_cong_1 = serializers.CharField(source='get_tong_cong')
     tien_kham = serializers.CharField(source='get_tong_cong')
     tu_chi_tra = serializers.CharField(source='tong_tien')
@@ -742,6 +743,7 @@ class FilterHoaDonChuoiKhamBaoHiemSerializer(serializers.ModelSerializer):
             'ma_bhyt',
             'ma_dkbd',
             'ma_benh',
+            'ngay_kham',
             'tong_cong_1',
             'tien_kham',
             'tu_chi_tra',
