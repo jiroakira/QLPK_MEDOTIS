@@ -157,7 +157,7 @@ class User(AbstractBaseUser):
 
     muc_huong = models.PositiveIntegerField(null=True, blank=True)
     so_diem_tich = models.PositiveIntegerField(null=True, blank=True)
-    
+
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
 
@@ -617,7 +617,6 @@ class ChuoiKham(models.Model):
         don_thuoc = self.don_thuoc_chuoi_kham.all().first()
         id_don_thuoc = don_thuoc.id 
         return id_don_thuoc
-    
 
 
 class PhanKhoaKham(models.Model):
@@ -674,7 +673,6 @@ class PhanKhoaKham(models.Model):
 
     def get_ma_pttt(self):
         return 1
-
     
 
 @receiver(post_save, sender=PhanKhoaKham)
@@ -1038,6 +1036,7 @@ class DanhMucKhoa(models.Model):
     class Meta:
         verbose_name = "Danh Mục Khoa"
         verbose_name_plural = "Danh Mục Khoa"
+
     def __str__(self):
         return self.ten_khoa
 

@@ -464,7 +464,7 @@ class DanhSachDichVuSerializer(serializers.ModelSerializer):
 
 class HoaDonLamSangSerializer(serializers.ModelSerializer):
     lich_hen = LichHenKhamSerializer()
-    tong_tien = serializers.CharField(source='get_don_gia')
+    # tong_tien = serializers.CharField(source='get_don_gia')
     class Meta:
         model = HoaDonLamSang
         fields = ('id', 'tong_tien', 'thoi_gian_tao', 'lich_hen')
@@ -730,9 +730,21 @@ class FilterHoaDonChuoiKhamBaoHiemSerializer(serializers.ModelSerializer):
     ma_benh = serializers.CharField(source='get_ma_benh')
     ngay_kham = serializers.CharField(source='get_ngay_kham')
     tong_cong_1 = serializers.CharField(source='get_tong_cong')
+    xet_nghiem = serializers.CharField(source='get_gia_xet_nghiem')
+    cdha_tdcn = serializers.CharField(source='get_gia_cdha_tdcn')
+    thuoc_1 = serializers.CharField(source='get_gia_thuoc_1')
+    mau = serializers.CharField(source='get_gia_mau')
+    ttpt = serializers.CharField(source='get_gia_ttpt')
+    vtyt_1 = serializers.CharField(source='get_gia_vtyt_1')
+    dvkt = serializers.CharField(source='get_gia_dvkt')
+    thuoc_2 = serializers.CharField(source='get_gia_thuoc_2')
+    vtyt_2 = serializers.CharField(source='get_gia_vtyt_2')
+    
     tien_kham = serializers.CharField(source='get_tong_cong')
-    tu_chi_tra = serializers.CharField(source='tong_tien')
-    tong_cong_2 = serializers.CharField(source='get_tong_cong_2')
+    van_chuyen = serializers.CharField(source='get_gia_van_chuyen')
+    tu_chi_tra = serializers.CharField(source='get_tu_chi_tra')
+    bao_hiem_tra = serializers.CharField(source='get_bao_hiem_tra')
+    ngoai_ds = serializers.CharField(source='get_chi_phi_ngoai_ds')
 
     class Meta:
         model = HoaDonChuoiKham
@@ -745,10 +757,27 @@ class FilterHoaDonChuoiKhamBaoHiemSerializer(serializers.ModelSerializer):
             'ma_benh',
             'ngay_kham',
             'tong_cong_1',
+            'xet_nghiem',
+            'cdha_tdcn',
+            'thuoc_1',
+            'mau',
+            'ttpt',
+            'vtyt_1',
+            'dvkt',
+            'thuoc_2',
+            'vtyt_2',
             'tien_kham',
+            'van_chuyen',
             'tu_chi_tra',
-            'tong_cong_2'
+            'bao_hiem_tra',
+            'ngoai_ds'
         )
+
+class FilterDichVuKhamBaoHiemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PhanKhoaKham
+        fields = '__all__'
 
 class DanhSachKetQuaChuoiKhamSerializer(serializers.ModelSerializer):
     benh_nhan = UserSerializerSimple()

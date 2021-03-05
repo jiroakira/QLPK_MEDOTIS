@@ -72,6 +72,18 @@ class HoaDonChuoiKham(models.Model):
         tong_cong_2 = float(self.get_tong_cong()) - float(self.tong_tien)
         return tong_cong_2
 
+    def get_bao_hiem_tra(self):
+        ds_dich_vu = self.chuoi_kham.phan_khoa_kham.all()
+        tong_tien = []
+        for phan_khoa in ds_dich_vu:
+            if phan_khoa.bao_hiem == True:
+                gia = phan_khoa.dich_vu_kham.don_gia
+                tong_tien.append(gia)
+        return sum(tong_tien)
+
+    def get_tu_chi_tra(self):
+        return int(self.get_tong_cong()) - int(self.get_bao_hiem_tra())
+
     def get_don_gia(self):
         don_gia = "{:,}".format(int(self.tong_tien))
         return don_gia
@@ -79,7 +91,38 @@ class HoaDonChuoiKham(models.Model):
     def get_ngay_kham(self):
         return self.thoi_gian_tao.strftime('%d-%m-%Y')
 
-    # TODO: trường tổng tiền có trong 2 hóa đơn sẽ được update sau khi bệnh nhân đóng tiền (transaction atomic update)
+    def get_gia_xet_nghiem(self):
+        return 0
+
+    def get_gia_cdha_tdcn(self):
+        return 0
+
+    def get_gia_thuoc_1(self):
+        return 0
+
+    def get_gia_mau(self):
+        return 0
+
+    def get_gia_ttpt(self):
+        return 0
+
+    def get_gia_vtyt_1(self):
+        return 0
+    
+    def get_gia_dvkt(self):
+        return 0
+
+    def get_gia_thuoc_2(self):
+        return 0
+
+    def get_gia_vtyt_2(self):
+        return 0
+
+    def get_gia_van_chuyen(self):
+        return 0
+
+    def get_chi_phi_ngoai_ds(self):
+        return 0
 
 class HoaDonLamSang(models.Model):
     lich_hen = models.ForeignKey("clinic.LichHenKham", on_delete=models.SET_NULL, null=True, blank=True, related_name="hoa_don_lam_sang")
