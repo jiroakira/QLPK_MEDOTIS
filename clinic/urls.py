@@ -183,7 +183,8 @@ urlpatterns = [
 
     path('bat_dau_chuoi_kham/<int:id>/', bat_dau_chuoi_kham, name='bat_dau_chuoi_kham'),
     path('bac_si_lam_sang/dung_kham_dot_xuat/', dung_kham, name='dung_kham'),
-    path('bac_si_lam_sang/dung_kham_ket_qua_chuyen_khoa', dung_kham_ket_qua_chuyen_khoa, name="dung_kham_ket_qua_chuyen_khoa"),
+    # path('bac_si_lam_sang/dung_kham_ket_qua_chuyen_khoa', dung_kham_ket_qua_chuyen_khoa, name="dung_kham_ket_qua_chuyen_khoa"),
+    path('bac_si_lam_sang/dung_kham_ket_qua_chuyen_khoa/', dung_kham_ket_qua_chuyen_khoa, name='dung_kham_ket_qua_chuyen_khoa'),
     path('bac_si_chuyen_khoa/dung_kham/', dung_kham_chuyen_khoa, name='dung_kham_chuyen_khoa'),
 
 # ---- MINH UPdate -----
