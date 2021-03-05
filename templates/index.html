@@ -166,6 +166,36 @@
                         <!--begin::Body-->
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                                <span class="symbol symbol-50 symbol-light-success mr-2">
+                                    <a href="{% url 'doanh_thu_phong_kham' %}">
+                                        <span class="symbol-label">
+                                        <span class="svg-icon svg-icon-xl svg-icon-success">
+                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24" />
+                                                    <rect fill="#000000" opacity="0.3" x="13" y="4" width="3" height="16" rx="1.5" />
+                                                    <rect fill="#000000" x="8" y="9" width="3" height="11" rx="1.5" />
+                                                    <rect fill="#000000" x="18" y="11" width="3" height="9" rx="1.5" />
+                                                    <rect fill="#000000" x="3" y="13" width="3" height="7" rx="1.5" />
+                                                </g>
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    </a>
+                                </span>
+                                <div class="d-flex flex-column text-right">
+                                    <span class="text-dark-75 font-weight-bolder font-size-h3"></span>
+                                    <span class="text-muted font-weight-bold mt-2">Doanh thu 7 ngày gần đây</span>
+                                </div>
+                            </div>
+                            <div id="chart_4"></div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    {% comment %} <div class="card card-custom card-stretch card-stretch-half gutter-b">
+                        <!--begin::Body-->
+                        <div class="card-body p-0">
+                            <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
                                 <span class="symbol symbol-50 symbol-light-primary mr-2">
                                     <span class="symbol-label">
                                         <span class="svg-icon svg-icon-xl svg-icon-primary">
@@ -189,7 +219,7 @@
                             <div id="kt_stats_widget_12_chart" data-color="primary" style="height: 150px"></div>
                         </div>
                         <!--end::Body-->
-                    </div>
+                    </div> {% endcomment %}
                     <!--end::New User-->
                 </div>
             </div>
@@ -615,9 +645,6 @@
                 series: [{
                     name: 'Dịch vụ khám',
                     data: {{ tong_tien_chuoi_kham|safe }}
-                }, {
-                    name: 'Thuốc',
-                    data: {{ tong_tien_thuoc|safe }}
                 }],
                 chart: {
                     type: 'bar',
@@ -673,140 +700,65 @@
         }
 
         var _initStatsWidget12 = function () {
-            var element = document.getElementById("kt_stats_widget_12_chart");
-
-            var height = parseInt(KTUtil.css(element, 'height'));
-            var color = KTUtil.hasAttr(element, 'data-color') ? KTUtil.attr(element, 'data-color') : 'primary';
-
-            if (!element) {
-                return;
-            }
-
+            const apexChart = "#chart_4";
             var options = {
                 series: [{
-                    name: 'Số người dùng mới',
-                    data: {{ users|safe }},
+                    name: 'Thuốc',
+                    data: {{ tong_tien_thuoc|safe }}
                 }],
                 chart: {
-                    type: 'area',
-                    height: height,
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                    sparkline: {
-                        enabled: true
-                    }
+                    type: 'bar',
+                    height: 170
                 },
-                plotOptions: {},
-                legend: {
-                    show: false
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '60%',
+                        endingShape: 'flat'
+                    },
                 },
                 dataLabels: {
-                    enabled: false
-                },
-                fill: {
-                    type: 'solid',
-                    opacity: 1
+                    enabled: false,
                 },
                 stroke: {
-                    curve: 'smooth',
                     show: true,
-                    width: 3,
-                    colors: [KTApp.getSettings()['colors']['theme']['base'][color]]
+                    width: 2,
+                    colors: ['transparent']
                 },
                 xaxis: {
-                    categories: {{ labels|safe }},
-                    axisBorder: {
-                        show: false,
-                    },
-                    axisTicks: {
-                        show: false
-                    },
-                    labels: {
-                        show: true,
-                        style: {
-                            colors: KTApp.getSettings()['colors']['gray']['gray-500'],
-                            fontSize: '12px',
-                            fontFamily: KTApp.getSettings()['font-family']
-                        }
-                    },
-                    crosshairs: {
-                        show: false,
-                        position: 'front',
-                        stroke: {
-                            color: KTApp.getSettings()['colors']['gray']['gray-300'],
-                            width: 1,
-                            dashArray: 3
-                        }
-                    },
-                    tooltip: {
-                        enabled: true,
-                        formatter: undefined,
-                        offsetY: 0,
-                        style: {
-                            fontSize: '12px',
-                            fontFamily: KTApp.getSettings()['font-family']
-                        }
-                    }
+                    categories: {{ thoi_gian_thuoc|safe }},
                 },
                 yaxis: {
-                    min: 0,
-                    max: 55,
-                    labels: {
-                        show: false,
-                        style: {
-                            colors: KTApp.getSettings()['colors']['gray']['gray-500'],
-                            fontSize: '12px',
-                            fontFamily: KTApp.getSettings()['font-family']
+                    title: {
+                        text: 'VND'
+                    },
+                    ticks: {
+                        callback: function(label, index, labels) {
+                            return label/1000+'k';
                         }
-                    }
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: '1k = 1000'
+                    },
                 },
-                states: {
-                    normal: {
-                        filter: {
-                            type: 'none',
-                            value: 0
-                        }
-                    },
-                    hover: {
-                        filter: {
-                            type: 'none',
-                            value: 0
-                        }
-                    },
-                    active: {
-                        allowMultipleDataPointsSelection: false,
-                        filter: {
-                            type: 'none',
-                            value: 0
-                        }
-                    }
+                fill: {
+                    opacity: 1
                 },
                 tooltip: {
-                    style: {
-                        fontSize: '12px',
-                        fontFamily: KTApp.getSettings()['font-family']
-                    },
                     y: {
                         formatter: function (val) {
-                            return val + " người dùng"
+                            return val + " VND"
                         }
                     }
                 },
-                colors: [KTApp.getSettings()['colors']['theme']['light'][color]],
-                markers: {
-                    colors: [KTApp.getSettings()['colors']['theme']['light'][color]],
-                    strokeColor: [KTApp.getSettings()['colors']['theme']['base'][color]],
-                    strokeWidth: 3
-                }
+                colors: [primary, success, warning]
             };
 
-            var chart = new ApexCharts(element, options);
+            var chart = new ApexCharts(document.querySelector(apexChart), options);
             chart.render();
         }
+
 
         var _initRegisterModal = function () {
             $(document).on('click', '.btn-register-user', function() {
