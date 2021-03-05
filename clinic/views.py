@@ -151,12 +151,12 @@ def index(request):
     tong_tien_chuoi_kham = [str(x['total_spent']) for x in hoa_don_chuoi_kham]
     days_chuoi_kham = [x["day"].strftime("%Y-%m-%d") for x in hoa_don_chuoi_kham ]
 
-    # hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
-    hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay('thoi_gian_tao'), created_count=Count('thoi_gian_tao__date')).values('day', 'created_count')
-    print(hoa_don_thuoc)
+    hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+    # hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay('thoi_gian_tao'), created_count=Count('thoi_gian_tao__date')).values('day', 'created_count')
+    tong_tien_thuoc = [str(x['total_spent']) for x in hoa_don_thuoc]
+    days_thuoc = [x["day"].strftime("%Y-%m-%d") for x in hoa_don_thuoc ]
 
-    # tong_tien_thuoc = [str(x['total_spent']) for x in hoa_don_thuoc]
-    
+
     data = {
         'user': request.user,
         'danh_sach_benh_nhan': danh_sach_benh_nhan,
@@ -173,7 +173,8 @@ def index(request):
         'user_trong_ngay': user_trong_ngay,
         'tong_tien_chuoi_kham' : tong_tien_chuoi_kham,
         'thoi_gian_chuoi_kham': days_chuoi_kham,
-        # 'tong_tien_thuoc' : tong_tien_thuoc,
+        'tong_tien_thuoc' : tong_tien_thuoc,
+        'thoi_gian_thuoc': days_thuoc,
         'bai_dang' : bai_dang,
         'phong_chuc_nang' : phong_chuc_nang,
     }
