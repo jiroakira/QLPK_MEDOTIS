@@ -98,14 +98,7 @@ def index(request):
     nguoi_dung = User.objects.filter(chuc_nang=1)
     # * tổng số bệnh nhân
     ds_bac_si = User.objects.filter(chuc_nang='3')
-    # tong_so_benh_nhan = benh_nhan.count()
 
-    # * tổng số hóa đơn
-    # tong_so_hoa_don = ChuoiKham.objects.select_related('benh_nhan').all().count()
-
-    # * tổng số đơn thuốc
-    # tong_so_don_thuoc = DonThuoc.objects.select_related('benh_nhan').all().count()
-    
     # * Danh sách dịch vụ khám
     danh_sach_dich_vu = DichVuKham.objects.all()
 
@@ -153,15 +146,16 @@ def index(request):
 
     user_trong_ngay = User.objects.filter(thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end)
     
-    hoa_don_chuoi_kham = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gt=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+    hoa_don_chuoi_kham = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+
     tong_tien_chuoi_kham = [str(x['total_spent']) for x in hoa_don_chuoi_kham]
     days_chuoi_kham = [x["day"].strftime("%Y-%m-%d") for x in hoa_don_chuoi_kham ]
 
-    hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gt=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
-    tong_tien_thuoc = [str(x['total_spent']) for x in hoa_don_thuoc]
+    # hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+    hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay('thoi_gian_tao'), created_count=Count('thoi_gian_tao__date')).values('day', 'created_count')
+    print(hoa_don_thuoc)
 
-    hoa_don_vat_tu = HoaDonVatTu.objects.filter(thoi_gian_tao__gt=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
-    tong_tien_vat_tu = [str(x['total_spent']) for x in hoa_don_vat_tu]
+    # tong_tien_thuoc = [str(x['total_spent']) for x in hoa_don_thuoc]
     
     data = {
         'user': request.user,
@@ -179,8 +173,7 @@ def index(request):
         'user_trong_ngay': user_trong_ngay,
         'tong_tien_chuoi_kham' : tong_tien_chuoi_kham,
         'thoi_gian_chuoi_kham': days_chuoi_kham,
-        'tong_tien_thuoc' : tong_tien_thuoc,
-        'tong_tien_vat_tu': tong_tien_vat_tu,
+        # 'tong_tien_thuoc' : tong_tien_thuoc,
         'bai_dang' : bai_dang,
         'phong_chuc_nang' : phong_chuc_nang,
     }
@@ -1442,19 +1435,40 @@ def loginUser(request):
 
 def dung_kham(request):
     if request.method == "POST":
+        id_lich_hen = request.POST.get('id_lich_hen')
+        ly_do = request.POST.get('ly_do')
+        lich_hen = LichHenKham.objects.get(id = id_lich_hen)
+        trang_thai_lich_hen = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Dừng Khám")[0]
+        trang_thai_chuoi_kham = TrangThaiChuoiKham.objects.get_or_create(trang_thai_chuoi_kham = "Dừng Khám")[0]
+        chuoi_kham = lich_hen.danh_sach_chuoi_kham.all().first()
+        lich_su = LichSuChuoiKham.objects.create(chuoi_kham = chuoi_kham, trang_thai = trang_thai_chuoi_kham, chi_tiet_trang_thai = ly_do)
+        lich_hen.trang_thai = trang_thai_lich_hen
+        lich_hen.save()
+        chuoi_kham.trang_thai = trang_thai_chuoi_kham
+        chuoi_kham.save() 
+        return HttpResponse(json.dumps({
+            'status' : 200,
+            'message' : "Đã dừng khám",
+            # 'url': '/danh_sach_benh_nhan_cho'
+        }), content_type="application/json")
+
+def dung_kham_ket_qua_chuyen_khoa(request):
+    if request.method == "POST":
         id_chuoi_kham = request.POST.get('id_chuoi_kham')
         ly_do = request.POST.get('ly_do')
         chuoi_kham = ChuoiKham.objects.get(id = id_chuoi_kham)
-        trang_thai = TrangThaiChuoiKham.objects.get_or_create(trang_thai_chuoi_kham = "Dừng khám")[0]
-        lich_su = LichSuChuoiKham.objects.create(chuoi_kham = chuoi_kham, trang_thai = trang_thai, chi_tiet_trang_thai = ly_do)
-        chuoi_kham.trang_thai = trang_thai
+        lich_hen = chuoi_kham.lich_hen
+        trang_thai_chuoi_kham = TrangThaiChuoiKham.objects.get_or_create(trang_thai_chuoi_kham = "Dừng Khám")[0]
+        trang_thai_lich_hen = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Dừng Khám")[0]
+        lich_su = LichSuChuoiKham.objects.create(chuoi_kham = chuoi_kham, trang_thai = trang_thai_chuoi_kham, chi_tiet_trang_thai = ly_do)
+        lich_hen.trang_thai = trang_thai_lich_hen
+        lich_hen.save()
+        chuoi_kham.trang_thai = trang_thai_chuoi_kham
         chuoi_kham.save()
         return HttpResponse(json.dumps({
             'status' : 200,
             'message' : "Đã dừng khám",
-            'url': '/danh_sach_benh_nhan_cho'
         }), content_type="application/json")
-
 # TODO Sửa lại phần dừng khám của bác sĩ lâm sàng, vì còn liên quan đến phần lịch hẹn
 
 def dung_kham_chuyen_khoa(request):
@@ -3555,11 +3569,11 @@ def export_excel(request):
         start = datetime.strptime(startDate, "%d-%m-%Y")
         tomorrow_start = start + timedelta(1)
         if endDate == '':
-            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)).filter(bao_hiem=True)
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start))
         else:
             end = datetime.strptime(endDate, "%d-%m-%Y")
             tomorrow_end = end + timedelta(1)
-            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start)).filter(bao_hiem=True)
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start))
 
         serializer = FilterHoaDonChuoiKhamBaoHiemSerializer(hoa_don_dich_vu, many=True, context={'request': request})
         excel_data = serializer.data
@@ -3574,6 +3588,7 @@ def export_excel(request):
     else:
         response = HttpResponse(json.dumps({'message': "It's not gonna happen"}), content_type='application/json; charset=utf-8')
     return response
+
        
 def ket_qua_benh_nhan_view(request):
     return render(request, 'le_tan/ket_qua_benh_nhan.html')
@@ -3605,4 +3620,15 @@ def xoa_chuoi_kham(request):
     response = {
         'message' : "Xóa Chuỗi Khám Thành Công"
     }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def xoa_mau_phieu(request):
+    id = request.POST.get('id')
+    mau_phieu = MauPhieu.objects.filter(id=id).first()
+    mau_phieu.delete()
+
+    response = {
+        'message' : "Xóa Mẫu Phiếu Thành Công"
+    }
+
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
