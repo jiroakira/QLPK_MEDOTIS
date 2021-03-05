@@ -397,8 +397,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                 success: function (response) {
                     if (response.status == 200){
                         toastr.success(response.message, "Thành Công")
-                        window.location = response.url;
-                    }
+                        $("#dung_kham_modal").modal('hide')
+                        $('#kt_datatable').KTDatatable('reload')                    }
 
                 },
                 error: function (res) {

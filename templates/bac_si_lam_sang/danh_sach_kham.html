@@ -524,12 +524,35 @@ var KTDatatableModal = function() {
         })
 
         $('#dung_kham_modal').on('click', '#btn_submit', function(){
-            var id = $(this).attr('data-id')
+            var id_chuoi_kham = $(this).attr('data-id')
             var data_dung_kham = $('#ly_do').val()
             var formData = new FormData()
 
-            formData.append('id')
-            
+            formData.append('id_chuoi_kham', id_chuoi_kham)
+            formData.append('ly_do', data_dung_kham)
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'dung_kham_ket_qua_chuyen_khoa' %}",
+                data: formData,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (response) {
+                    if (response.status == 200){
+                        toastr.success(response.message, "Thành Công")
+                        $("#dung_kham_modal").modal('hide')
+                        $('#kt_datatable').KTDatatable('reload')
+                        {% comment %} window.location = response.url; {% endcomment %}
+                    }
+
+                },
+                error: function (res) {
+                    alert(res)                         
+                }
+            })
         })
     };
 

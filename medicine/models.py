@@ -217,18 +217,12 @@ class KeDonThuoc(models.Model):
     ghi_chu = models.TextField()
     bao_hiem = models.BooleanField(default=False)
 
-    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
-    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+    thoi_gian_tao = models.DateTimeField(auto_now_add=True)
+    thoi_gian_cap_nhat = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Kê Đơn Thuốc"
         verbose_name_plural = "Kê Đơn Thuốc"
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.thoi_gian_tao = timezone.now()
-        self.thoi_gian_cap_nhat = timezone.now()
-        return super(KeDonThuoc, self).save(*args, **kwargs)
 
     def gia_thuoc_theo_bao_hiem(self):
         gia_ban = self.thuoc.gia_thuoc.gia

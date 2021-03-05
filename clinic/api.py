@@ -12,7 +12,7 @@ from json import dump
 from rest_framework.parsers import FileUploadParser
 from rest_framework.parsers import MultiPartParser
 import json
-from medicine.models import DonThuoc, Thuoc, TrangThaiDonThuoc, VatTu
+from medicine.models import DonThuoc, KeDonThuoc, Thuoc, TrangThaiDonThuoc, VatTu
 from django.http.response import Http404, HttpResponse, JsonResponse
 from rest_framework import views
 from rest_framework.views import APIView
@@ -34,7 +34,7 @@ from clinic.models import (
 )
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
+from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuKhamBaoHiemSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -2621,7 +2621,7 @@ class TestExportExcel(APIView):
         start = datetime.strptime(startDate, "%d-%m-%Y")
         tomorrow_start = start + timedelta(1)
         if endDate == '':
-            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start))
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)
         else:
             end = datetime.strptime(endDate, "%d-%m-%Y")
             tomorrow_end = end + timedelta(1)
@@ -2633,5 +2633,72 @@ class TestExportExcel(APIView):
         response = {
             'data': excel_data
         }
+
+        return Response(response)
+
+class TestExportExcelDichVu(APIView):
+    def get(self, request, format=None):
+        startDate = self.request.query_params.get('range_start')
+        endDate = self.request.query_params.get('range_end')
+        start = datetime.strptime(startDate, "%d-%m-%Y")
+        tomorrow_start = start + timedelta(1)
+
+        if endDate == '':
+            dich_vu = PhanKhoaKham.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start).values('dich_vu_kham__ten_dvkt').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__ten_dvkt').annotate(dich_vu_kham_count = Count('dich_vu_kham__ten_dvkt')).annotate(ma_dvkt=F('dich_vu_kham__ma_dvkt')).annotate(don_gia=F('dich_vu_kham__don_gia')).annotate(stt=F('dich_vu_kham__stt'))
+            list_dich_vu = []
+            for i in dich_vu:
+                list_dich_vu.append(i)
+            response = {
+                'data' : list_dich_vu,
+            }
+        else:
+            end = datetime.strptime(endDate, "%d-%m-%Y")
+            tomorrow_end = end + timedelta(1)
+            dich_vu = PhanKhoaKham.objects.filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start)).filter(bao_hiem=True).values('dich_vu_kham__ten_dvkt').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__ten_dvkt').annotate(dich_vu_kham_count = Count('dich_vu_kham__ten_dvkt')).annotate(ma_dvkt=F('dich_vu_kham__ma_dvkt')).annotate(don_gia=F('dich_vu_kham__don_gia')).annotate(stt=F('dich_vu_kham__stt'))
+            
+            list_tong_tien_formatted = ["{:,}".format(int(i['tong_tien'])) if i['tong_tien'] is not None else 0 for i in dich_vu]
+
+            list_dich_vu = []
+            for idx, val in enumerate(dich_vu):
+                val['tong_tien'] = list_tong_tien_formatted[idx]
+                list_dich_vu.append(val)
+
+            # serializer = FilterDichVuKhamBaoHiemSerializer(dich_vu, many=True, context={'request': request})
+            response = {
+                'data': list_dich_vu
+            }
+
+        return Response(response)
+
+class TestExportExcelThuoc(APIView):
+    def get(self, request, format=None):
+        startDate = self.request.query_params.get('range_start')
+        endDate = self.request.query_params.get('range_end')
+        start = datetime.strptime(startDate, "%d-%m-%Y")
+        tomorrow_start = start + timedelta(1)
+
+        if endDate == '':
+            thuoc = KeDonThuoc.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start).values('thuoc__ten_thuoc').annotate(tong_tien=Sum('thuoc__don_gia_tt')).order_by('thuoc__ten_thuoc').annotate(thuoc_count = Count('thuoc__ten_thuoc')).annotate(ten_hoat_chat=F('thuoc__ten_hoat_chat')).annotate(duong_dung=F('thuoc__duong_dung')).annotate(ham_luong=F('thuoc__ham_luong')).annotate(so_dang_ky=F('thuoc__so_dang_ky')).annotate(don_vi_tinh=F('thuoc__don_vi_tinh')).annotate(don_gia=F('thuoc__don_gia_tt'))
+            
+            list_thuoc = []
+            for i in thuoc:
+                list_thuoc.append(i)
+            response = {
+                'data' : list_thuoc,
+            }
+        else:
+            end = datetime.strptime(endDate, "%d-%m-%Y")
+            tomorrow_end = end + timedelta(1)
+            thuoc = KeDonThuoc.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start)).values('thuoc__ten_thuoc').annotate(tong_tien=Sum('thuoc__don_gia_tt')).order_by('thuoc__ten_thuoc').annotate(thuoc_count = Count('thuoc__ten_thuoc')).annotate(ten_hoat_chat=F('thuoc__ten_hoat_chat')).annotate(duong_dung=F('thuoc__duong_dung')).annotate(ham_luong=F('thuoc__ham_luong')).annotate(so_dang_ky=F('thuoc__so_dang_ky')).annotate(don_vi_tinh=F('thuoc__don_vi_tinh')).annotate(don_gia=F('thuoc__don_gia_tt'))
+            list_tong_tien_formatted = ["{:,}".format(int(i['tong_tien'])) for i in thuoc]
+
+            list_thuoc = []
+            for idx, val in enumerate(thuoc):
+                val['tong_tien'] = list_tong_tien_formatted[idx]
+                list_thuoc.append(val)
+
+            response = {
+                'data': list_thuoc
+            }
 
         return Response(response)
