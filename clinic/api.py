@@ -34,7 +34,7 @@ from clinic.models import (
 )
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuKhamBaoHiemSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
+from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerFormatted, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuKhamBaoHiemSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonLamSangSerializerFormatted, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -220,7 +220,7 @@ class DichVuKhamViewSet(viewsets.ViewSet):
     def list(self, request):
         phong_chuc_nang = PhongChucNangSerializerSimple()
         dich_vu_kham = DichVuKham.objects.all()
-        serializer = DichVuKhamSerializer(dich_vu_kham, many=True, context={"request": request})
+        serializer = DichVuKhamSerializerFormatted(dich_vu_kham, many=True, context={"request": request})
         response = {
             "error": False,
             "status": status.HTTP_200_OK,
@@ -231,7 +231,7 @@ class DichVuKhamViewSet(viewsets.ViewSet):
 
     def create(self, request):
         try:
-            serializer = DichVuKhamSerializer(data=request.data, context={"request": request})
+            serializer = DichVuKhamSerializerFormatted(data=request.data, context={"request": request})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             response = {
@@ -250,7 +250,7 @@ class DichVuKhamViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         queryset = DichVuKham.objects.all()
         dich_vu_kham = get_object_or_404(queryset, pk=pk)
-        serializer = DichVuKhamSerializer(dich_vu_kham, context={"request": request})
+        serializer = DichVuKhamSerializerFormatted(dich_vu_kham, context={"request": request})
         data = serializer.data
         response = {
             "error": False, 
@@ -264,7 +264,7 @@ class DichVuKhamViewSet(viewsets.ViewSet):
         try:
             queryset = DichVuKham.objects.all()
             dich_vu_kham = get_object_or_404(queryset, pk=pk)
-            serializer = DichVuKhamSerializer(dich_vu_kham, data=request.data, context={"request": request})
+            serializer = DichVuKhamSerializerFormatted(dich_vu_kham, data=request.data, context={"request": request})
             serializer.is_valid()
             serializer.save()
             response = {
@@ -1129,7 +1129,7 @@ class DanhSachDoanhThuLamSang(APIView):
         if range_end == '':
             danh_sach_hoa_don = HoaDonLamSang.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)
 
-            serializer = HoaDonLamSangSerializer(danh_sach_hoa_don, many=True, context={'request': request})
+            serializer = HoaDonLamSangSerializerFormatted(danh_sach_hoa_don, many=True, context={'request': request})
             data = serializer.data
 
             return Response(data)
@@ -1139,7 +1139,7 @@ class DanhSachDoanhThuLamSang(APIView):
 
             danh_sach_hoa_don = HoaDonLamSang.objects.filter(Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start))
 
-            serializer = HoaDonLamSangSerializer(danh_sach_hoa_don, many=True, context={'request': request})
+            serializer = HoaDonLamSangSerializerFormatted(danh_sach_hoa_don, many=True, context={'request': request})
             data = serializer.data
 
             return Response(data)

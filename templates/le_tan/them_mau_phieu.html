@@ -53,19 +53,15 @@
                                 <!--begin::Form-->
                                 <div class="form-group">
                                     <label>Dịch Vụ Khám <span class="text-danger">*</span></label>
-                                    <select class="form-control select2" id="kt_select2_4" name="param">
-                                        <option label="Label"></option>
+                                    <select class="form-control selectpicker" id="kt_select2_4" data-live-search="true" name="param">
+                                        <option value="" selected disabled>Chọn Dịch Vụ Khám</option>
                                         {% for dv in dich_vu %}
-                                            <option value="{{ dv.id }}">{{dv.ten_dvkt}}</option>
+                                            <option value="{{ dv.id }}" data-name="{{ dv.ten_dvkt }}" >{{dv.ten_dvkt}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                          
-                                <div class="form-group">
-                                    <label>Tên Mẫu Phiếu <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control input" id="tieu_de" name="text" placeholder="Nhập tên mẫu phiếu" />
-                                </div>
-
+                            
                                 <div class="form-group">
                                     <label>Mã hóa dạng HTML <span class="text-danger">*</span></label>
                                     <div class="col-3">
@@ -225,16 +221,15 @@
                 }
             }
         });
- 
+
+        
         var store_mau_phieu = function() {
             $('#submitData').on('click', function() {
                 var id_dich_vu = $('#kt_select2_4').val()
-                var ten_mau_phieu = $('#tieu_de').val()
                 var html = $('#select_html:checked').val()
                 var noi_dung = CKEDITOR.instances.noi_dung.getData()
                 var formData = new FormData()
                 formData.append('id_dich_vu', id_dich_vu)
-                formData.append('ten_mau_phieu', ten_mau_phieu)
                 formData.append('noi_dung', noi_dung)
                 formData.append('html', html)
                 formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
@@ -266,7 +261,7 @@
         return {
             // public functions
             init: function() {
-                _initPreview();
+                {% comment %} _initPreview(); {% endcomment %}
                 _initValidate();
                 store_mau_phieu();
             }

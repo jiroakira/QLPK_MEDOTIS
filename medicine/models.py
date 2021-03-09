@@ -137,7 +137,18 @@ class Thuoc(models.Model):
                 return True 
             else: 
                 return False
-   
+
+    def get_don_gia(self):
+        don_gia = "{:,}".format(int(self.don_gia))
+        return don_gia
+
+    def get_don_gia_tt(self):
+        don_gia_tt = "{:,}".format(int(self.don_gia_tt))
+        return don_gia_tt
+
+    def get_so_luong_kha_dung(self):
+        so_luong_kha_dung = "{:,}".format(self.so_luong_kha_dung)
+        return so_luong_kha_dung
 # def get_sentinel_user():
 #     return User.objects.get_or_create(ho_ten='deleted')[0]
 
@@ -217,8 +228,8 @@ class KeDonThuoc(models.Model):
     ghi_chu = models.TextField()
     bao_hiem = models.BooleanField(default=False)
 
-    thoi_gian_tao = models.DateTimeField(auto_now_add=True)
-    thoi_gian_cap_nhat = models.DateTimeField(auto_now=True)
+    thoi_gian_tao = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    thoi_gian_cap_nhat = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         verbose_name = "Kê Đơn Thuốc"
@@ -381,6 +392,27 @@ class VatTu(models.Model):
     @property
     def kha_dung(self):
         return self.so_luong_kha_dung > 0
+
+    def get_don_gia(self):
+        if self.don_gia is not None:
+            don_gia = "{:,}".format(int(self.don_gia))
+        else:
+            don_gia = '-'
+        return don_gia
+
+    def get_don_gia_tt(self):
+        if self.don_gia_tt is not None:
+            don_gia_tt = "{:,}".format(int(self.don_gia_tt))
+        else:
+            don_gia_tt = '-'
+        return don_gia_tt
+
+    def get_so_luong_kha_dung(self):
+        if self.so_luong_kha_dung is not None:
+            so_luong_kha_dung = "{:,}".format(int(self.so_luong_kha_dung))
+        else:
+            so_luong_kha_dung = '-'
+        return so_luong_kha_dung
 
 class KeVatTu(models.Model):
     hoa_don_vat_tu = models.ForeignKey(HoaDonVatTu, on_delete=models.CASCADE, null=True, blank=True, related_name="ke_don")

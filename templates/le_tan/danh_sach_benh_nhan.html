@@ -158,7 +158,9 @@
                             </div>
                             <div class="col-lg-6">
                                 <label>Ngày sinh</label>
-                                <input class="form-control" id="inputNgaySinhModal" type="text" />
+                                {% comment %} <input class="form-control" id="inputNgaySinhModal" type="text" /> {% endcomment %}
+                                {% comment %} {{ form.ngay_sinh|attr:"class:form-control"|attr:"name:ngay_sinh"|attr:"id:kt_datepicker_3"|attr:"readonly:readonly"|attr:"placeholder:Chọn ngày sinh"}} {% endcomment %}
+                                <input type="text" class="form-control" id="kt_datepicker_3" name="ngay_sinh" readonly="readonly" placeholder="Chọn ngày sinh"/>
                                 <span class="form-text text-muted">Nhập ngày sinh dạng: 
                                 <code>ngày/tháng/năm</code></span>
                             </div>
@@ -168,25 +170,52 @@
                                 <label>Giới tính</label>
                                 <div class="radio-inline">
                                     <label class="radio">
-                                        <input type="radio" name="radio" class="inputGioiTinhModal" value="Nữ" />
+                                        <input type="radio" name="radio" class="inputGioiTinhModal" value="2" />
                                         <span></span>Nữ
                                     </label>
                                     <label class="radio">
-                                        <input type="radio" checked name="radio" class="inputGioiTinhModal" value="Nam" />
+                                        <input type="radio" checked name="radio" class="inputGioiTinhModal" value="1" />
                                         <span></span>Nam
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-2">
                                 <label>Dân tộc <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="inputDanTocModal" placeholder="Nhập dân tộc của bệnh nhân"/>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
+                                <label>Cân Nặng <span class="text-danger">*</span></label>
+                                <input type="number" min="0" class="form-control" id="inputCanNangModal" placeholder="Nhập cân nặng của bệnh nhân"/>
+                            </div>
+                            <div class="col-lg-4">
                                 <label>Mã số bảo hiểm <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="inputMaSoBaoHiemModal" placeholder="Nhập mã số bảo hiểm của bệnh nhân"/>
                             </div>
                         </div>
                         
+                        <div class="form-group row">
+                            <div class="col-lg-4">
+                                <label>Mã Nơi ĐK KCB BĐ<span class="text-danger">*</span></label>
+                                {% comment %} {{ form.ma_dkbd|attr:"class:form-control"|attr:"name:ma_dkbd"|attr:"placeholder:Nhập mã nơi đăng kí khám chữa bệnh ban đầu"}} {% endcomment %}
+                                <input type="text" class="form-control" id="inputMaDkbdModal" placeholder="Nhập mã nơi đăng kí khám chữa bệnh ban đầu"/>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <label>Giá Trị Thẻ Từ</label>
+                                {% comment %} <div class="radio-inline">
+                                    {{ form.gioi_tinh|attr:"class:form-control selectpicker"|attr:"name:gioi_tinh" }}
+                                </div> {% endcomment %}
+                                {% comment %} {{ form.gt_the_tu|attr:"class:form-control"|attr:"name:gt_the_tu"|attr:"id:kt_datepicker_4"|attr:"readonly:readonly"|attr:"placeholder:Chọn thời điểm thẻ có giá trị"}} {% endcomment %}
+                                <input type="text" class="form-control" id="kt_datepicker_4" name="gt_the_tu" readonly="readonly" placeholder="Chọn thời điểm thẻ có giá trị"/>
+                            </div>
+                            <div class="col-lg-4">
+                                <label>Liên Tiếp 5 Năm Từ<span class="text-danger">*</span></label>
+                                {% comment %} {{ form.lien_tuc_5_nam_tu|attr:"class:form-control"|attr:"name:lien_tuc_5_nam_tu"|attr:"id:kt_datepicker_5"|attr:"readonly:readonly"|attr:"placeholder:Chọn thời điểm 5 năm liên tục từ"}} {% endcomment %}
+                                <input type="text" class="form-control" id="kt_datepicker_5" name="lien_tuc_5_nam_tu" readonly="readonly" placeholder="Chọn thời điểm 5 năm liên tục từ"/>
+                            </div>
+                            
+                        </div>
+
                         <div class="form-group row">
                             <div class="col-lg-4">
                                 <label>Tỉnh/Thành Phố<span class="text-danger">*</span></label>
@@ -325,6 +354,51 @@ var KTDatatableRemoteAjaxDemo = function() {
     // basic demo
 
     var demo = function() {
+        var arrows;
+        if (KTUtil.isRTL()) {
+            arrows = {
+                leftArrow: '<i class="la la-angle-right"></i>',
+                rightArrow: '<i class="la la-angle-left"></i>'
+            }
+        } else {
+            arrows = {
+                leftArrow: '<i class="la la-angle-left"></i>',
+                rightArrow: '<i class="la la-angle-right"></i>'
+            }
+        }
+
+        $('#kt_datepicker_3').datepicker({
+            rtl: KTUtil.isRTL(),
+            todayBtn: "linked",
+            clearBtn: true,
+            orientation: "bottom left",
+            todayHighlight: true,
+            templates: arrows,
+            format: 'dd/mm/yyyy',
+            autoclose:true,
+        });
+
+        $('#kt_datepicker_4').datepicker({
+            rtl: KTUtil.isRTL(),
+            todayBtn: "linked",
+            clearBtn: true,
+            orientation: "bottom left",
+            todayHighlight: true,
+            templates: arrows,
+            format: 'dd/mm/yyyy',
+            autoclose:true,
+        });
+
+        $('#kt_datepicker_5').datepicker({
+            rtl: KTUtil.isRTL(),
+            todayBtn: "linked",
+            clearBtn: true,
+            orientation: "bottom left",
+            todayHighlight: true,
+            templates: arrows,
+            format: 'dd/mm/yyyy',
+            autoclose:true,
+        });
 
         $('#kt_select2_1').on('changed.bs.select', function(e, clickedIndex, newValue, oldValue) {
             console.log(this.value, clickedIndex, newValue, oldValue)
@@ -656,13 +730,17 @@ var KTDatatableRemoteAjaxDemo = function() {
             formData.append('password', $("#inputPasswordModal").val())
             formData.append('cmnd_cccd', $("#inputCmtModal").val())
             formData.append('dia_chi', $("#inputDiaChiModal").val())
-            formData.append('ngay_sinh', $("#inputNgaySinhModal").val())
+            formData.append('ngay_sinh', $("#kt_datepicker_3").val())
             formData.append('gioi_tinh', gioi_tinh)
             formData.append('dan_toc', $("#inputDanTocModal").val())
             formData.append('ma_so_bao_hiem', $("#inputMaSoBaoHiemModal").val())
+            formData.append('can_nang', $('#inputCanNangModal').val())
+            formData.append('ma_dkbd', $('#inputMaDkbdModal').val())
             formData.append('tinh', $('#kt_select2_1').val())
             formData.append('huyen', $('#kt_select2_2').val())
             formData.append('xa', $('#kt_select2_3').val())
+            formData.append('gt_the_tu', $('#kt_datepicker_4').val())
+            formData.append('lien_tuc_5_nam_tu', $('#kt_datepicker_5').val())
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
             $.ajax({

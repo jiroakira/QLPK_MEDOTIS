@@ -183,6 +183,17 @@ def writeToExcelDichVu(excel_data):
     worksheet_s.merge_range('F8:F9', "Đơn giá (đồng)", cell_center)
     worksheet_s.merge_range('G8:G9', "Thành tiền (đồng)", cell_center)
 
+    for idx, data in enumerate(excel_data):
+        row = 9 + idx
+        worksheet_s.write(row, 0, data['stt'], cell_center)
+        worksheet_s.write(row, 1, data['ma_dvkt'], cell_center)
+        worksheet_s.write(row, 2, data['dich_vu_kham__ten_dvkt'], cell_center)
+        worksheet_s.write(row, 3, data['dich_vu_kham_count'], cell_center)
+        worksheet_s.write(row, 4, '0', cell_center)
+        worksheet_s.write(row, 5, data['don_gia'], cell_center)
+        worksheet_s.write(row, 6, data['tong_tien'], cell_center)
+    
+
     workbook.close()
 
     xlsx_data = output.getvalue()
@@ -248,6 +259,7 @@ def writeToExcelThuoc(excel_data):
     worksheet_s.merge_range('K7:K8', "Đơn giá (đồng)", cell_center)
     worksheet_s.merge_range('L7:L8', "Thành tiền (đồng)", cell_center)
 
+    
     workbook.close()
 
     xlsx_data = output.getvalue()

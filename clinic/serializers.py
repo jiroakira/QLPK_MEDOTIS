@@ -393,6 +393,7 @@ class DanhSachDonThuocSerializer(serializers.ModelSerializer):
         fields = ('id', 'ma_don_thuoc', 'bac_si_ke_don')
 
 class BaiDangSerializer(serializers.ModelSerializer):
+    noi_dung_chinh = serializers.CharField(source='get_truncated_noi_dung_chinh')
     class Meta:
         model = BaiDang
         fields = "__all__"
@@ -403,6 +404,9 @@ class NhomVatTuSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class VatTuSerializer(serializers.ModelSerializer):
+    don_gia = serializers.CharField(source='get_don_gia')
+    don_gia_tt = serializers.CharField(source='get_don_gia_tt')
+    so_luong_kha_dung = serializers.CharField(source='get_so_luong_kha_dung')
     nhom_vat_tu = NhomVatTuSerializer()
     nha_thau = CongTySerializer()
     class Meta:
@@ -469,6 +473,13 @@ class HoaDonLamSangSerializer(serializers.ModelSerializer):
         model = HoaDonLamSang
         fields = ('id', 'tong_tien', 'thoi_gian_tao', 'lich_hen')
 
+class HoaDonLamSangSerializerFormatted(serializers.ModelSerializer):
+    lich_hen = LichHenKhamSerializer()
+    tong_tien = serializers.CharField(source='get_don_gia')
+    class Meta:
+        model = HoaDonLamSang
+        fields = ('id', 'tong_tien', 'thoi_gian_tao', 'lich_hen')
+
 
 # * -------------------- End -----------------------
 
@@ -486,7 +497,11 @@ class DanhSachBacSiSerializer(serializers.ModelSerializer):
         model = BacSi
         fields = '__all__'
 # END
-
+class DichVuKhamSerializerFormatted(serializers.ModelSerializer):
+    don_gia = serializers.CharField(source='get_don_gia')
+    class Meta:
+        model = DichVuKham
+        fields = '__all__'
 
 class DichVuKhamSerializer(serializers.ModelSerializer):
     phong_chuc_nang = PhongChucNangSerializerSimple()

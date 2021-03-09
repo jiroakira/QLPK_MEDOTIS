@@ -78,7 +78,7 @@
 
                         <div id='allRowValues'>
                             {% for tieu_chuan in tieu_chuan_dich_vu %}
-                            <div class="divRow form-group row" id="inputFormRow" data-id-chi-tiet="{{tieu_chuan.chi_tiet.id}}" data-id-chi-so="{{tieu_chuan.id}}">
+                            <div class="divRow form-group row inputFormRow" data-id-chi-tiet="{{tieu_chuan.chi_tiet.id}}" data-id-chi-so="{{tieu_chuan.id}}">
                                 <div class="col-lg-1">
                                     <input type="text" class="evaluate_field form-control" placeholder="Mã CS" name='ma_chi_so' value="{{tieu_chuan.ma_chi_so}}" data-id={{tieu_chuan.chi_tiet.id}} ></input> 
                                 </div>
@@ -98,7 +98,7 @@
                                     <input type="text" class="evaluate_field form-control" placeholder="Ghi chú" name='ghi_chu' value="{{tieu_chuan.chi_tiet.ghi_chu}}"></input>
                                 </div>
                                 <div class="col-lg-1 ">
-                                    <button id="removeRow" type="button" class="btn btn-danger">Xóa</button>  
+                                    <button type="button" data-id-chi-so="{{tieu_chuan.id}}" class="btn btn-danger removeStandard">Xóa</button>  
                                 </div>
                             </div>
                             {% endfor %}
@@ -157,7 +157,7 @@
 
     $('#addRow').click(function() {
         var html = '';
-        html += `<div class="divRow form-group row" id="inputFormRow" data-id-chi-tiet="{{tieu_chuan.chi_tiet.id}}" data-id-chi-so="{{tieu_chuan.id}}">`
+        html += `<div class="divRow form-group row inputFormRow" data-id-chi-tiet="{{tieu_chuan.chi_tiet.id}}" data-id-chi-so="{{tieu_chuan.id}}">`
         html += `<div class="col-lg-1">
                     <input type="text" class="evaluate_field form-control" placeholder="Mã CS" name='ma_chi_so'></input> 
                 </div>`
@@ -177,38 +177,55 @@
                     <input type="text" class="evaluate_field form-control" placeholder="Ghi chú" name='ghi_chu'></input>  
                 </div>`
         html += `<div class="col-lg-1 ">
-                    <button id="removeRow" type="button" class="btn btn-danger">Xóa</button>  
+                    <button id="removeRow" type="button" class="btn btn-danger ">Xóa</button>  
                 </div>`
         html += `</div>`
         $('#newRow').append(html);
     })
 
     $(document).on('click', '#removeRow', function () {
-        $(this).closest('#inputFormRow').remove();
+        $(this).closest('.inputFormRow').remove();
     });
 
     $("#submitData").click(function(){
         var chi_so = []
         var formData = new FormData()
-
+        
         var id_dich_vu = $("#select_1").val()
         var id_doi_tuong = $("#select_2").val()
 
         $(".divRow").each(function(){
             var input = $(this).find('input')
             var chi_so_1 = []
+            var startDict = "{"
+            var endDict = "}"
+            var dictStr = ""
             for (var i = 0; i < input.length; i++) {
-                chi_so_1.push({
-                    id_chi_tiet: $(input[i]).closest('.divRow').attr('data-id-chi-tiet'),
-                    id_chi_so : $(input[i]).closest('.divRow').data('id-chi-so'),
-                    key: $(input[i]).attr("name"),
-                    value: $(input[i]).val()
-                })
+                // chi_so_1.push({
+                //     id_chi_tiet: $(input[i]).closest('.divRow').attr('data-id-chi-tiet'),
+                //     id_chi_so : $(input[i]).closest('.divRow').data('id-chi-so'),
+                //     key: $(input[i]).attr("name"),
+                //     value: $(input[i]).val()
+                // })  
+                var element = `"${$(input[i]).attr("name")}": "${$(input[i]).val()}",`
+                dictStr += element
             }
-            chi_so.push(chi_so_1)
+            {% comment %} chi_so.push(chi_so_1) {% endcomment %}
+            var id_chi_tiet = `"id_chi_tiet": "${$(this).data('id-chi-tiet')}",`
+            var id_chi_so = `"id_chi_so": "${$(this).data('id-chi-so')}",`
+            var newDictStr =  dictStr + id_chi_tiet + id_chi_so
+            var dict = startDict + newDictStr + endDict
+            var editedDict = dict.substring(0, dict.length - 2)+ '}'
+            var obj = JSON.parse(editedDict)
+            chi_so.push(obj)
+            // listStr += dict
+            console.log(editedDict)
+
         })
+        // var list = startList + listStr + endList
 
         console.log(chi_so)
+        {% comment %} console.log(list) {% endcomment %}
 
         formData.append('data', JSON.stringify(chi_so))
         formData.append('id_dich_vu', id_dich_vu)
@@ -224,7 +241,10 @@
             contentType: false,
             success: function(response){
                 if (response.status == 200) {
-                    toastr.success(response.message, "Thành Công")    
+                    toastr.success(response.message, "Thành Công")
+                    setTimeout(function () {
+                        window.location.href = '/danh_sach_tieu_chuan/'; //redirect về danh sách chờ lâm sàng
+                    }, 1500);  
                 } else if (response.status == 404) {
                     toastr.warning(response.message, "Thất Bại")
                 }
@@ -276,6 +296,68 @@
                 }
             }
         }
+
+        var deleteRowTieuChuan = function() {
+            $(".removeStandard").on('click', function() {
+                var id_chi_so = $(this).attr('data-id-chi-so')
+ 
+                Swal.fire({
+                    title: "Xóa Tiêu Chuẩn DVKT Khỏi Danh Sách",
+                    text: "Bạn đã chắc chắn chưa?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    cancelButtonText: "Hủy",
+                    confirmButtonText: "Xác Nhận!"
+                }).then(function(result) {
+                    if (result.value) {
+                     
+                        var formData = new FormData()
+                        formData.append('id', id_chi_so)
+                        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+    
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'xoa_chi_so' %}",
+                            data: formData,
+                            cache: false,
+                            processData: false,
+                            contentType: false,
+                            success: function(response){
+                                if(response.status == 200) {
+                                    Swal.fire(
+                                        'Đã Xóa!',
+                                        response.message,
+                                        'success'
+                                    )
+                                    $("div").find(`[data-id-chi-so='${id_chi_so}']`).remove()
+                                } else if (response.status == 404) {
+                                    Swal.fire(
+                                        'Lỗi!',
+                                        response.message,
+                                        'error'
+                                    )
+                                }
+                                
+                            },
+                            error: function(response){
+                                Swal.fire(
+                                    'Đã Xóa!',
+                                    "response.message",
+                                    'success'
+                                )
+                            }
+                        })
+                    }else if (result.dismiss === 'cancel') {
+                        Swal.fire(
+                            'Đã Hủy',
+                            'Tiêu Chuẩn Vẫn An Toàn Nhé! :)',
+                            'error'
+                        )
+                    }
+                });
+            })
+        }
+
         var _initValidate = function () {
  
             FormValidation.formValidation(
@@ -350,10 +432,12 @@
             init: function() {
                 _initPreview();
                 _initValidate();
+                deleteRowTieuChuan();
             }
         };
     }();
  
+
     jQuery(document).ready(function() {
         KTFormControls.init();
     });

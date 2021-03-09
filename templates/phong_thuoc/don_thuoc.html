@@ -55,7 +55,7 @@
                                 <th>Tên thuốc</th>
                                 <th>Số lượng</th>
                                 <th>Cách dùng</th>
-                                <th>Tác dụng phụ</th>
+                                <th>Ghi chú</th>
                             </tr>
                         </thead>
                             {% for thuoc in danh_sach_thuoc %}
@@ -70,7 +70,7 @@
                                         {{ thuoc.cach_dung }}
                                     </td>
                                     <td>
-                                        {{ thuoc.thuoc.tac_dung_phu }}
+                                        {{ thuoc.ghi_chu }}
                                     </td>
                                 </tr>
                             {% endfor %}

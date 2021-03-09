@@ -153,7 +153,7 @@
                                 </span>
                                 <div class="d-flex flex-column text-right">
                                     <span class="text-dark-75 font-weight-bolder font-size-h3"></span>
-                                    <span class="text-muted font-weight-bold mt-2">Doanh thu 7 ngày gần đây</span>
+                                    <span class="text-muted font-weight-bold mt-2">Doanh thu dịch vụ 7 ngày gần đây</span>
                                 </div>
                             </div>
                             <div id="chart_3"></div>
@@ -185,7 +185,7 @@
                                 </span>
                                 <div class="d-flex flex-column text-right">
                                     <span class="text-dark-75 font-weight-bolder font-size-h3"></span>
-                                    <span class="text-muted font-weight-bold mt-2">Doanh thu 7 ngày gần đây</span>
+                                    <span class="text-muted font-weight-bold mt-2">Doanh thu thuốc 7 ngày gần đây</span>
                                 </div>
                             </div>
                             <div id="chart_4"></div>
@@ -233,7 +233,7 @@
                         <!--begin::Header-->
                         <div class="card-header border-0 pt-5">
                             <h3 class="card-title align-items-start flex-column">
-                                <span class="card-label font-weight-bolder text-dark">Danh sách bệnh nhân đăng ký mới trong ngày</span>
+                                <span class="card-label font-weight-bolder text-dark">Danh sách bệnh nhân đăng ký mới trong 1 tuần qua</span>
                                 <span class="text-muted mt-3 font-weight-bold font-size-sm">Thông tin cơ bản của các bệnh nhân mới</span>
                             </h3>
                         </div>
@@ -604,7 +604,9 @@
     const danger = '#F64E60';
 
     // Class definition
-    
+    var date = {{tong_tien_chuoi_kham|safe}}
+
+    console.log(date)
     
     // Class definition
     var KTWidgets = function () {
@@ -667,6 +669,7 @@
                 },
                 xaxis: {
                     categories: {{ thoi_gian_chuoi_kham|safe }},
+
                 },
                 yaxis: {
                     title: {
@@ -688,11 +691,15 @@
                 tooltip: {
                     y: {
                         formatter: function (val) {
-                            return val + " VND"
+                            if (parseInt(val) >= 1000) {
+                                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " VND";
+                            } else {
+                                return val + " VND"
+                            }
                         }
                     }
                 },
-                colors: [primary, success, warning]
+                colors: [success]
             };
 
             var chart = new ApexCharts(document.querySelector(apexChart), options);
@@ -748,11 +755,15 @@
                 tooltip: {
                     y: {
                         formatter: function (val) {
-                            return val + " VND"
+                            if (parseInt(val) >= 1000) {
+                                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " VND";
+                            } else {
+                                return val + " VND"
+                            }
                         }
                     }
                 },
-                colors: [primary, success, warning]
+                colors: [primary]
             };
 
             var chart = new ApexCharts(document.querySelector(apexChart), options);

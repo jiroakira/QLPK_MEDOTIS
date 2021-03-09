@@ -130,7 +130,7 @@
                     <div class="row">
                         <div class="col-lg-12 ml-lg-auto text-center">
                             <button type="submit" class="btn btn-primary font-weight-bold mr-2" id="submitData" name="submitButton">Xác nhận</button>
-                            <button type="reset" class="btn btn-light-primary font-weight-bold">Hủy</button>
+                            <button type="reset" class="btn btn-light-primary font-weight-bold" id="redirectBtn">Hủy</button>
                         </div>
                     </div>
                 </div>
@@ -233,12 +233,19 @@
             })
         }
 
+        var redirectToIndex = function() {
+            $('#redirectBtn').on('click', function() {
+                window.location.href = "/trang_chu"
+            })
+        }
+
         return {
             // public functions
             init: function() {
                 _initPreview();
                 _initDemo1();
                 _formAddDichVuSubmit();
+                redirectToIndex();
             }
         };
     }();
