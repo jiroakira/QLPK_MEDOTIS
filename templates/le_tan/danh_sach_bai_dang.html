@@ -149,7 +149,7 @@ var KTDatatableModal = function() {
             // columns definition
             columns: [{
                 field: 'id',
-                title: 'ID',
+                title: 'Stt',
                 sortable: true,
                 width: 30,
                 textAlign: 'center',
@@ -184,19 +184,47 @@ var KTDatatableModal = function() {
                     }
                 }
             }, {
-                field: 'actions',
+                field: 'xem',
                 width: 130,
-                title: 'Thao Tác',
+                title: 'Xem',
                 sortable: false,
                 overflow: 'visible',
                 textAlign: 'center',
                 autoHide: false,
                 template: function(row) {
                     return `
-                      
+                        <a href="/bai_dang/${row.id}" class="btn btn-sm btn-clean" title="Xem Chi Tiết">
+                            <i class="la la-edit icon-lg text-primary"></i>
+                        </a>
+                        
+                    `;
+                },
+            }, {
+                field: 'actions',
+                width: 130,
+                title: 'Chỉnh Sửa',
+                sortable: false,
+                overflow: 'visible',
+                textAlign: 'center',
+                autoHide: false,
+                template: function(row) {
+                    return `
                         <a href="/chinh_sua/bai_dang/${row.id}" class="btn btn-sm btn-clean" title="Xem Chi Tiết">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        
+                    `;
+                },
+            }, {
+                field: 'delete',
+                width: 130,
+                title: 'Xóa',
+                sortable: false,
+                overflow: 'visible',
+                textAlign: 'center',
+                autoHide: false,
+                template: function(row) {
+                    return `
                         <a href="javascript:;" class="btn-xoa-bai-dang btn btn-lg btn-clean btn-icon" data-id="${row.id}" title="Xóa bài đăng">
                             <i class="la la-trash-alt icon-lg text-danger"></i>
                         </a>

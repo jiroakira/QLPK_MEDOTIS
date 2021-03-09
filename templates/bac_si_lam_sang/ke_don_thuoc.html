@@ -419,7 +419,8 @@ var KTDatatableRecordSelectionDemo = function() {
                                 <input type="checkbox" id="${trVals.obj.id}" class="checkbox checkbox-lg checkbox-light-success checkbox-inline flex-shrink-0 m-0 mx-4 big-checkbox" data-checked="True" data-unchecked="False" />
                             </td>
                             <td>
-                                <input type="number" class="big-input-quantity form-control" />
+                                <input type="text" onkeypress='validate(event)' />
+                                {% comment %} <input type='text'  /> {% endcomment %}
                             </td>
                             <td>
                                 <span>
@@ -435,14 +436,30 @@ var KTDatatableRecordSelectionDemo = function() {
                             <td>
                                 <input type="text" class="big-input-note form-control" list="dataList"/>
                                 <datalist id="dataList">
-                                    <option>abc</option>
-                                    <option>addslashes</option>
-                                    <option>asdasd</option>
+                                    <option>Uống trước khi ăn 15'</option>
+                                    <option>Uống trước khi ăn 30'</option>
+                                    <option>Uống trước khi ăn 1h</option>
+                                    <option>Uống trước khi ăn 2h</option>
+                                    <option>Uống sau khi ăn 15'</option>
+                                    <option>Uống sau khi ăn 30'</option>
+                                    <option>Uống sau khi ăn 1h</option>
+                                    <option>Uống sau khi ăn 2h</option>
                                 </datalist>
                             </td>
                         </tr>
                     `);
                 })
+
+                function validate(e) {
+                    var ev = e || window.event;
+                    var key = ev.keyCode || ev.which;
+                    key = String.fromCharCode( key );
+                    var regex = /[0-9]/;
+                    if( !regex.test(key) ) {
+                        ev.returnValue = false;
+                        if(ev.preventDefault) ev.preventDefault();
+                    }
+                }
 
             } else {
                 var trVals = $(this).closest('tr').data();
@@ -453,6 +470,8 @@ var KTDatatableRecordSelectionDemo = function() {
                 lstNote = {}
             }
         })
+
+        
 
         $('#kt_datatable_3').on('click', 'tbody input[type="checkbox"]', function () {
             if($(this).is(":checked")){
