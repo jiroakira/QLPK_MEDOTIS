@@ -57,14 +57,14 @@
                     <!--begin::Mixed Widget 1-->
                     <div class="card card-custom bg-gray-100 card-stretch gutter-b">
                         <!--begin::Header-->
-                        <div class="card-header border-0 bg-danger py-5">
+                        <div class="card-header border-0 bg-primary py-5">
                             <h3 class="card-title font-weight-bolder text-white">Thao Tác</h3>
                         </div>
                         <!--end::Header-->
                         <!--begin::Body-->
                         <div class="card-body p-0 position-relative overflow-hidden">
                             <!--begin::Chart-->
-                            <div id="kt_mixed_widget_1_chart" class="card-rounded-bottom bg-danger" style="height: 200px"></div>
+                            <div id="kt_mixed_widget_1_chart" class="card-rounded-bottom bg-primary" style="height: 200px"></div>
                             <!--end::Chart-->
                             <!--begin::Stats-->
                             <div class="card-spacer mt-n25">
@@ -152,8 +152,8 @@
                                     </a>
                                 </span>
                                 <div class="d-flex flex-column text-right">
-                                    <span class="text-dark-75 font-weight-bolder font-size-h3"></span>
-                                    <span class="text-muted font-weight-bold mt-2">Doanh thu dịch vụ 7 ngày gần đây</span>
+                                    {% comment %} <span class="text-dark-75 font-weight-bolder "></span> {% endcomment %}
+                                    <span class="font-weight-bold font-size-h5">Doanh thu dịch vụ 7 ngày gần đây</span>
                                 </div>
                             </div>
                             <div id="chart_3"></div>
@@ -184,8 +184,8 @@
                                     </a>
                                 </span>
                                 <div class="d-flex flex-column text-right">
-                                    <span class="text-dark-75 font-weight-bolder font-size-h3"></span>
-                                    <span class="text-muted font-weight-bold mt-2">Doanh thu thuốc 7 ngày gần đây</span>
+                                    {% comment %} <span class="text-dark-75 font-weight-bolder "></span> {% endcomment %}
+                                    <span class="font-weight-bold font-size-h5">Doanh thu thuốc 7 ngày gần đây</span>
                                 </div>
                             </div>
                             <div id="chart_4"></div>
@@ -699,7 +699,7 @@
                         }
                     }
                 },
-                colors: [success]
+                colors: ['#ff884b']
             };
 
             var chart = new ApexCharts(document.querySelector(apexChart), options);
@@ -763,7 +763,7 @@
                         }
                     }
                 },
-                colors: [primary]
+                colors: ['#51adcf']
             };
 
             var chart = new ApexCharts(document.querySelector(apexChart), options);

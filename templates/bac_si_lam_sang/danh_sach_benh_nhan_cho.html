@@ -248,7 +248,7 @@ var KTDatatableModal = function() {
             // columns definition
             columns: [{
                 field: 'id',
-                title: 'ID',
+                title: 'Stt',
                 sortable: true,
                 width: 30,
                 textAlign: 'center',
@@ -256,23 +256,7 @@ var KTDatatableModal = function() {
                 field: 'benh_nhan.ho_ten',
                 title: 'Họ Tên',
                 sortable: 'asc',
-            },
-            //{
-            //    field: 'benh_nhan.email',
-            //    title: 'Email',
-            //    template: function(row) {
-            //        if (!row.benh_nhan.email) {
-            //            return "Không Có"
-            //        } else {
-            //            return row.benh_nhan.email
-            //        }
-            //    }
-            //}, 
-            //{
-            //    field: 'benh_nhan.so_dien_thoai',
-            //    title: 'Số Điện Thoại',
-            //}, 
-            {
+            }, {
                 field: 'thoi_gian_bat_dau',
                 title: 'Thời Gian Hẹn',
                 template: function(row) {
@@ -393,7 +377,7 @@ var KTDatatableModal = function() {
         datatable.on("click", ".btn-dung-kham", function(){
             var ten = $(this).attr('data-ten')
             var id = $(this).data('id')
-            console.log(ten)
+
             $('#dung_kham_modal').modal('show')
             $('#dung_kham_modal').find('#ten_benh_nhan').html(ten)
             $('#dung_kham_modal').find('#ten_benh_nhan').attr("data-id-lich-hen", id)
@@ -403,9 +387,6 @@ var KTDatatableModal = function() {
             var data_dung_kham = $('#ly_do').val()
             var id_lich_hen = $('#ten_benh_nhan').data('id-lich-hen')
             var formData = new FormData();
-
-            console.log(data_dung_kham)
-            console.log(id_lich_hen)
 
             formData.append('ly_do', data_dung_kham)
             formData.append('id_lich_hen', id_lich_hen)
