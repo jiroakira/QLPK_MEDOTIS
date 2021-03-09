@@ -8,7 +8,7 @@ from finance.models import (
     HoaDonVatTu
 )
 from clinic.forms import (
-    MauPhieuForm, PhongKhamForm, 
+    BaiDangForm, MauPhieuForm, PhongKhamForm, 
     ThuocForm, 
     UserForm, 
     CongTyForm, 
@@ -75,6 +75,7 @@ from channels.layers import get_channel_layer
 from clinic.serializers import FilterHoaDonChuoiKhamBaoHiemSerializer, HoaDonChuoiKhamSerializer
 from django.contrib.auth import logout
 from django.urls import reverse
+import locale 
 
 from datetime import datetime
 format = '%m/%d/%Y %H:%M %p'
@@ -139,12 +140,7 @@ def index(request):
     bai_dang = BaiDang.objects.filter(thoi_gian_ket_thuc__gt=now)
     starting_day = datetime.now() - timedelta(days=7)
 
-    user_data = User.objects.filter(thoi_gian_tao__gt=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id"))
-    users = [x["c"] for x in user_data]
-    new_users = sum(users)
-    labels = [x["day"].strftime("%Y-%m-%d") for x in user_data]
-
-    user_trong_ngay = User.objects.filter(thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end)
+    user_trong_ngay = User.objects.filter(thoi_gian_tao__gte=starting_day)
     
     hoa_don_chuoi_kham = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
 
@@ -161,12 +157,9 @@ def index(request):
         'user': request.user,
         'danh_sach_benh_nhan': danh_sach_benh_nhan,
         'lich_hen_chua_xac_nhan': danh_sach_lich_hen_chua_xac_nhan,
-        'upcoming_events': upcoming_events,
-        'past_events': past_events,
+        'upcoming_events': upcoming_events[:6],
+        'past_events': past_events[:6],
         # 'today_events': today_events,
-        'users': users,
-        "new_users_count": new_users, 
-        'labels': labels,
         'ds_bac_si': ds_bac_si,
         'danh_sach_dich_vu': danh_sach_dich_vu,
         'nguoi_dung': nguoi_dung,
@@ -249,6 +242,7 @@ def cap_nhat_thong_tin_benh_nhan(request):
 
         if email == '':
             email = ''
+
         tinh_id = request.POST.get('tinh')      
         tinh = Province.objects.filter(id=tinh_id).first()       
         huyen_id = request.POST.get('huyen')       
@@ -267,10 +261,6 @@ def cap_nhat_thong_tin_benh_nhan(request):
 
         ngay_sinh = datetime.strptime(ngay_sinh, format_3)
         ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
-
-        
-    
-
     
         benh_nhan = get_object_or_404(User, id=id_benh_nhan)
         benh_nhan.ho_ten         = ho_ten
@@ -282,6 +272,7 @@ def cap_nhat_thong_tin_benh_nhan(request):
         benh_nhan.gioi_tinh      = gioi_tinh
         benh_nhan.dan_toc        = dan_toc
         benh_nhan.ma_so_bao_hiem = ma_so_bao_hiem
+
         benh_nhan.tinh = tinh
         benh_nhan.huyen = huyen
         benh_nhan.xa = xa
@@ -363,38 +354,101 @@ class CapNhatLichKhamAPIToggle(APIView):
 # tạo người dùng
 
 def create_user(request):
-    if request.user.is_authenticated and request.user.chuc_nang == '2':
+    if request.user.is_authenticated and request.user.chuc_nang == '2' or request.user.chuc_nang == '7':
         if request.method == "POST":
-            ho_ten         = request.POST.get("ho_ten", None)
-            so_dien_thoai  = request.POST.get("so_dien_thoai", None)
-            password       = request.POST.get("password", None)
-            cmnd_cccd      = request.POST.get("cmnd_cccd", None)
-            dia_chi        = request.POST.get("dia_chi", None)
-            ngay_sinh      = request.POST.get("ngay_sinh", None)
-            gioi_tinh      = request.POST.get("gioi_tinh", None)
-            dan_toc        = request.POST.get("dan_toc", None)
-            ma_so_bao_hiem = request.POST.get("ma_so_bao_hiem", None)
-            id_tinh = request.POST.get("tinh", None)
-            id_huyen = request.POST.get("huyen", None)
-            id_xa = request.POST.get("xa", None)
+            # ho_ten         = request.POST.get("ho_ten", None)
+            # so_dien_thoai  = request.POST.get("so_dien_thoai", None)
+            # password       = request.POST.get("password", None)
+            # cmnd_cccd      = request.POST.get("cmnd_cccd", None)
+            # dia_chi        = request.POST.get("dia_chi", None)
+            # ngay_sinh      = request.POST.get("ngay_sinh", None)
+            # gioi_tinh      = request.POST.get("gioi_tinh", None)
+            # dan_toc        = request.POST.get("dan_toc", None)
+            # ma_so_bao_hiem = request.POST.get("ma_so_bao_hiem", None)
+            # id_tinh = request.POST.get("tinh", None)
+            # id_huyen = request.POST.get("huyen", None)
+            # id_xa = request.POST.get("xa", None)
+            # can_nang = request.POST.get('can_nang')
+            # ma_dkbd = request.POST.get('ma_dkbd')
+
+            # ngay_sinh = datetime.strptime(ngay_sinh, format_3)
+            # ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
+            
+            # tinh = Province.objects.filter(id=id_tinh).first()
+            # huyen = District.objects.filter(id=id_huyen).first()
+            # xa = Ward.objects.filter(id=id_xa).first()
+
+
+            # gt_the_tu = request.POST.get('gt_the_tu')
+            # gt_the_tu = datetime.strptime(gt_the_tu, format_3)
+            # gt_the_tu = gt_the_tu.strftime("%Y-%m-%d")
+            
+            # lien_tuc_5_nam_tu = request.POST.get('lien_tuc_5_nam_tu')
+            # lien_tuc_5_nam_tu = datetime.strptime(lien_tuc_5_nam_tu, format_3)
+            # lien_tuc_5_nam_tu = lien_tuc_5_nam_tu.strftime("%Y-%m-%d")
+
+            # if ho_ten == '':
+            #     return HttpResponse(json.dumps({'message': "Họ Tên Không Được Trống", 'status': '400'}), content_type='application/json; charset=utf-8')
+
+            # if User.objects.filter(so_dien_thoai=so_dien_thoai).exists():
+            #     return HttpResponse(json.dumps({'message': "Số Điện Thoại Đã Tồn Tại", 'status': '409'}), content_type='application/json; charset=utf-8')
+
+            # if User.objects.filter(cmnd_cccd=cmnd_cccd).exists():
+            #     return HttpResponse(json.dumps({'message': "Số chứng minh thư đã tồn tại", 'status': '403'}), content_type = 'application/json; charset=utf-8')
+
+            # user = User.objects.create_nguoi_dung(
+            #     ho_ten         = ho_ten, 
+            #     so_dien_thoai  = so_dien_thoai, 
+            #     password       = password,
+            #     cmnd_cccd      = cmnd_cccd,
+            #     dia_chi        = dia_chi,
+            #     ngay_sinh      = ngay_sinh,
+            #     gioi_tinh      = gioi_tinh,
+            #     dan_toc        = dan_toc,    
+            #     ma_so_bao_hiem = ma_so_bao_hiem,
+            # )
+            # user.tinh = tinh
+            # user.huyen = huyen
+            # user.xa = xa
+            # user.save()
+
+            ho_ten         = request.POST.get('ho_ten')
+            so_dien_thoai  = request.POST.get('so_dien_thoai')
+            password       = request.POST.get("password")
+            email          = request.POST.get('email')
+            cmnd_cccd      = request.POST.get('cmnd_cccd')
+            ngay_sinh      = request.POST.get('ngay_sinh')
+            gioi_tinh      = request.POST.get('gioi_tinh')
+            dan_toc        = request.POST.get('dan_toc')
+            ma_so_bao_hiem = request.POST.get('ma_so_bao_hiem')
+            dia_chi        = request.POST.get('dia_chi')
+
+            print(gioi_tinh)
+
+            if email == '':
+                email = ''
+
+            tinh_id = request.POST.get('tinh')      
+            tinh = Province.objects.filter(id=tinh_id).first()       
+            huyen_id = request.POST.get('huyen')       
+            huyen = District.objects.filter(id=huyen_id).first()
+            xa_id = request.POST.get('xa')
+            xa = Ward.objects.filter(id=xa_id).first()
+
+            ma_dkbd = request.POST.get('ma_dkbd')
+            gt_the_tu = request.POST.get('gt_the_tu')
+            lien_tuc_5_nam_tu = request.POST.get('lien_tuc_5_nam_tu')
+            can_nang = request.POST.get('can_nang')
+            if can_nang != '':
+                can_nang = request.POST.get('can_nang')
+            else:
+                can_nang = 0
 
             ngay_sinh = datetime.strptime(ngay_sinh, format_3)
             ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
-            
-            tinh = Province.objects.filter(id=id_tinh).first()
-            huyen = District.objects.filter(id=id_huyen).first()
-            xa = Ward.objects.filter(id=id_xa).first()
-
-            if ho_ten == '':
-                return HttpResponse(json.dumps({'message': "Họ Tên Không Được Trống", 'status': '400'}), content_type='application/json; charset=utf-8')
-
-            if User.objects.filter(so_dien_thoai=so_dien_thoai).exists():
-                return HttpResponse(json.dumps({'message': "Số Điện Thoại Đã Tồn Tại", 'status': '409'}), content_type='application/json; charset=utf-8')
-
-            if User.objects.filter(cmnd_cccd=cmnd_cccd).exists():
-                return HttpResponse(json.dumps({'message': "Số chứng minh thư đã tồn tại", 'status': '403'}), content_type = 'application/json; charset=utf-8')
-
-            user = User.objects.create_nguoi_dung(
+        
+            # benh_nhan = get_object_or_404(User, id=id_benh_nhan)
+            benh_nhan = User.objects.create_nguoi_dung(
                 ho_ten         = ho_ten, 
                 so_dien_thoai  = so_dien_thoai, 
                 password       = password,
@@ -405,15 +459,34 @@ def create_user(request):
                 dan_toc        = dan_toc,    
                 ma_so_bao_hiem = ma_so_bao_hiem,
             )
-            user.tinh = tinh
-            user.huyen = huyen
-            user.xa = xa
-            user.save()
+            benh_nhan.dia_chi        = dia_chi
+            benh_nhan.ngay_sinh      = ngay_sinh
+            benh_nhan.gioi_tinh      = gioi_tinh
+            benh_nhan.dan_toc        = dan_toc
+            benh_nhan.ma_so_bao_hiem = ma_so_bao_hiem
+            
+            benh_nhan.tinh = tinh
+            benh_nhan.huyen = huyen
+            benh_nhan.xa = xa
+            benh_nhan.can_nang = can_nang
+            benh_nhan.ma_dkbd = ma_dkbd
+
+            if gt_the_tu != '':
+                gt_the_tu = datetime.strptime(gt_the_tu, format_3)
+                gt_the_tu = gt_the_tu.strftime("%Y-%m-%d")
+                benh_nhan.gt_the_tu = gt_the_tu
+
+            if lien_tuc_5_nam_tu != '':
+                lien_tuc_5_nam_tu = datetime.strptime(lien_tuc_5_nam_tu, format_3)
+                lien_tuc_5_nam_tu = lien_tuc_5_nam_tu.strftime("%Y-%m-%d")
+                benh_nhan.lien_tuc_5_nam_tu = lien_tuc_5_nam_tu
+
+            benh_nhan.save()
 
             response = {
                 "message": "Đăng Kí Người Dùng Thành Công",
-                "ho_ten": user.ho_ten,
-                "so_dien_thoai": user.so_dien_thoai,
+                "ho_ten": benh_nhan.ho_ten,
+                "so_dien_thoai": benh_nhan.so_dien_thoai,
             }
 
             return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
@@ -3020,8 +3093,12 @@ def store_ket_qua_xet_nghiem(request):
         ket_qua = request.POST.get('ket_qua')
         data = request.POST.get('data')
         list_data = json.loads(data)
+
         chuoi_kham = ChuoiKham.objects.filter(id=id_chuoi_kham).first()
         phan_khoa_kham = PhanKhoaKham.objects.filter(id=id_phan_khoa).first()
+
+        for i in list_data:
+            print(i)
 
         ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham)[0]
         ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.create(
@@ -3035,10 +3112,11 @@ def store_ket_qua_xet_nghiem(request):
 
         bulk_create_data = []
         for i in list_data:
-            ma_chi_so = i['key']
+            id = i['key3']
             ket_qua_xet_nghiem = i['value']
             danh_gia = i['value2']
-            chi_so = ChiSoXetNghiem.objects.get(ma_chi_so=ma_chi_so)
+            chi_so = ChiSoXetNghiem.objects.filter(id=id).first()
+
             model = KetQuaXetNghiem(
                 phan_khoa_kham = phan_khoa_kham,
                 ket_qua_chuyen_khoa = ket_qua_chuyen_khoa,
@@ -3053,13 +3131,12 @@ def store_ket_qua_xet_nghiem(request):
             'status': 200,
             'message': 'Lưu Dữ Liệu Thành Công'
         }
-        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
     else:
         response = {
             'status': 404,
-            'message': 'Có Lỗi Xảy Ra'
+            'message': 'Không gửi được dữ liệu!'
         }
-        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
 def store_ket_qua_chuyen_khoa_html(request):
     if request.method == "POST":
@@ -3193,12 +3270,12 @@ def chi_tiet_mau_phieu(request, **kwargs):
 def create_mau_phieu(request):
     if request.method == "POST":
         id_dich_vu = request.POST.get('id_dich_vu')
-        ten_mau_phieu = request.POST.get('ten_mau_phieu')
         noi_dung = request.POST.get('noi_dung')
         html = request.POST.get("html")
        
         try:
-            dich_vu = DichVuKham.objects.get(id=id_dich_vu)
+            dich_vu = DichVuKham.objects.filter(id=id_dich_vu).first()
+            ten_mau_phieu = dich_vu.ten_dvkt
             if html == '1':
                 dich_vu.html = True
                 dich_vu.save()
@@ -3226,13 +3303,11 @@ def update_mau_phieu(request):
     if request.method == "POST":
         id_dich_vu = request.POST.get('id_dich_vu')
         id_mau_phieu = request.POST.get('id_mau_phieu')
-        ten_mau_phieu = request.POST.get('ten_mau_phieu')
         noi_dung = request.POST.get('noi_dung')
         try:
-            dich_vu = DichVuKham.objects.get(id=id_dich_vu)
+            dich_vu = DichVuKham.objects.filter(id=id_dich_vu).first()
             # mau_phieu = MauPhieu.objects.update(dich_vu=dich_vu, ten_mau=ten_mau_phieu, noi_dung=noi_dung)
-            mau_phieu = MauPhieu.objects.get(id=id_mau_phieu)
-            mau_phieu.ten_mau = ten_mau_phieu
+            mau_phieu = MauPhieu.objects.filter(id=id_mau_phieu).first()
             mau_phieu.dich_vu = dich_vu
             mau_phieu.noi_dung = noi_dung
             mau_phieu.save()
@@ -3320,7 +3395,7 @@ def chi_tiet_ket_qua_xet_nghiem(request, **kwargs):
     chan_doan = [ket_qua_chuyen_khoa.ket_luan]
 
     ten_chi_so = [i.chi_so_xet_nghiem.ten_chi_so for i in ket_qua_xet_nghiem]
-    chi_so_binh_thuong = [i.chi_so_xet_nghiem.chi_tiet.chi_so_binh_thuong_max for i in ket_qua_xet_nghiem]
+    chi_so_binh_thuong = [f'{i.chi_so_xet_nghiem.chi_tiet.chi_so_binh_thuong_min} - {i.chi_so_xet_nghiem.chi_tiet.chi_so_binh_thuong_max}' for i in ket_qua_xet_nghiem]
     don_vi = [i.chi_so_xet_nghiem.chi_tiet.don_vi_do if i.chi_so_xet_nghiem.chi_tiet.don_vi_do is not None else '' for i in ket_qua_xet_nghiem]
     ket_qua = [i.ket_qua_xet_nghiem if i.ket_qua_xet_nghiem is not None else '' for i in ket_qua_xet_nghiem]
     
@@ -3546,14 +3621,71 @@ def chinh_sua_tieu_chuan_dich_vu(request):
         id_dich_vu = request.POST.get('id_dich_vu')
         id_doi_tuong = request.POST.get('id_doi_tuong')
 
-        print(list_data)
+        try:
+            dich_vu = DichVuKham.objects.get(id=id_dich_vu)
+        except DichVuKham.DoesNotExist:
+            response = {
+                'status': 404,
+                'message': "Không tìm thấy thông tin dịch vụ kĩ thuật của tiêu chuẩn"
+            }
+            return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+
+        try:
+            doi_tuong = DoiTuongXetNghiem.objects.get(id=id_doi_tuong)
+        except DoiTuongXetNghiem.DoesNotExist:
+            response = {
+                'status': 404,
+                'message': "Không tìm thấy thông tin đối tượng xét nghiệm của tiêu chuẩn"
+            }
+            return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+
+        for i in list_data:
+            id_chi_so = i['id_chi_so']
+            if id_chi_so != '':
+                try:
+                    chi_so = ChiSoXetNghiem.objects.get(id=id_chi_so)
+                    chi_tiet_chi_so = chi_so.chi_tiet
+
+                    chi_so.ma_chi_so = i['ma_chi_so']
+                    chi_so.ten_chi_so = i['ten_chi_so']
+                    
+                    chi_tiet_chi_so.chi_so_binh_thuong_min = i['chi_so_min']
+                    chi_tiet_chi_so.chi_so_binh_thuong_max = i['chi_so_max']
+                    chi_tiet_chi_so.don_vi_do = i['don_vi']
+                    chi_tiet_chi_so.ghi_chu = i['ghi_chu']
+                    chi_tiet_chi_so.save()
+            
+                    chi_so.dich_vu_kham = dich_vu
+                    chi_so.doi_tuong_xet_nghiem = doi_tuong
+                    chi_so.chi_tiet = chi_tiet_chi_so
+                    chi_so.save()
+                except ChiSoXetNghiem.DoesNotExist:
+                    continue
+            else:
+                chi_so = ChiSoXetNghiem.objects.create(
+                    dich_vu_kham = dich_vu,
+                    doi_tuong_xet_nghiem = doi_tuong,
+                    ma_chi_so = i['ma_chi_so'],
+                    ten_chi_so = i['ten_chi_so']
+                )
+                chi_tiet_chi_so = ChiTietChiSoXetNghiem.objects.create(
+                    chi_so_binh_thuong_min = i['chi_so_min'],
+                    chi_so_binh_thuong_max = i['chi_so_max'],
+                    don_vi_do = i['don_vi'],
+                    ghi_chu = i['ghi_chu']
+                )
+                chi_tiet_chi_so.save()
+                chi_so.chi_tiet = chi_tiet_chi_so
+                chi_so.save()
 
         response = {
             'status': 200,
+            'message': "Cập nhật chỉ số tiêu chuẩn dịch vụ kĩ thuật thành công"
         }
     else: 
         response = {
             'status': 404,
+            'message': 'Xảy ra lỗi trong quá trình gửi dữ liệu'
         }
     return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
 
@@ -3632,4 +3764,51 @@ def xoa_mau_phieu(request):
         'message' : "Xóa Mẫu Phiếu Thành Công"
     }
 
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def xoa_bai_dang(request):
+    id = request.POST.get('id')
+    bai_dang = BaiDang.objects.filter(id=id).first()
+    bai_dang.delete()
+    response = {
+        'message' : "Xóa Mẫu Phiếu Thành Công"
+    }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def chinh_sua_bai_dang_view(request, **kwargs):
+    id = kwargs.get('id')
+    instance = get_object_or_404(BaiDang, id=id)
+    form = BaiDangForm(request.POST or None, instance=instance)
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'le_tan/chinh_sua_bai_dang.html', context=context)
+
+def xoa_tieu_chuan(request, **kwargs):
+    id  = kwargs.get('id')
+    dich_vu = get_object_or_404(DichVuKham, id=id)
+    dich_vu.chi_so = False
+    dich_vu.save()
+
+    # chi_so_xet_nghiem = dich_vu.chi_so_xet_nghiem.all()
+    response = {
+        'message' : "Xóa Tiêu Chuẩn DVKT Thành Công"
+    }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def xoa_chi_so(request):
+    id = request.POST.get('id')
+    try:
+        chi_so = ChiSoXetNghiem.objects.get(id=id)
+        chi_so.delete()
+        response = {
+            'status': 200,
+            'message': "Tiêu chuẩn dịch vụ kĩ thuật đã xóa thành công."
+        }
+    except ChiSoXetNghiem.DoesNotExist: 
+        response = {
+            'status': 404,
+            'message': "Tiêu chuẩn này không tồn tại"
+        }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")

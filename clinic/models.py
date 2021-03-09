@@ -364,10 +364,11 @@ class DichVuKham(models.Model):
             return False
     
     def get_don_gia(self):
-        don_gia = "{:,}".format(int(self.don_gia))
+        if self.don_gia is not None:
+            don_gia = "{:,}".format(int(self.don_gia))
+        else:
+            don_gia = '-'
         return don_gia
-
-    gia_dich_vu = property(get_don_gia)
     
 class GiaDichVu(models.Model):
     """ Bảng giá sẽ lưu trữ tất cả giá của dịch vụ khám và cả thuốc """
@@ -816,7 +817,7 @@ class FileKetQuaChuyenKhoa(models.Model):
 
 class BaiDang(models.Model):
     file_prepend = 'bai_dang/'
-    tieu_de = models.TextField(null=True, blank=True)
+    tieu_de = models.CharField(null=True, blank=True, max_length=1024)
     hinh_anh = models.ImageField(upload_to = file_url, null=True, blank=True)
     noi_dung_chinh = models.TextField(null=True, blank=True)
     noi_dung = models.TextField(null=True, blank=True)
@@ -830,6 +831,9 @@ class BaiDang(models.Model):
         verbose_name = "Bài Đăng"
         verbose_name_plural = "Bài Đăng"
 
+    def get_truncated_noi_dung_chinh(self):
+        noi_dung_chinh = (self.noi_dung_chinh[:75] + '...') if len(self.noi_dung_chinh) > 75 else self.noi_dung_chinh
+        return noi_dung_chinh
 
 # * ------ Update 19/01 -------
 

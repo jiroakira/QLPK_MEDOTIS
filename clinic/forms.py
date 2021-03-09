@@ -1,5 +1,5 @@
 from .models import ( 
-    FileKetQua, 
+    BaiDang, FileKetQua, 
     FileKetQuaTongQuat, 
     GiaDichVu, 
     KetQuaTongQuat, MauPhieu, 
@@ -112,3 +112,8 @@ class MauPhieuForm(forms.ModelForm):
     class Meta:
         model = MauPhieu
         fields = ('dich_vu', 'ten_mau', 'noi_dung')
+
+class BaiDangForm(forms.ModelForm):
+    class Meta:
+        model = BaiDang
+        fields = '__all__'
