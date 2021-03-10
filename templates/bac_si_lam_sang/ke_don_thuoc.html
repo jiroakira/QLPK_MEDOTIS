@@ -419,7 +419,7 @@ var KTDatatableRecordSelectionDemo = function() {
                                 <input type="checkbox" id="${trVals.obj.id}" class="checkbox checkbox-lg checkbox-light-success checkbox-inline flex-shrink-0 m-0 mx-4 big-checkbox" data-checked="True" data-unchecked="False" />
                             </td>
                             <td>
-                                <input type="text" onkeypress='validate(event)' />
+                                <input type="text" class="big-input-quantity form-control" oninput="this.value|=0" />
                                 {% comment %} <input type='text'  /> {% endcomment %}
                             </td>
                             <td>
@@ -450,17 +450,6 @@ var KTDatatableRecordSelectionDemo = function() {
                     `);
                 })
 
-                function validate(e) {
-                    var ev = e || window.event;
-                    var key = ev.keyCode || ev.which;
-                    key = String.fromCharCode( key );
-                    var regex = /[0-9]/;
-                    if( !regex.test(key) ) {
-                        ev.returnValue = false;
-                        if(ev.preventDefault) ev.preventDefault();
-                    }
-                }
-
             } else {
                 var trVals = $(this).closest('tr').data();
                 $(`.${trVals.obj.id}`).remove();
@@ -470,8 +459,6 @@ var KTDatatableRecordSelectionDemo = function() {
                 lstNote = {}
             }
         })
-
-        
 
         $('#kt_datatable_3').on('click', 'tbody input[type="checkbox"]', function () {
             if($(this).is(":checked")){

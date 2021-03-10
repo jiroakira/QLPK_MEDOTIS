@@ -422,15 +422,9 @@ class KeVatTu(models.Model):
     so_luong = models.PositiveIntegerField(null=True, blank=True)
     bao_hiem = models.BooleanField(default=False)
 
-    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
-    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+    thoi_gian_tao = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    thoi_gian_cap_nhat = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         verbose_name = "Kê Vật Tư "
         verbose_name_plural = "Kê Vật Tư"
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.thoi_gian_tao = timezone.now()
-        self.thoi_gian_cap_nhat = timezone.now()
-        return super(KeDonThuoc, self).save(*args, **kwargs)

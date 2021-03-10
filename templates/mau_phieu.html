@@ -55,7 +55,7 @@
                 <div class="col-md-9">
                     <div class="text-right">
                         {% comment %} <button type="button" class="btn btn-primary font-weight-bold" id="btn-thanh-toan">Thanh Toán</button> {% endcomment %}
-                        <button type="button" class="btn btn-light-primary font-weight-bold " onclick="PrintElem('mau_phieu')">In Phiếu</button>
+                        <button type="button" class="btn btn-light-primary font-weight-bold" onclick="PrintElem('mau_phieu')" id="print_elem">In Phiếu</button>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,6 @@
 "use strict";
 // Class definition
 
-
 function PrintElem(elem)
 {
     var mywindow = window.open('', 'PRINT', 'height=400,width=600');
@@ -91,15 +90,19 @@ function PrintElem(elem)
     mywindow.document.write('<p>' + document.title  + '</p>');
     mywindow.document.write(document.getElementById(elem).innerHTML);
     mywindow.document.write('</body></html>');
-
     mywindow.document.close(); // necessary for IE >= 10
-    mywindow.focus(); // necessary for IE >= 10*/
-
+    mywindow.focus(); // necessary for IE >= 10*/ 
+    
     mywindow.print();
-    mywindow.close();
+    // mywindow.close();
 
     return true;
 }
+
+{% comment %} $(document).on('click', "#print_elem", function(mau_phieu){
+    PrintElem('mau_phieu')
+    console.log(1)
+}) {% endcomment %}
 
 var KTDropzoneDemo = function () {
 

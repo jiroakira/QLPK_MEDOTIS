@@ -213,8 +213,12 @@ class User(AbstractBaseUser):
 
     def tuoi(self):
         now = datetime.date.today()
-        days = now - self.ngay_sinh
-        return int((days.days / 365))
+        if self.ngay_sinh is not None:
+            days = now - self.ngay_sinh
+            tuoi = int((days.days / 365))
+        else:
+            tuoi = 0
+        return tuoi
 
     def get_dia_chi(self):
         if self.tinh is not None:

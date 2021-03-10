@@ -3696,9 +3696,7 @@ def export_excel(request):
     if request.method == 'POST':
         startDate = request.POST.get('startDate')
         endDate = request.POST.get('endDate')
-        print(startDate)
-        print(endDate)
-
+        
         start = datetime.strptime(startDate, "%d-%m-%Y")
         tomorrow_start = start + timedelta(1)
         if endDate == '':

@@ -66,7 +66,7 @@ class HoaDonChuoiKham(models.Model):
         for phan_khoa in ds_dich_vu:
             gia = phan_khoa.dich_vu_kham.don_gia
             tong_tien.append(gia)
-        return sum(tong_tien)
+        return int(sum(tong_tien))
 
     def get_tong_cong_2(self):
         tong_cong_2 = float(self.get_tong_cong()) - float(self.tong_tien)
