@@ -104,23 +104,48 @@ def WriteToExcel(excel_data):
         worksheet_s.write(row, 5, data['ma_dkbd'], cell_center)
         worksheet_s.write(row, 6, data['ma_benh'], cell_center)
         worksheet_s.write(row, 7, data['ngay_kham'], cell_center)
-        worksheet_s.write(row, 8, data['tong_cong_1'], cell_center)
+        worksheet_s.write_number(row, 8, data['tong_cong_1'], cell_center)
 
-        worksheet_s.write(row, 9, data['xet_nghiem'], cell_center)
-        worksheet_s.write(row, 10, data['cdha_tdcn'], cell_center)
-        worksheet_s.write(row, 11, data['thuoc_1'], cell_center)
-        worksheet_s.write(row, 12, data['mau'], cell_center)
-        worksheet_s.write(row, 13, data['ttpt'], cell_center)
-        worksheet_s.write(row, 14, data['vtyt_1'], cell_center)
-        worksheet_s.write(row, 15, data['dvkt'], cell_center)
-        worksheet_s.write(row, 16, data['thuoc_2'], cell_center)
-        worksheet_s.write(row, 17, data['vtyt_2'], cell_center)
+        worksheet_s.write_number(row, 9, data['xet_nghiem'], cell_center)
+        worksheet_s.write_number(row, 10, data['cdha_tdcn'], cell_center)
+        worksheet_s.write_number(row, 11, data['thuoc_1'], cell_center)
+        worksheet_s.write_number(row, 12, data['mau'], cell_center)
+        worksheet_s.write_number(row, 13, data['ttpt'], cell_center)
+        worksheet_s.write_number(row, 14, data['vtyt_1'], cell_center)
+        worksheet_s.write_number(row, 15, data['dvkt'], cell_center)
+        worksheet_s.write_number(row, 16, data['thuoc_2'], cell_center)
+        worksheet_s.write_number(row, 17, data['vtyt_2'], cell_center)
 
-        worksheet_s.write(row, 18, data['tien_kham'], cell_center)
-        worksheet_s.write(row, 19, data['van_chuyen'], cell_center)
-        worksheet_s.write(row, 20, data['tu_chi_tra'], cell_center)
-        worksheet_s.write(row, 21, data['bao_hiem_tra'], cell_center)
-        worksheet_s.write(row, 22, data['ngoai_ds'], cell_center)
+        worksheet_s.write_number(row, 18, data['tien_kham'], cell_center)
+        worksheet_s.write_number(row, 19, data['van_chuyen'], cell_center)
+        worksheet_s.write_number(row, 20, data['tu_chi_tra'], cell_center)
+        worksheet_s.write_number(row, 21, data['bao_hiem_tra'], cell_center)
+        worksheet_s.write_number(row, 22, data['ngoai_ds'], cell_center)
+
+    row = row + 1
+    worksheet_s.write(row, 0, '', cell_center)
+    worksheet_s.write(row, 1, 'Tổng cộng', cell_center)
+    worksheet_s.write(row, 2, '', cell_center)
+    worksheet_s.write(row, 3, '', cell_center)
+    worksheet_s.write(row, 4, '', cell_center)
+    worksheet_s.write(row, 5, '', cell_center)
+    worksheet_s.write(row, 6, '', cell_center)
+    worksheet_s.write(row, 7, '', cell_center)
+    worksheet_s.write_formula(row, 8, '=SUM({0}{1}:{0}{2})'.format('I', 11, row), cell_center)
+    worksheet_s.write(row, 9, '', cell_center)
+    worksheet_s.write(row, 10, '', cell_center)
+    worksheet_s.write(row, 11, '', cell_center)
+    worksheet_s.write(row, 12, '', cell_center)
+    worksheet_s.write(row, 13, '', cell_center)
+    worksheet_s.write(row, 14, '', cell_center)
+    worksheet_s.write(row, 15, '', cell_center)
+    worksheet_s.write(row, 16, '', cell_center)
+    worksheet_s.write(row, 17, '', cell_center)
+    worksheet_s.write_formula(row, 18, '=SUM({0}{1}:{0}{2})'.format('S', 11, row), cell_center)
+    worksheet_s.write(row, 19, '', cell_center)
+    worksheet_s.write_formula(row, 20, '=SUM({0}{1}:{0}{2})'.format('U', 11, row), cell_center)
+    worksheet_s.write_formula(row, 21, '=SUM({0}{1}:{0}{2})'.format('V', 11, row), cell_center)
+    worksheet_s.write(row, 22, '', cell_center)
 
     workbook.close()
 
@@ -192,7 +217,16 @@ def writeToExcelDichVu(excel_data):
         worksheet_s.write(row, 4, '0', cell_center)
         worksheet_s.write(row, 5, data['don_gia'], cell_center)
         worksheet_s.write(row, 6, data['tong_tien'], cell_center)
-    
+
+    row = row + 1
+
+    worksheet_s.write(row, 0, "", cell_center)
+    worksheet_s.write(row, 1, "Tổng cộng", cell_center)
+    worksheet_s.write(row, 2, "", cell_center)
+    worksheet_s.write_formula(row, 3, '=SUM({0}{1}:{0}{2})'.format('D', 10, row), cell_center)
+    worksheet_s.write_formula(row, 4, '=SUM({0}{1}:{0}{2})'.format('E', 10, row), cell_center)
+    worksheet_s.write(row, 2, "", cell_center)
+    worksheet_s.write_formula(row, 6, '=SUM({0}{1}:{0}{2})'.format('G', 10, row), cell_center)
 
     workbook.close()
 
@@ -260,6 +294,7 @@ def writeToExcelThuoc(excel_data):
     worksheet_s.merge_range('L7:L8', "Thành tiền (đồng)", cell_center)
 
     
+
     workbook.close()
 
     xlsx_data = output.getvalue()
