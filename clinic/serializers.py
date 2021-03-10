@@ -499,6 +499,7 @@ class DanhSachBacSiSerializer(serializers.ModelSerializer):
 # END
 class DichVuKhamSerializerFormatted(serializers.ModelSerializer):
     don_gia = serializers.CharField(source='get_don_gia')
+    phong_chuc_nang = PhongChucNangSerializerSimple()
     class Meta:
         model = DichVuKham
         fields = '__all__'
