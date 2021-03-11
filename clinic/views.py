@@ -3810,3 +3810,52 @@ def xoa_chi_so(request):
             'message': "Tiêu chuẩn này không tồn tại"
         }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+import string
+import random
+
+LETTERS = string.ascii_letters
+NUMBERS = string.digits  
+PUNCTUATION = string.punctuation    
+
+def password_generator(length=8):
+    '''
+    Generates a random password having the specified length
+    :length -> length of password to be generated. Defaults to 8
+        if nothing is specified.
+    :returns string <class 'str'>
+    '''
+    # create alphanumerical from string constants
+    printable = f'{LETTERS}{NUMBERS}'
+
+    # convert printable from string to list and shuffle
+    printable = list(printable)
+    random.shuffle(printable)
+
+    # generate random password and convert to string
+    random_password = random.choices(printable, k=length)
+    random_password = ''.join(random_password)
+    return random_password
+
+def resetPassword(request):
+    id = request.POST.get('id')
+    try:
+        import time
+        time.sleep(2)
+        user = User.objects.get(id=id)
+        randPassword = password_generator(12)
+        user.set_password(randPassword)
+        user.save()
+        response = {
+            'status': 200,
+            'message': "Đặt lại mật khẩu thành công",
+            'user': user.ho_ten,
+            'password': randPassword,
+        }
+    except User.DoesNotExist:
+        response = {
+            'status': 404,
+            'message': "Không tồn tại bệnh nhân này"
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+    

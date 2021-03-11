@@ -627,7 +627,7 @@ class ChuoiKham(models.Model):
 class PhanKhoaKham(models.Model):
     benh_nhan = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     dich_vu_kham = models.ForeignKey(DichVuKham, on_delete=models.SET_NULL, null=True, blank=True, related_name="phan_khoa_dich_vu")
-    bac_si_lam_sang = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user), related_name="bac_si")
+    bac_si_lam_sang = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="bac_si", null=True)
     chuoi_kham = models.ForeignKey(ChuoiKham, on_delete=models.CASCADE, null=True, blank=True, related_name="phan_khoa_kham")
     bao_hiem = models.BooleanField(default=False)
     priority = models.SmallIntegerField(null=True, blank=True)
