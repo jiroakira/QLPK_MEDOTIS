@@ -29,11 +29,29 @@
         <!--begin::Container-->
         <div class="container">
             <!--begin::Card-->
+            <div id='resetPasswordNotification' class="alert alert-custom alert-notice alert-light-success fade show" role="alert" style="display: none">
+                <div class="alert-icon"><i class="flaticon2-writing"></i></div>
+                <div class="alert-text">
+                    <h5>Thành công</h5>
+                    Thông báo này sẽ có hiệu lực trong vòng 60 giây <br>
+                    Vui lòng ghi chú lại mật khẩu mới <br>
+                    Mật khẩu mới là: 
+                    <div id='newUserPassword'></div>
+                </div>
+                
+                <div class="alert-close">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><i class="ki ki-close"></i></span>
+                    </button>
+                </div>
+            </div>
+
             <div class="card card-custom">
                 <div class="card-header flex-wrap border-0 pt-6 pb-0">
                     <div class="card-title">
                         <h3 class="card-label">Danh sách bệnh nhân</h3>
                     </div>
+                    
                     <div class="card-toolbar">
                         <!-- begin::Button -->
                         <a href="javascript:;" class="btn btn-light-primary font-weight-bolder mr-2" id="btn-them-benh-nhan">
@@ -334,7 +352,7 @@
 "use strict";
 // Class definition
 
-{% comment %} $(document).ajaxStart(function() {
+$(document).ajaxStart(function() {
     KTApp.blockPage({
         overlayColor: '#000000',
         state: 'primary',
@@ -344,7 +362,7 @@
 
 $(document).ajaxStop(function() {
     KTApp.unblockPage();
-}) {% endcomment %}
+})
 
 var KTDatatableRemoteAjaxDemo = function() {
     // Private functions
@@ -589,6 +607,32 @@ var KTDatatableRemoteAjaxDemo = function() {
                         </a>
                     `;
                 },
+            }, {
+                field: 'reset_password',
+                title: 'Đặt lại mật khẩu',
+                sortable: false,
+                width: 60,
+                textAlign: 'center',
+                template: function(row) {
+                    return `
+                        <a href="javascript:;" class="btn_reset_password btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ho_ten}" title="Đặt lại mật khẩu cho người dùng: ${row.ho_ten}">
+                            <i class="la la-lock-open icon-lg text-primary"></i>
+                        </a>
+                    `;
+                },
+            }, {
+                field: 'change_password',
+                title: 'Thay đổi mật khẩu',
+                sortable: false,
+                width: 60,
+                textAlign: 'center',
+                template: function(row) {
+                    return `
+                        <a href="javascript:;" class="btn_change_password btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ho_ten}" title="Đổi mật khẩu cho người dùng: ${row.ho_ten}">
+                            <i class="la la-user-lock icon-lg text-primary"></i>
+                        </a>
+                    `;
+                },
             }],
 
         });
@@ -827,6 +871,58 @@ var KTDatatableRemoteAjaxDemo = function() {
         });
     }
 
+    var resetPassword = function() {
+        $('#kt_datatable').on('click', '.btn_reset_password', function() {
+            var id = $(this).data('id')
+            var ten_benh_nhan = $(this).data('ten')
+            Swal.fire({
+                title: "Đặt lại mật khẩu cho bệnh nhân: " +ten_benh_nhan,
+                text: "Bạn sẽ không thể hoàn tác!",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: "Hủy",
+                confirmButtonText: "Xác Nhận!"
+            }).then(function(result) {
+                if (result.value) {
+                    console.log(id)
+                    var formData = new FormData()
+                    formData.append('id', id)
+                    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+ 
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'dat_lai_mat_khau' %}",
+                        data: formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function(response){
+                            if( response.status == 200 ){
+                                $('#newUserPassword').html(`<strong>${response.password}</strong>`)
+                                $('#resetPasswordNotification').show()
+                                window.setTimeout(function() {
+                                    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                                        $(this).remove(); 
+                                    });
+                                }, 60000);
+                            } else if (response.status == 404) {
+                                toastr.warning(response.message, "Lỗi")
+                            }
+                        },
+                        error: function(response){
+                        }
+                    })
+                }else if (result.dismiss === 'cancel') {
+					Swal.fire(
+						'Đã Hủy',
+						'Mật Khẩu Của Bệnh Nhân Vẫn Y Nguyên Nhé! :)',
+						'error'
+					)
+				}
+            });
+        })
+    }
+
     return {
         init: function() {
             demo();
@@ -834,6 +930,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             _registerUser();
             themLichHenKham();
             deleteBenhNhan();
+            resetPassword();
         },
     };
 }();

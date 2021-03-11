@@ -275,9 +275,9 @@ var KTDropzoneDemo = function () {
                     if (response.status == 200) {
                         var id_phong_chuc_nang = $("#upload-form").find("#upload").data('id-phong-chuc-nang')
                         toastr.success(response.message, "Thành Công")
-                        {% comment %} setTimeout(function () {
+                        setTimeout(function () {
                             window.location.href = '/phong_chuyen_khoa/' + id_phong_chuc_nang; //redirect về danh sách chờ lâm sàng
-                        }, 1500) {% endcomment %}
+                        }, 1500)
                     } else if (response.status == 404) {
                         toastr.warning(response.message, "Thất Bại")
                     }
