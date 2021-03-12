@@ -2239,7 +2239,7 @@ def upload_bai_dang(request):
         noi_dung           = request.POST.get('noi_dung', None)
         thoi_gian_bat_dau  = request.POST.get('thoi_gian_bat_dau', None)
         thoi_gian_ket_thuc = request.POST.get('thoi_gian_ket_thuc')
-        print(thoi_gian_bat_dau)
+
         thoi_gian_bat_dau = datetime.strptime(thoi_gian_bat_dau, format_2)
         thoi_gian_bat_dau = thoi_gian_bat_dau.strftime("%Y-%m-%d %H:%M")
 
@@ -2248,10 +2248,10 @@ def upload_bai_dang(request):
         # print(id_chuoi_kham)
 
         if tieu_de == '':
-            HttpResponse({'status': 404, 'message': 'Mã Kết Quả Không Được Để Trống'})
+            HttpResponse({'status': 404, 'message': 'Tiêu đề không được để trống'})
 
         if noi_dung_chinh == '':
-            HttpResponse({'status': 404, 'message': 'Mô Tả Không Được Để Trống'})
+            HttpResponse({'status': 404, 'message': 'Nội dung chính không được để trống'})
 
         # chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
         # ket_qua_tong_quat = KetQuaTongQuat.objects.get_or_create(chuoi_kham=chuoi_kham)[0]
@@ -3779,6 +3779,7 @@ def chinh_sua_bai_dang_view(request, **kwargs):
     form = BaiDangForm(request.POST or None, instance=instance)
     context = {
         'form': form,
+        'id': id
     }
 
     return render(request, 'le_tan/chinh_sua_bai_dang.html', context=context)
@@ -3858,4 +3859,121 @@ def resetPassword(request):
             'message': "Không tồn tại bệnh nhân này"
         }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+    
+def validatePassword(password):
+    import re 
+    while True:   
+        if (len(password)<8): 
+            return False
+        elif not re.search("[a-z]", password): 
+            return False
+        elif not re.search("[0-9]", password): 
+            return False
+        elif re.search("\s", password): 
+            return False
+        else: 
+            return True
+
+def changePassword(request):
+    if request.method == "POST":
+        id = request.POST.get('id')
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        try:
+            user = User.objects.get(id=id)
+            if not user.check_password(current_password):
+                response = {
+                    'status': 400,
+                    'message': 'Mật khẩu hiện tại không đúng, vui lòng thử lại'
+                }
+                return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+            
+            elif new_password != confirm_password:
+                response = {
+                    'status': 400,
+                    'message': 'Mật khẩu hiện tại không đúng, vui lòng thử lại'
+                }
+                return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+            elif not validatePassword(new_password):
+                response = {
+                    'status': 400,
+                    'message': 'Mật khẩu mới không đủ mạnh'
+                }
+                return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+            else:
+                user.set_password(new_password)
+                user.save()
+
+        except User.DoesNotExist:
+            response = {
+                'status': 400,
+                'message': 'Người dùng không tồn tại, vui lòng kiểm tra lại'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+        response = {
+            'status': 200,
+            'message': 'Cập nhật mật khẩu thành công'
+        }
+    else:
+        response = {
+            'status': 400,
+            'message': 'Không thể đổi được mật khẩu, vui lòng kiểm tra lại'
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def chinh_sua_bai_dang(request):
+    if request.method == "POST":
+        id_bai_dang = request.POST.get('id')
+        tieu_de = request.POST.get('tieu_de')
+        noi_dung_chinh = request.POST.get('noi_dung_chinh')
+        thoi_gian_bat_dau = request.POST.get("thoi_gian_bat_dau")
+        thoi_gian_ket_thuc = request.POST.get('thoi_gian_ket_thuc')
+        hinh_anh = request.FILES.get('hinh_anh', None)
+        noi_dung = request.POST.get('noi_dung')
+
+        thoi_gian_bat_dau = datetime.strptime(thoi_gian_bat_dau, format_2)
+        thoi_gian_bat_dau = thoi_gian_bat_dau.strftime("%Y-%m-%d %H:%M")
+
+        thoi_gian_ket_thuc = datetime.strptime(thoi_gian_ket_thuc, format_2)
+        thoi_gian_ket_thuc = thoi_gian_ket_thuc.strftime("%Y-%m-%d %H:%M")
+
+        try:
+            bai_dang = BaiDang.objects.get(id=id_bai_dang)
+            if hinh_anh is not None:
+                bai_dang.tieu_de = tieu_de
+                bai_dang.noi_dung_chinh = noi_dung_chinh
+                bai_dang.thoi_gian_bat_dau = thoi_gian_bat_dau
+                bai_dang.thoi_gian_ket_thuc = thoi_gian_ket_thuc
+                bai_dang.hinh_anh = hinh_anh
+                bai_dang.noi_dung = noi_dung
+            else:
+                bai_dang.tieu_de = tieu_de
+                bai_dang.noi_dung_chinh = noi_dung_chinh
+                bai_dang.thoi_gian_bat_dau = thoi_gian_bat_dau
+                bai_dang.thoi_gian_ket_thuc = thoi_gian_ket_thuc
+                bai_dang.noi_dung = noi_dung
+
+            bai_dang.save()
+            response = {
+                'status': 200,
+                'message': 'Cập nhật bài đăng thành công'
+            }
+
+        except BaiDang.DoesNotExist:
+            response = {
+                'status': 404,
+                'message': 'Không tìm thấy bài đăng'
+            }
+    else:
+        response = {
+            'status': 404,
+            'message': 'Không cập nhật được bài đăng'
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+
     
