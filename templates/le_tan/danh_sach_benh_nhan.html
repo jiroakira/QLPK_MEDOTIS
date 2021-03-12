@@ -332,6 +332,44 @@
     </div>
 </div>
 
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thay đổi mật khẩu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="inputPassword1">Mật khẩu hiện tại <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="inputPassword1" placeholder="Mật khẩu hiện tại"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword2">Mật khẩu mới <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="inputPassword2" placeholder="Mật khẩu mới"/>
+                            <span class="form-text text-muted"><code>Mật khẩu phải có ít nhất 8 ký tự.</code></span>
+                            <span class="form-text text-muted"><code>Mật khẩu phải có các chữ cái từ a-z.</code></span>
+                            <span class="form-text text-muted"><code>Mật khẩu phải có ít nhất 1 chữ số từ 0-9.</code></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="inputPassword3" placeholder="Xác nhận mật khẩu"/>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Đóng</button>
+                        <button type="button" id="changePasswordBtn" class="btn btn-primary font-weight-bold">Xác Nhận</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 
@@ -352,17 +390,17 @@
 "use strict";
 // Class definition
 
-$(document).ajaxStart(function() {
-    KTApp.blockPage({
-        overlayColor: '#000000',
-        state: 'primary',
-        message: 'Đang xử lý...'
-    });
-})
-
-$(document).ajaxStop(function() {
-    KTApp.unblockPage();
-})
+// $(document).ajaxStart(function() {
+//     KTApp.blockPage({
+//         overlayColor: '#000000',
+//         state: 'primary',
+//         message: 'Đang xử lý...'
+//     });
+// })
+// 
+// $(document).ajaxStop(function() {
+//     KTApp.unblockPage();
+// })
 
 var KTDatatableRemoteAjaxDemo = function() {
     // Private functions
@@ -787,6 +825,12 @@ var KTDatatableRemoteAjaxDemo = function() {
             formData.append('lien_tuc_5_nam_tu', $('#kt_datepicker_5').val())
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
+            KTApp.blockPage({
+                overlayColor: '#000000',
+                state: 'primary',
+                message: 'Đang xử lý...'
+            });
+
             $.ajax({
                 type: "POST",
                 url: "{% url 'dang_ki_nguoi_dung' %}",
@@ -795,13 +839,18 @@ var KTDatatableRemoteAjaxDemo = function() {
                 processData: false,
                 contentType: false,
                 success: function(response){
+                    KTApp.unblockPage();
                     if (response.status == 400) {
+                        
                         toastr.warning(response.message, "Xảy Ra Lỗi")
                     } else if (response.status == 409) {
+                        
                         toastr.info(response.message, "Lỗi")
                     } else if (response.status == 403){
+                        
                         toastr.info(response.message, "Lỗi")
                     } else {
+                        
                         toastr.success(response.message, "Thành Công")
                         $('#form_register').find("input, textarea").val("");
                         $('#error_phone').html('')
@@ -836,7 +885,12 @@ var KTDatatableRemoteAjaxDemo = function() {
                     var formData = new FormData()
                     formData.append('id', id)
                     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
- 
+                    KTApp.blockPage({
+                        overlayColor: '#000000',
+                        state: 'primary',
+                        message: 'Đang xử lý...'
+                    });
+
                     $.ajax({
                         type: "POST",
                         url: "{% url 'xoa_benh_nhan' %}",
@@ -845,7 +899,9 @@ var KTDatatableRemoteAjaxDemo = function() {
                         processData: false,
                         contentType: false,
                         success: function(response){
+                            KTApp.unblockPage();
                             if( response.status == 200 ){
+                                
                                 Swal.fire(
                                     'Đã Xóa!',
                                     'Bệnh Nhân Đã Được Xóa.',
@@ -888,7 +944,12 @@ var KTDatatableRemoteAjaxDemo = function() {
                     var formData = new FormData()
                     formData.append('id', id)
                     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
- 
+                    KTApp.blockPage({
+                        overlayColor: '#000000',
+                        state: 'primary',
+                        message: 'Đang xử lý...'
+                    });
+
                     $.ajax({
                         type: "POST",
                         url: "{% url 'dat_lai_mat_khau' %}",
@@ -898,6 +959,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                         contentType: false,
                         success: function(response){
                             if( response.status == 200 ){
+                                KTApp.unblockPage();
                                 $('#newUserPassword').html(`<strong>${response.password}</strong>`)
                                 $('#resetPasswordNotification').show()
                                 window.setTimeout(function() {
@@ -923,6 +985,71 @@ var KTDatatableRemoteAjaxDemo = function() {
         })
     }
 
+    var changePassword = function() {
+        $('#kt_datatable').on('click', '.btn_change_password', function() {
+            $('#changePasswordModal').modal('show');
+            $('#changePasswordModal').find('#changePasswordBtn').attr("data-id", $(this).data('id'))
+
+        })
+
+        $('#changePasswordModal').on('click', '#changePasswordBtn', function() {
+            var currentPassword = $('#inputPassword1').val()
+            var newPassword = $("#inputPassword2").val()
+            var confirmPassword = $("#inputPassword3").val()
+            
+            var formData = new FormData()
+            if (currentPassword == ''){
+                toastr.info('Không thể thiếu mật khẩu hiện tại', 'Thông tin', {
+                    positionClass:'toast-top-center',
+                    timeOut: 2000,
+                })
+            } else if (currentPassword == newPassword) {
+                toastr.info('Mật khẩu mới phải khác với mật khẩu hiện tại', 'Thông tin', {
+                    positionClass:'toast-top-center',
+                    timeOut: 2000,
+                })
+            } else if (newPassword != confirmPassword) {
+                toastr.info('Xác nhận mật khẩu không khớp', 'Thông tin', {
+                    positionClass:'toast-top-center',
+                    timeOut: 2000,
+                })
+            } else {
+
+                formData.append('id', $(this).data('id'))
+                formData.append('current_password', currentPassword)
+                formData.append('new_password', newPassword)
+                formData.append('confirm_password', confirmPassword)
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'change_password' %}",
+                    data: formData,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function(response){
+                        if (response.status == 200) {
+                            toastr.success(response.message, 'Thành Công!')
+                            setTimeout(function () {
+                                window.location.href = '/danh_sach_benh_nhan/'; //redirect về danh sách chờ lâm sàng
+                            }, 1500); 
+                        } else if (response.status == 400) {
+                            toastr.warning(response.message, 'Lỗi')
+                        }
+                        //sau 2 giây (1000 = 1s)
+                        //window.location = '/danh_sach_benh_nhan/'
+                    },
+                    error: function(response){
+                        console.log("error")
+                    }
+                })
+            }
+            
+
+        })
+    }
+
     return {
         init: function() {
             demo();
@@ -931,6 +1058,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             themLichHenKham();
             deleteBenhNhan();
             resetPassword();
+            changePassword();
         },
     };
 }();
