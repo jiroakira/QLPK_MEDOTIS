@@ -178,20 +178,20 @@
 
     avatar4.on('cancel', function(imageInput) {
         swal.fire({
-            title: 'Image successfully canceled !',
+            title: 'Hủy thay đổi ảnh !',
             type: 'success',
             buttonsStyling: false,
-            confirmButtonText: 'Awesome!',
+            confirmButtonText: 'Đồng ý',
             confirmButtonClass: 'btn btn-primary font-weight-bold'
         });
     });
 
     avatar4.on('change', function(imageInput) {
         swal.fire({
-            title: 'Image successfully changed !',
+            title: 'Thay đổi ảnh thành công!',
             type: 'success',
             buttonsStyling: false,
-            confirmButtonText: 'Awesome!',
+            confirmButtonText: 'Đồng ý',
             confirmButtonClass: 'btn btn-primary font-weight-bold'
         });
 
@@ -201,10 +201,10 @@
 
     avatar4.on('remove', function(imageInput) {
         swal.fire({
-            title: 'Image successfully removed !',
+            title: 'Ảnh đã được gỡ bỏ, hãy chọn ảnh khác!',
             type: 'error',
             buttonsStyling: false,
-            confirmButtonText: 'Got it!',
+            confirmButtonText: 'Đồng ý',
             confirmButtonClass: 'btn btn-primary font-weight-bold'
         });
     });
