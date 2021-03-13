@@ -36,6 +36,7 @@ class ChildUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'so_dien_thoai', 'ho_ten', 'email', 'cmnd_cccd', 'chuc_nang') 
 
 class UserSerializer(serializers.ModelSerializer):
+    gioi_tinh = serializers.CharField(source='get_gioi_tinh')
     class Meta:
         model = User
         # fields = '__all__'
