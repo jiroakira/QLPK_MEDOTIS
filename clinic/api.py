@@ -1,7 +1,3 @@
-
-from typing import Generic
-
-from django.http import response
 from finance.models import (
     HoaDonChuoiKham, 
     HoaDonThuoc, 
@@ -13,7 +9,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.parsers import MultiPartParser
 import json
 from medicine.models import DonThuoc, KeDonThuoc, Thuoc, TrangThaiDonThuoc, VatTu
-from django.http.response import Http404, HttpResponse, JsonResponse
+from django.http.response import Http404, HttpResponse
 from rest_framework import views
 from rest_framework.views import APIView
 from clinic.models import (
@@ -46,7 +42,6 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncDay
 from django.db.models import Count, F, Sum, Q
-from django.db.models import Sum, ExpressionWrapper, DecimalField
 from django.db import models
 from medicine.serializers import (
     DanhSachThuocSerializer, 
@@ -1291,7 +1286,7 @@ class DanhSachDoanhThuTheoThoiGian(APIView):
             end = datetime.strptime(range_end, "%d-%m-%Y")
             # tomorrow_end = end + timedelta(1)
             
-            tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter( thoi_gian_tao__gt=start, thoi_gian_tao__lt=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
 
             list_tong_tien = [x['total_spent'] for x in tong_tien_hoa_don_chuoi_kham_theo_thoi_gian]
             tong_tien_dich_vu_kham = sum(list_tong_tien)

@@ -3382,37 +3382,41 @@ def chi_tiet_lich_hen_benh_nhan(request, **kwargs):
 def chi_tiet_ket_qua_xet_nghiem(request, **kwargs):
     id_ket_qua_chuyen_khoa = kwargs.get('id')
     ket_qua_chuyen_khoa = KetQuaChuyenKhoa.objects.filter(id=id_ket_qua_chuyen_khoa).first()
-    ket_qua_xet_nghiem = ket_qua_chuyen_khoa.ket_qua_xet_nghiem.all()
-    phan_khoa_kham = ket_qua_xet_nghiem[0].phan_khoa_kham
-    dich_vu = phan_khoa_kham.dich_vu_kham
-    mau_phieu = dich_vu.mau_phieu.all()[0]
+    if ket_qua_chuyen_khoa is not None:
+        ket_qua_xet_nghiem = ket_qua_chuyen_khoa.ket_qua_xet_nghiem.all()
+        phan_khoa_kham = ket_qua_xet_nghiem[0].phan_khoa_kham
+        dich_vu = phan_khoa_kham.dich_vu_kham
+        mau_phieu = dich_vu.mau_phieu.all()[0]
 
-    benh_nhan = [phan_khoa_kham.benh_nhan.ho_ten]
-    dia_chi = [phan_khoa_kham.benh_nhan.dia_chi]
-    tuoi = [str(phan_khoa_kham.benh_nhan.tuoi())]
-    gioi_tinh = ['Nam' if phan_khoa_kham.benh_nhan.gioi_tinh == "1" else 'KXD' if phan_khoa_kham.benh_nhan.gioi_tinh == "1" else "Nữ"]
-    bac_si_chi_dinh = [phan_khoa_kham.bac_si_lam_sang.ho_ten]
-    chan_doan = [ket_qua_chuyen_khoa.ket_luan]
+        benh_nhan = [phan_khoa_kham.get_ten_benh_nhan()]
+        dia_chi = [phan_khoa_kham.get_dia_chi_benh_nhan()]
+        tuoi = [str(phan_khoa_kham.get_tuoi_benh_nhan())]
+        gioi_tinh = [phan_khoa_kham.get_gioi_tinh_benh_nhan()]
+        bac_si_chi_dinh = [phan_khoa_kham.get_bac_si_chi_dinh()]
+        chan_doan = [ket_qua_chuyen_khoa.get_ket_luan()]
 
-    ten_chi_so = [i.chi_so_xet_nghiem.ten_chi_so for i in ket_qua_xet_nghiem]
-    chi_so_binh_thuong = [f'{i.chi_so_xet_nghiem.chi_tiet.chi_so_binh_thuong_min} - {i.chi_so_xet_nghiem.chi_tiet.chi_so_binh_thuong_max}' for i in ket_qua_xet_nghiem]
-    don_vi = [i.chi_so_xet_nghiem.chi_tiet.don_vi_do if i.chi_so_xet_nghiem.chi_tiet.don_vi_do is not None else '' for i in ket_qua_xet_nghiem]
-    ket_qua = [i.ket_qua_xet_nghiem if i.ket_qua_xet_nghiem is not None else '' for i in ket_qua_xet_nghiem]
-    
-    context = {
-        'mau_phieu': mau_phieu, 
-        'list_ten_chi_so': ten_chi_so,
-        'list_chi_so_binh_thuong': chi_so_binh_thuong,
-        'list_don_vi': don_vi,
-        'list_ket_qua': ket_qua,
-        'benh_nhan': benh_nhan,
-        'dia_chi': dia_chi,
-        'tuoi': tuoi,
-        'gioi_tinh': gioi_tinh,
-        'bac_si_chi_dinh': bac_si_chi_dinh,
-        'chan_doan': chan_doan,
-    }
-    return render(request, 'mau_phieu.html', context=context)
+        ten_chi_so = [i.get_ten_chi_so() for i in ket_qua_xet_nghiem]
+        chi_so_binh_thuong = [f'{i.get_chi_so_min()} - {i.get_chi_so_max()}' for i in ket_qua_xet_nghiem]
+        don_vi = [i.get_don_vi() for i in ket_qua_xet_nghiem]
+        ket_qua = [i.get_ket_qua_xet_nghiem() for i in ket_qua_xet_nghiem]
+        
+        context = {
+            'mau_phieu': mau_phieu, 
+            'list_ten_chi_so': ten_chi_so,
+            'list_chi_so_binh_thuong': chi_so_binh_thuong,
+            'list_don_vi': don_vi,
+            'list_ket_qua': ket_qua,
+            'benh_nhan': benh_nhan,
+            'dia_chi': dia_chi,
+            'tuoi': tuoi,
+            'gioi_tinh': gioi_tinh,
+            'bac_si_chi_dinh': bac_si_chi_dinh,
+            'chan_doan': chan_doan,
+        }
+        return render(request, 'mau_phieu.html', context=context)
+
+    else:
+        return render(request, '404.html')
 
 def chi_tiet_phieu_ket_qua(request, **kwargs):
     id_ket_qua_chuyen_khoa = kwargs.get('id')

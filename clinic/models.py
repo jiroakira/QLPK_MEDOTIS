@@ -644,6 +644,42 @@ class PhanKhoaKham(models.Model):
         verbose_name = "Phân Khoa Khám"
         verbose_name_plural = "Phân Khoa Khám"
 
+    def get_ten_benh_nhan(self):
+        if self.benh_nhan is not None:
+            return self.benh_nhan.ho_ten
+        else:
+            return "Không xác định"
+
+    def get_dia_chi_benh_nhan(self):
+        if self.benh_nhan is not None:
+            return f"{self.benh_nhan.dia_chi}, {self.benh_nhan.xa.name}, {self.benh_nhan.huyen.name}, {self.benh_nhan.tinh.name}"
+        else:
+            return "Không có địa chỉ"
+
+    def get_tuoi_benh_nhan(self):
+        if self.benh_nhan is not None:
+            return self.benh_nhan.tuoi()
+        else:
+            return "-"
+    
+    def get_gioi_tinh_benh_nhan(self):
+        if self.benh_nhan is not None:
+            if self.benh_nhan.gioi_tinh == '1':
+                return "Nam"
+            elif self.benh_nhan.gioi_tinh == '2':
+                return "Nữ"
+            else:
+                return "Không xác định"
+        else:
+            return "Không xác định"
+
+    def get_bac_si_chi_dinh(self):
+        if self.bac_si_lam_sang is not None:
+            return self.bac_si_lam_sang.ho_ten
+        else:
+            return "Không có"
+        
+
     def gia_dich_vu_theo_bao_hiem(self):
         gia = self.dich_vu_kham.gia_dich_vu_kham.gia 
         if self.bao_hiem:
@@ -767,7 +803,10 @@ class KetQuaChuyenKhoa(models.Model):
 
     def get_ten_dich_vu(self):
         if self.phan_khoa_kham is not None:
-            return self.phan_khoa_kham.dich_vu_kham.ten_dvkt
+            if self.phan_khoa_kham.dich_vu_kham is not None:
+                return self.phan_khoa_kham.dich_vu_kham.ten_dvkt
+            else:
+                return "Không xác định"
         else:
             return "Không xác định"
 
@@ -789,6 +828,9 @@ class FileKetQua(models.Model):
 
     def filename(self):
         return os.path.basename(self.file.name)
+    
+    def get_url(self):
+        return self.file.url
     # ket_qua_chuyen_khoa = models.ForeignKey(KetQuaChuyenKhoa, on_delete=models.SET_NULL, null=True, blank=True, related_name="file_ket_qua_chuyen_khoa")
     # ket_qua_tong_quat = models.ForeignKey(KetQuaTongQuat, on_delete=models.SET_NULL, null=True, blank=True, related_name="file_ket_qua_tong_quat")
 
@@ -936,6 +978,48 @@ class KetQuaXetNghiem(models.Model):
     class Meta:
         verbose_name = "Kết Quả Xét Nghiệm"
         verbose_name_plural = "Kết Quả Xét Nghiệm"
+
+    def get_ten_chi_so(self):
+        if self.chi_so_xet_nghiem is not None:
+            return self.chi_so_xet_nghiem.ten_chi_so
+        else:
+            return "Không xác định"
+
+    def get_chi_so_min(self):
+        if self.chi_so_xet_nghiem is not None:
+            if self.chi_so_xet_nghiem.chi_tiet is not None:
+                return self.chi_so_xet_nghiem.chi_tiet.chi_so_binh_thuong_min
+            else:
+                return 0
+        else:
+            return "Không xác định"
+
+    def get_chi_so_max(self):
+        if self.chi_so_xet_nghiem is not None:
+            if self.chi_so_xet_nghiem.chi_tiet is not None:
+                return self.chi_so_xet_nghiem.chi_tiet.chi_so_binh_thuong_max
+            else:
+                return 0
+        else:
+            return "Không xác định"
+
+    def get_don_vi(self):
+        if self.chi_so_xet_nghiem is not None:
+            if self.chi_so_xet_nghiem.chi_tiet is not None:
+                if self.chi_so_xet_nghiem.chi_tiet.don_vi_do is not None:
+                    return self.chi_so_xet_nghiem.chi_tiet.don_vi_do
+                else:
+                    return ""
+            else:
+                return ""
+        else:
+            return ""
+
+    def get_ket_qua_xet_nghiem(self):
+        if not self.ket_qua_xet_nghiem:
+            return "Không có"
+        else:
+            return self.ket_qua_xet_nghiem
 
     def get_ten_dvkt(self):
         return self.phan_khoa_kham.dich_vu_kham.ten_dvkt
