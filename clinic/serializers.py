@@ -528,9 +528,6 @@ class ChuoiKhamSerializer(serializers.ModelSerializer):
         model = ChuoiKham
         fields = '__all__'
  
-    def create(self, validated_data):
-        pass
- 
     def to_representation(self, instance):
         response = super().to_representation(instance)
         response['actions'] = ''
@@ -739,7 +736,7 @@ class TatCaLichHenSerializer(serializers.ModelSerializer):
         fields = ('id', 'ma_lich_hen', 'thoi_gian_bat_dau', 'thoi_gian_ket_thuc', 'trang_thai')
 
 class FilterHoaDonChuoiKhamBaoHiemSerializer(serializers.ModelSerializer):
-    benh_nhan = serializers.CharField(source='chuoi_kham.benh_nhan.ho_ten')
+    benh_nhan = serializers.CharField(source='get_benh_nhan')
     nam_sinh = serializers.CharField(source='chuoi_kham.benh_nhan.ngay_sinh')
     gioi_tinh = serializers.CharField(source='chuoi_kham.benh_nhan.gioi_tinh')
     ma_bhyt = serializers.CharField(source='chuoi_kham.benh_nhan.ma_so_bao_hiem')
@@ -820,15 +817,35 @@ class WardSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ChiTietChiSoXetNghiemSerializer(serializers.ModelSerializer):
+    chi_so_binh_thuong_min = serializers.CharField(source='get_chi_so_binh_thuong_min')
+    chi_so_binh_thuong_max = serializers.CharField(source='get_chi_so_binh_thuong_max')
+    chi_so_binh_thuong = serializers.CharField(source='get_chi_so_binh_thuong')
+    don_vi_do = serializers.CharField(source='get_don_vi_do')
+    ghi_chu = serializers.CharField(source='get_ghi_chu')
     class Meta:
         model = ChiTietChiSoXetNghiem
-        fields = '__all__'
+        fields = (
+            'id',
+            'chi_so_binh_thuong_min',
+            'chi_so_binh_thuong_max',
+            'chi_so_binh_thuong',
+            'don_vi_do',
+            'ghi_chu'
+        )
 
 class ChiSoXetNghiemSerializer(serializers.ModelSerializer):
     chi_tiet = ChiTietChiSoXetNghiemSerializer()
     class Meta:
         model = ChiSoXetNghiem
-        fields = '__all__'
+        fields = (
+            'id',
+            'chi_tiet',
+            'ma_chi_so',
+            'ten_chi_so',
+            'dich_vu_kham',
+            'doi_tuong_xet_nghiem'
+        )
+
 
 class KetQuaXetNghiemSerializer(serializers.ModelSerializer):
     # chi_so_xet_nghiem = ChiSoXetNghiemSerializer()
@@ -842,7 +859,6 @@ class KetQuaXetNghiemSerializer(serializers.ModelSerializer):
             'ket_qua_xet_nghiem',
             'danh_gia_chi_so',
             'danh_gia_ghi_chu',
-
         )
 
 class PhieuKetQuaSerializer(serializers.ModelSerializer):

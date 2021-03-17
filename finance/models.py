@@ -12,7 +12,7 @@ class HoaDonThuoc(models.Model):
     @field thoi_gian_tao: thời gian hóa đơn được tạo
     @field thoi_gian_cap_nhat: thời gian hóa đơn được cập nhật
     """
-    don_thuoc = models.OneToOneField("medicine.DonThuoc", on_delete=models.SET_NULL, null=True, related_name='hoa_don_thuoc')
+    don_thuoc = models.OneToOneField("medicine.DonThuoc", on_delete=models.CASCADE, null=True, related_name='hoa_don_thuoc')
     ma_hoa_don = models.CharField(max_length=255, unique=True, null=True, blank=True)
     tong_tien = models.DecimalField(decimal_places=0, max_digits=10, null=True, blank=True)
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
@@ -40,7 +40,7 @@ class HoaDonChuoiKham(models.Model):
     @field thoi_gian_cap_nhat : thời gian hóa đơn được cập nhật
     """
 
-    chuoi_kham = models.OneToOneField("clinic.ChuoiKham", on_delete=models.SET_NULL, null=True, related_name='hoa_don_dich_vu')
+    chuoi_kham = models.OneToOneField("clinic.ChuoiKham", on_delete=models.CASCADE, null=True, related_name='hoa_don_dich_vu')
     ma_hoa_don = models.CharField(max_length=255, null=True, blank=True, unique=True)
     tong_tien = models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
@@ -53,6 +53,9 @@ class HoaDonChuoiKham(models.Model):
             self.thoi_gian_tao = timezone.now()
         self.thoi_gian_cap_nhat = timezone.now()
         return super(HoaDonChuoiKham, self).save(*args, **kwargs)
+
+    def get_benh_nhan(self):
+        return self.chuoi_kham.benh_nhan.ho_ten
 
     def get_ma_benh(self):
         try:
@@ -125,7 +128,7 @@ class HoaDonChuoiKham(models.Model):
         return 0
 
 class HoaDonLamSang(models.Model):
-    lich_hen = models.ForeignKey("clinic.LichHenKham", on_delete=models.SET_NULL, null=True, blank=True, related_name="hoa_don_lam_sang")
+    lich_hen = models.ForeignKey("clinic.LichHenKham", on_delete=models.CASCADE, null=True, blank=True, related_name="hoa_don_lam_sang")
     tong_tien = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)

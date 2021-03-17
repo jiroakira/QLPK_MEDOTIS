@@ -1,10 +1,10 @@
-from clinic.serializers import ChuoiKhamSerializer
+from clinic.serializers import ChuoiKhamSerializerSimple
 from django.db import models
 from finance.models import HoaDonChuoiKham, HoaDonThuoc
 from rest_framework import serializers
 
 class HoaDonChuoiKhamSerializer(serializers.ModelSerializer):
-    chuoi_kham = ChuoiKhamSerializer()
+    chuoi_kham = ChuoiKhamSerializerSimple()
     class Meta:
         model = HoaDonChuoiKham
         fields = '__all__'
