@@ -920,6 +920,36 @@ class ChiTietChiSoXetNghiem(models.Model):
         else:
             return True
 
+    def get_chi_so_binh_thuong_min(self):
+        if not self.chi_so_binh_thuong_min:
+            return ""
+        else:
+            return self.chi_so_binh_thuong_min
+
+    def get_chi_so_binh_thuong_max(self):
+        if not self.chi_so_binh_thuong_max:
+            return ""
+        else:
+            return self.chi_so_binh_thuong_max
+    
+    def get_chi_so_binh_thuong(self):
+        if not self.chi_so_binh_thuong:
+            return ""
+        else:
+            return self.chi_so_binh_thuong
+    
+    def get_don_vi_do(self):
+        if not self.don_vi_do:
+            return ""
+        else:
+            return self.don_vi_do
+
+    def get_ghi_chu(self):
+        if not self.ghi_chu:
+            return ""
+        else:
+            return self.ghi_chu
+
 class DoiTuongXetNghiem(models.Model):
     MALE = "1"
     FEMALE = "2"

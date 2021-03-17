@@ -293,7 +293,20 @@ def writeToExcelThuoc(excel_data):
     worksheet_s.merge_range('K7:K8', "Đơn giá (đồng)", cell_center)
     worksheet_s.merge_range('L7:L8', "Thành tiền (đồng)", cell_center)
 
-    
+    for idx, data in enumerate(excel_data):
+        row = 8 + idx
+        worksheet_s.write(row, 0, "", cell_center)
+        worksheet_s.write(row, 1, data['ma_thuoc'], cell_center)
+        worksheet_s.write(row, 2, data['ten_hoat_chat'], cell_center)
+        worksheet_s.write(row, 3, data['thuoc__ten_thuoc'], cell_center)
+        worksheet_s.write(row, 4, data['duong_dung'], cell_center)
+        worksheet_s.write(row, 5, data['ham_luong'], cell_center)
+        worksheet_s.write(row, 6, data['so_dang_ky'], cell_center)
+        worksheet_s.write(row, 7, data['don_vi_tinh'], cell_center)
+        worksheet_s.write(row, 8, data['thuoc_count'], cell_center)
+        worksheet_s.write(row, 9, "0", cell_center)
+        worksheet_s.write(row, 10, data['don_gia'], cell_center)
+        worksheet_s.write(row, 11, data['tong_tien'], cell_center)
 
     workbook.close()
 

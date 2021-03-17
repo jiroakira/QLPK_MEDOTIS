@@ -1223,7 +1223,8 @@ class DanhSachDoanhThuTheoThoiGian(APIView):
 
         # print(start)
         if range_end == '':
-            tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter( thoi_gian_tao__gt=start, thoi_gian_tao__lt=tomorrow_start).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+
+            tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=tomorrow_start).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
 
             list_tong_tien = [x['total_spent'] for x in tong_tien_hoa_don_chuoi_kham_theo_thoi_gian]
             tong_tien_dich_vu_kham = sum(list_tong_tien)
@@ -1283,23 +1284,26 @@ class DanhSachDoanhThuTheoThoiGian(APIView):
             return Response(response)
 
         else:
+
             end = datetime.strptime(range_end, "%d-%m-%Y")
+            print(end)
             # tomorrow_end = end + timedelta(1)
-            
-            tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            if range_start == range_end:
+                end = end + timedelta(1)
+
+            tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lte=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
 
             list_tong_tien = [x['total_spent'] for x in tong_tien_hoa_don_chuoi_kham_theo_thoi_gian]
             tong_tien_dich_vu_kham = sum(list_tong_tien)
 
-
-            tong_tien_lam_sang_theo_thoi_gian = HoaDonLamSang.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            tong_tien_lam_sang_theo_thoi_gian = HoaDonLamSang.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lte=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
             list_tong_tien_lam_sang = [x['total_spent'] for x in tong_tien_lam_sang_theo_thoi_gian]
             tong_tien_lam_sang = sum(list_tong_tien_lam_sang)
 
             tong_tien_dich_vu = tong_tien_dich_vu_kham + tong_tien_lam_sang
             tong_tien_dich_vu_formatted = "{:,}".format(int(tong_tien_dich_vu))
 
-            tong_tien_hoa_don_thuoc_theo_thoi_gian = HoaDonThuoc.objects.filter( thoi_gian_tao__gt=start, thoi_gian_tao__lt=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            tong_tien_hoa_don_thuoc_theo_thoi_gian = HoaDonThuoc.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lte=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
             list_tong_tien_don_thuoc = [x['total_spent'] for x in tong_tien_hoa_don_thuoc_theo_thoi_gian]
 
             tong_tien_don_thuoc = sum(list_tong_tien_don_thuoc)
@@ -1308,8 +1312,8 @@ class DanhSachDoanhThuTheoThoiGian(APIView):
             tong_doanh_thu = tong_tien_dich_vu + tong_tien_don_thuoc
             tong_doanh_thu_formatted = "{:,}".format(int(tong_doanh_thu))
             
-            danh_sach_dich_vu = PhanKhoaKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start)).values('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(dich_vu_kham_count = Count('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang'))
-            print(danh_sach_dich_vu)
+            danh_sach_dich_vu = PhanKhoaKham.objects.filter(thoi_gian_tao__lte=end, thoi_gian_tao__gt=start).values('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(dich_vu_kham_count = Count('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang'))
+
             list_tong_tien_without_format = [i['tong_tien'] for i in danh_sach_dich_vu]
             tong_tien_theo_phong = sum(list_tong_tien_without_format)
             tong_tien_theo_phong_formatted = "{:,}".format(int(tong_tien_theo_phong))
@@ -2317,12 +2321,13 @@ class DanhSachHoaDonDichVuBaoHiem(APIView):
         # hoa_don_phan_khoa = []
 
         if range_end == '':
-            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)).filter(bao_hiem=True)
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)
 
         else:
             end = datetime.strptime(range_end, "%d-%m-%Y")
-            tomorrow_end = end + timedelta(1)
-            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(bao_hiem=True).filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start))
+            if range_start == range_end:
+                end = end + timedelta(1)
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start)
         
         serializer = HoaDonChuoiKhamSerializer(hoa_don_dich_vu, many=True, context={'request': request})
 
@@ -2342,12 +2347,13 @@ class DanhSachHoaDonThuocBaoHiem(APIView):
         tomorrow_start = start + timedelta(1)
 
         if range_end == '':
-            hoa_don_thuoc = HoaDonThuoc.objects.filter(bao_hiem = True).filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start))
+            hoa_don_thuoc = HoaDonThuoc.objects.filter(bao_hiem = True).filter(thoi_gian_tao__lte=tomorrow_start, thoi_gian_tao__gt=start)
 
         else :
             end = datetime.strptime(range_end, "%d-%m-%Y")
-            tomorrow_end = end + timedelta(1)
-            hoa_don_thuoc = HoaDonThuoc.objects.filter(bao_hiem = True).filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start))
+            if range_start == range_end:
+                end = end + timedelta(1)
+            hoa_don_thuoc = HoaDonThuoc.objects.filter(bao_hiem = True).filter(thoi_gian_tao__lte=end, thoi_gian_tao__gt=start)
 
         serializer = HoaDonThuocSerializer(hoa_don_thuoc, many=True, context = {'request' : request})
         response = {
@@ -2616,18 +2622,20 @@ class GetFuncroomInfo(APIView):
         return Response(response)
 
 
-class TestExportExcel(APIView):
+class ApiExportBenhNhanBaoHiemExcel(APIView):
     def get(self, request, format=None):
         startDate = self.request.query_params.get('range_start')
         endDate = self.request.query_params.get('range_end')
         start = datetime.strptime(startDate, "%d-%m-%Y")
         tomorrow_start = start + timedelta(1)
         if endDate == '':
-            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start)
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(thoi_gian_tao__lte=tomorrow_start, thoi_gian_tao__gt=start)
         else:
             end = datetime.strptime(endDate, "%d-%m-%Y")
-            tomorrow_end = end + timedelta(1)
-            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=tomorrow_end, thoi_gian_tao__gte=start))
+            if startDate == endDate:
+                end = end + timedelta(1)
+            
+            hoa_don_dich_vu = HoaDonChuoiKham.objects.filter(thoi_gian_tao__lte=end, thoi_gian_tao__gt=start)
 
         serializer = FilterHoaDonChuoiKhamBaoHiemSerializer(hoa_don_dich_vu, many=True, context={'request': request})
         excel_data = serializer.data
@@ -2638,7 +2646,7 @@ class TestExportExcel(APIView):
 
         return Response(response)
 
-class TestExportExcelDichVu(APIView):
+class ApiExportExcelDichVu(APIView):
     def get(self, request, format=None):
         startDate = self.request.query_params.get('range_start')
         endDate = self.request.query_params.get('range_end')
@@ -2655,8 +2663,9 @@ class TestExportExcelDichVu(APIView):
             }
         else:
             end = datetime.strptime(endDate, "%d-%m-%Y")
-            tomorrow_end = end + timedelta(1)
-            dich_vu = PhanKhoaKham.objects.filter(Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start)).filter(bao_hiem=True).values('dich_vu_kham__ten_dvkt').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__ten_dvkt').annotate(dich_vu_kham_count = Count('dich_vu_kham__ten_dvkt')).annotate(ma_dvkt=F('dich_vu_kham__ma_dvkt')).annotate(don_gia=F('dich_vu_kham__don_gia')).annotate(stt=F('dich_vu_kham__stt'))
+            if startDate == endDate:
+                end = end + timedelta(1)
+            dich_vu = PhanKhoaKham.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start).filter(bao_hiem=True).values('dich_vu_kham__ten_dvkt').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__ten_dvkt').annotate(dich_vu_kham_count = Count('dich_vu_kham__ten_dvkt')).annotate(ma_dvkt=F('dich_vu_kham__ma_dvkt')).annotate(don_gia=F('dich_vu_kham__don_gia')).annotate(stt=F('dich_vu_kham__stt'))
             
             list_tong_tien_formatted = ["{:,}".format(int(i['tong_tien'])) if i['tong_tien'] is not None else 0 for i in dich_vu]
 
@@ -2665,14 +2674,13 @@ class TestExportExcelDichVu(APIView):
                 val['tong_tien'] = list_tong_tien_formatted[idx]
                 list_dich_vu.append(val)
 
-            # serializer = FilterDichVuKhamBaoHiemSerializer(dich_vu, many=True, context={'request': request})
             response = {
                 'data': list_dich_vu
             }
 
         return Response(response)
 
-class TestExportExcelThuoc(APIView):
+class ApiExportExcelThuoc(APIView):
     def get(self, request, format=None):
         startDate = self.request.query_params.get('range_start')
         endDate = self.request.query_params.get('range_end')
@@ -2690,8 +2698,9 @@ class TestExportExcelThuoc(APIView):
             }
         else:
             end = datetime.strptime(endDate, "%d-%m-%Y")
-            tomorrow_end = end + timedelta(1)
-            thuoc = KeDonThuoc.objects.filter(Q(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start) | Q(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start)).values('thuoc__ten_thuoc').annotate(tong_tien=Sum('thuoc__don_gia_tt')).order_by('thuoc__ten_thuoc').annotate(thuoc_count = Count('thuoc__ten_thuoc')).annotate(ten_hoat_chat=F('thuoc__ten_hoat_chat')).annotate(duong_dung=F('thuoc__duong_dung')).annotate(ham_luong=F('thuoc__ham_luong')).annotate(so_dang_ky=F('thuoc__so_dang_ky')).annotate(don_vi_tinh=F('thuoc__don_vi_tinh')).annotate(don_gia=F('thuoc__don_gia_tt'))
+            if startDate == endDate:
+                end = end + timedelta(1)
+            thuoc = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gte=start).values('thuoc__ten_thuoc').annotate(tong_tien=Sum('thuoc__don_gia_tt')).order_by('thuoc__ten_thuoc').annotate(thuoc_count = Count('thuoc__ten_thuoc')).annotate(ten_hoat_chat=F('thuoc__ten_hoat_chat')).annotate(duong_dung=F('thuoc__duong_dung')).annotate(ham_luong=F('thuoc__ham_luong')).annotate(so_dang_ky=F('thuoc__so_dang_ky')).annotate(don_vi_tinh=F('thuoc__don_vi_tinh')).annotate(don_gia=F('thuoc__don_gia_tt')).annotate(ma_thuoc=F('thuoc__ma_thuoc'))
             list_tong_tien_formatted = ["{:,}".format(int(i['tong_tien'])) for i in thuoc]
 
             list_thuoc = []

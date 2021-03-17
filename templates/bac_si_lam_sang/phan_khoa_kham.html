@@ -724,14 +724,18 @@ var KTDatatableRecordSelectionDemo = function() {
                 dataType: 'json',
                 safe: false,
                 success: function(response) {
-                    toastr.success(response.message, "Thành Công")
-
-                    setTimeout(function () {
-                        window.location.href = response.url; //redirect về danh sách chờ lâm sàng
-                    }, 2000); //sau 2 giây (1000 = 1s)
+                    if (response.status == 200) {
+                        toastr.success(response.message, "Thành Công")
+                        setTimeout(function () {
+                            window.location.href = response.url; //redirect về danh sách chờ lâm sàng
+                        }, 2000);
+                    } else if (response.status == 404) {
+                        toastr.warning(response.message, "Lỗi")
+                    }
+                     //sau 2 giây (1000 = 1s)
                 },
                 error: function() {
-                    alert()                                                                                                                         
+                    toastr.warning("Phân Khoa Không Thành Công", "Lỗi")                                                                                                                         
                 }
             });
         }
