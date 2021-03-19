@@ -830,17 +830,29 @@ def store_ke_don(request):
 
         now = datetime.now()
         date_time = now.strftime("%m%d%y%H%M%S")
+        try:
+            chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
+        except ChuoiKham.DoesNotExist:
+            repsonse = {
+                "status": 404,
+                "message": "Chuỗi Khám Này Không Tồn Tại",
+            }
+            return HttpResponse(json.dumps(repsonse), content_type='application/json; charset=utf-8')
         
-        chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
-        
+        try:
+            user = User.objects.get(id=user)
+            subName = getSubName(user.ho_ten)
+            ma_don_thuoc = subName + '-' + date_time
+            trang_thai = TrangThaiDonThuoc.objects.get_or_create(trang_thai="Chờ Thanh Toán")[0]
+            don_thuoc = DonThuoc.objects.get_or_create(benh_nhan=user, bac_si_ke_don=request.user, trang_thai=trang_thai, ma_don_thuoc=ma_don_thuoc, chuoi_kham = chuoi_kham)[0]
+        except User.DoesNotExist:
+            repsonse = {
+                "status": 404,
+                "message": "Bệnh Nhân Này Không Tồn Tại",
+            }
+            return HttpResponse(json.dumps(repsonse), content_type='application/json; charset=utf-8')
+            
         bulk_create_data = []
-        user = User.objects.get(id=user)
-        subName = getSubName(user.ho_ten)
-        ma_don_thuoc = subName + '-' + date_time
-        trang_thai = TrangThaiDonThuoc.objects.get_or_create(trang_thai="Chờ Thanh Toán")[0]
-        don_thuoc = DonThuoc.objects.get_or_create(benh_nhan=user, bac_si_ke_don=request.user, trang_thai=trang_thai, ma_don_thuoc=ma_don_thuoc, chuoi_kham = chuoi_kham)[0]
-        trang_thai_lich_hen = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Chờ Thanh Toán Hóa Đơn Thuốc")[0]
-
         for i in data:
             thuoc = Thuoc.objects.only('id').get(id=i['obj']['id'])
             so_luong=i['obj']['so_luong']
