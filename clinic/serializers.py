@@ -26,6 +26,7 @@ from .models import (
     TinhTrangPhongKham, Ward, send_func_room_info,
 )
 from medicine.models import DonThuoc, KeDonThuoc, NhomVatTu, VatTu
+from django.contrib.auth.models import Group, Permission
 
 User = get_user_model()
 
@@ -865,3 +866,31 @@ class PhieuKetQuaSerializer(serializers.ModelSerializer):
     class Meta:
         model = HtmlKetQua
         fields = '__all__'
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'
+
+class PermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = (
+            'id', 
+            'codename', 
+            'name'
+        )
+
+class StaffUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username', 
+            'ho_ten', 
+            'so_dien_thoai',
+            'gioi_tinh',
+            'cmnd_cccd',
+            'chuc_nang',
+            'ngay_sinh',
+        )

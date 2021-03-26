@@ -55,6 +55,7 @@
                             <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
                                 <!--begin::Navigation-->
                                 <ul class="navi flex-column navi-hover py-2">
+                                    {% if perms.clinic.can_add_appointment %}
                                     <li class="navi-item">
                                         <a href="javascript:;" class="navi-link addLichHenKhamBtn">
                                             <span class="navi-icon">
@@ -63,6 +64,8 @@
                                             <span class="navi-text">Thêm Lịch Hẹn Khám</span>
                                         </a>
                                     </li>
+                                    {% endif %}
+
                                     <li class="navi-item">
                                         <a href="javascript:;" class="navi-link">
                                             <span class="navi-icon">
@@ -158,6 +161,7 @@
             <div class="modal-body">
                 <form>
                     <div class="card-body">
+
                         <div class="form-group mb-8">
                             <div class="alert alert-custom alert-default" role="alert">
                                 <div class="alert-icon"><i class="flaticon2-calendar-6 text-primary"></i></div>
@@ -166,6 +170,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label>Chọn Dịch Vụ Khám <span class="text-danger">*</span></label>
                             <select id="selectDichVuKham" class="form-control selectpicker">
@@ -456,9 +461,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_change_appointment %}
                         <a href="javascript:;" class="btn-edit btn btn-clean btn-icon" title="Thay đổi thời gian lịch hẹn" data-id="${row.id}" data-lich-hen="${row.thoi_gian_bat_dau}">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -470,9 +477,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_confirm_appoinment %}
                         <a href="javascript:;" class="btn-confirm btn btn-clean btn-icon" data-id="${row.id}" title="Xác nhận lịch hẹn">
                             <i class="la la-calendar-check icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -484,9 +493,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_confirm_do_examination %}
                         <a href="javascript:;" class="btn-set-status btn btn-clean btn-icon" data-id="${row.id}" title="Xác nhận đến khám và chờ thanh toán lâm sàng">
                             <i class="la la-money-check icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -500,9 +511,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                     var trang_thai = row.trang_thai.id
                     if(trang_thai == 5 || trang_thai == 2 || trang_thai == 9){
                         return `
+                            {% if perms.clinic.can_delete_appointment %}
                             <a href="javascript:;" class="btn-cancel btn btn-clean btn-icon" data-id="${row.id}" data-ten="${row.benh_nhan.ho_ten}" title="Hủy lịch hẹn bệnh nhân ${row.benh_nhan.ho_ten}">
                                 <i class="la la-trash-alt icon-lg text-danger"></i>
                             </a>
+                            {% endif %}
                         `;
                     }else{
                         return '<span class="text text-info"></span>'

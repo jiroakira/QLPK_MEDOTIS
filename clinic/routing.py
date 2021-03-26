@@ -14,5 +14,4 @@ websocket_urlpatterns = [
     path('ws/charge_prescription_bill/<int:user_id>/', consumer.ChargePrescriptionBillNoti.as_asgi()),
     path('ws/charge_process_bill/<int:user_id>/', consumer.ChargeProcessBillNoti.as_asgi()),
     path('ws/process_accomplished/<int:user_id>/', consumer.ProcessAccomplishedNoti.as_asgi()),
-
 ]

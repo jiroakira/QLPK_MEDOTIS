@@ -379,6 +379,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_view_assignment_chain_result %}
                         <a href="#" class="btn btn-lg btn-clean btn-icon btn-xem-ket-qua" title=" Xem kết quả khám của bệnh nhân ${row.benh_nhan.ho_ten}" data-ma-lk='${row.ma_lk}' data-id-chuoi-kham='${row.id}'>
                             <span class="svg-icon svg-icon-primary svg-icon-2x"><!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2020-10-29-133027/theme/html/demo1/dist/../src/media/svg/icons/General/Visible.svg--><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -387,7 +388,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                                     <path d="M12,15 C10.3431458,15 9,13.6568542 9,12 C9,10.3431458 10.3431458,9 12,9 C13.6568542,9 15,10.3431458 15,12 C15,13.6568542 13.6568542,15 12,15 Z" fill="#000000" opacity="0.3"/>
                                 </g>
                             </svg>
-                        </a>    
+                        </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -399,6 +401,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_delete_assignment_chain_result %}
                         <a href="#" class="btn btn-lg btn-clean btn-icon btn_delete" title=" Xóa kết quả khám của bệnh nhân ${row.benh_nhan.ho_ten}" data-id-chuoi-kham="${row.id}" data-ma-lk='${row.ma_lk}'>
                             <span class="svg-icon svg-icon-primary svg-icon-2x"><!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2020-10-29-133027/theme/html/demo1/dist/../src/media/svg/icons/Home/Trash.svg--><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -408,6 +411,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                                 </g>
                             </svg>
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

@@ -70,6 +70,8 @@
                                             <span class="navi-text">Danh Sách Kết Quả Chuyên Khoa</span>
                                         </a>
                                     </li>
+                                
+                                    {% if perms.medicine.can_change_prescription %}
                                     <li class="navi-item">
                                         <a href="javascript:;" class="navi-link btn_don_thuoc">
                                             <span class="navi-icon">
@@ -78,6 +80,7 @@
                                             <span class="navi-text">Đơn Thuốc Hoàn Thành</span>
                                         </a>
                                     </li>
+                                    {% endif %}
                                 </ul>
                                 <!--end::Navigation-->
                             </div>
@@ -406,6 +409,7 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_view_assignment_chain_result %}
                         <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-ket-qua-kham" data-record-id="${row.id}" data-benh-nhan-id="${row.benh_nhan.id}" data-ten="${row.benh_nhan.ho_ten}" title="Danh Sách Kết Quả Khám Chuyên Khoa">
                             <span class="svg-icon svg-icon-primary svg-icon-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -418,6 +422,7 @@ var KTDatatableModal = function() {
                                 </svg>
                             </span>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -430,6 +435,7 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_prescribe %}
                         <a href="/danh_sach_kham/ke_don_thuoc/${row.benh_nhan.id}/${row.id}/" class="btn btn-sm btn-clean btn-icon" data-record-id="${row.id}" data-benh-nhan-id="${row.benh_nhan.id}" data-ten="${row.benh_nhan.ho_ten}" title="Kê Đơn Thuốc Cho Bệnh Nhân ${row.benh_nhan.ho_ten}">
                             <span class="svg-icon svg-icon-primary svg-icon-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -443,6 +449,7 @@ var KTDatatableModal = function() {
                                 </svg>
                             </span>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -455,9 +462,11 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_make_reexamination %}
                         <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-tai-kham" title="Đặt lịch tái khám cho bệnh nhân" data-ten="${row.benh_nhan.ho_ten}" data-id="${row.benh_nhan.id}">
                             <i class="fa far fa-calendar-alt text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -470,6 +479,7 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_stop_serivce_assignment %}
                         <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-dung-kham" title="Dừng Khám Có Lý Do" data-ten="${row.benh_nhan.ho_ten}" data-id="${row.id}">
                             <span class="svg-icon svg-icon-danger svg-icon-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -480,6 +490,7 @@ var KTDatatableModal = function() {
                                 </svg>
                             </span>
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

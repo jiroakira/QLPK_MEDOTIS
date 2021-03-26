@@ -43,17 +43,21 @@
                     <div class="card-toolbar">
                     
                         <!-- begin::Button Thống kê vật tư -->
+                        {% if perms.medicine.can_listed_supplies_at_the_end_of_month %}
                         <a href="{% url 'thong_ke_vat_tu' %}" class="btn btn-light-info font-weight-bolder mr-2">
                             <i class="la la-clipboard-list icon-md"></i>
                             Thống kê vật tư cuối tháng 
                         </a>
+                        {% endif %}
                         <!-- end::Button Thống kê vật tư -->
 
                         <!-- begin::Button Thêm vật tư -->
+                        {% if perms.medicine.can_add_medical_supplies %}
                         <a href="{% url 'them_vat_tu' %}" class="btn-them-thuoc btn btn-light-primary font-weight-bolder mr-2" id="btn-them-thuoc">
                             <i class="la la-plus-circle icon-md"></i>
                             Thêm mới vật tư
                         </a>
+                        {% endif %}
                         <!-- end::Button Thêm vật tư -->
 
                         <!-- begin::Button reload -->
@@ -106,6 +110,7 @@
                                             <ul class="navi flex-column navi-hover py-2">
                                                 <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Tùy chọn:</li>
                                                 
+                                                {% if perms.medicine.can_add_supplies_using_excel_file %}
                                                 <li class="navi-item">
                                                     <a href="{% url 'them_vat_tu_excel' %}" class="navi-link">
                                                         <span class="navi-icon">
@@ -114,6 +119,9 @@
                                                         <span class="navi-text">Thêm Vật Tư Excel</span>
                                                     </a>
                                                 </li>
+                                                {% endif %}
+
+                                                {% if perms.medicine.can_export_medical_supplies_list %}
                                                 <li class="navi-item">
                                                     <a href="javascript:;" class="navi-link" id="excelExport">
                                                         <span class="navi-icon">
@@ -122,6 +130,8 @@
                                                         <span class="navi-text">Xuất Vật Tư Excel</span>
                                                     </a>
                                                 </li>
+                                                {% endif %}
+
                                             </ul>
                                             <!--end::Navigation-->
                                         </div>
@@ -264,9 +274,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_change_medical_supplies %}
                         <a href="javascript:;" class="btn btn-sm btn-clean btn-icon mr-2" title="Edit details">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -279,9 +291,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_delete_medical_supplies %}
                         <a href="javascript:;" class="btn_delete btn btn-clean btn-icon mr-2" title="Xóa vật tư khỏi danh sách" data-id="${row.id}" data-ten="${row.ten_vtyt_bv}">
                             <i class="la la-trash-alt icon-lg text-danger"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

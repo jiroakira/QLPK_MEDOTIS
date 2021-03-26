@@ -36,10 +36,12 @@
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
+                        {% if perms.clinic.can_add_test_values %}
                         <a href="{% url 'dang_ki_tieu_chuan_view' %}" class="btn btn-light-primary font-weight-bolder mr-3">
                             <i class="la la-plus icon-md"></i>
                             Đăng Kí Tiêu Chuẩn
                         </a>
+                        {% endif %}
                         <!--end::Button-->
                         
                         <!--begin::Button-->
@@ -172,9 +174,11 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_change_test_values %}
                         <a href="/chi_tiet_tieu_chuan/${row.id}/" class="btn btn-sm btn-clean" title="Xem Chi Tiết">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                         
                     `;
                 },
@@ -188,10 +192,11 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_delete_test_values %}
                         <a href="javascript:;" class="btn btn-sm btn-clean btn_delete" data-id="${row.id}" title="Xóa">
                             <i class="la la-trash-alt icon-lg text-danger"></i>
                         </a>
-                        
+                        {% endif %}
                     `;
                 },
             }],

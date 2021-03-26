@@ -36,10 +36,12 @@
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
+                        {% if perms.clinic.can_add_consulting_room %}
                         <a href="{% url 'them_phong_chuc_nang' %}" class="btn btn-light-primary font-weight-bolder mr-3">
                             <i class="la la-plus"></i>
                             Thêm PCN
                         </a>
+                        {% endif %}
                         <!--end::Button-->
 
                         <!--begin::Button-->
@@ -276,9 +278,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_change_consulting_room %}
                         <a href="javascript:;" data-id="${row.id}" data-ten-phong-chuc-nang="${row.ten_phong_chuc_nang}" class="btn-update btn btn-clean btn-icon mr-2" title="Chỉnh sửa thông tin phòng chức năng">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {

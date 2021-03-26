@@ -37,10 +37,12 @@
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
+                        {% if perms.medicine.can_add_company %}
                         <a href="#" class="btn btn-light-primary font-weight-bolder mr-2" id="btn_add_nguon_cung">
                             <i class="la la-plus-circle icon-md"></i>
                             Thêm Nguồn Cung
                         </a>
+                        {% endif %}
                         <!--end::Button-->
                         <!--begin::Button-->
                         <a href="#" class="btn btn-light-primary font-weight-bolder" id="btn-reload">
@@ -72,6 +74,7 @@
                                             </span>
                                         </div>
                                     </div>
+                                    {% if perms.medicine.can_export_list_of_company %}
                                     <div>
                                         <a href="#" class="btn btn-light-success font-weight-bolder ml-2" id="excelExport">
                                             <span class="navi-icon">
@@ -80,6 +83,7 @@
                                             <span class="navi-text">Xuất file excel</span>
                                         </a>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -296,9 +300,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_change_company %}
                         <a href="/nguon_cung/${row.id}/chinh_sua" class="btn-edit btn btn-clean btn-icon" title="Cập nhật thông tin nguồn cung">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {

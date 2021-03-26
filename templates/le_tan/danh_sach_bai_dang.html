@@ -35,10 +35,12 @@
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
+                        {% if perms.clinic.can_add_news %}
                         <a href="{% url 'them_bai_dang' %}" class="btn btn-light-primary font-weight-bolder mr-3">
                             <i class="la la-plus icon-md"></i>
                             Thêm Bài Đăng
                         </a>
+                        {% endif %}
                         <!--end::Button-->
                         
                         <!--begin::Button-->
@@ -209,9 +211,11 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_change_news %}
                         <a href="/chinh_sua/bai_dang/${row.id}" class="btn btn-sm btn-clean" title="Xem Chi Tiết">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                         
                     `;
                 },
@@ -225,9 +229,11 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_delete_news %}
                         <a href="javascript:;" class="btn-xoa-bai-dang btn btn-lg btn-clean btn-icon" data-id="${row.id}" title="Xóa bài đăng">
                             <i class="la la-trash-alt icon-lg text-danger"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }],
