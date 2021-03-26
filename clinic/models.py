@@ -15,7 +15,9 @@ from django.core.validators import RegexValidator
 from django.core.files.storage import FileSystemStorage
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-
+from django.contrib import auth
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.models import PermissionsMixin
 
 def file_url(self, filename): 
 
@@ -72,17 +74,19 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, ho_ten, so_dien_thoai, cmnd_cccd, dia_chi, password):
+    def create_staffuser(self, ho_ten, username, so_dien_thoai, cmnd_cccd, dia_chi, gioi_tinh, password):
         """
         Creates and saves a staff user with the given email and password.
         """
-        user = self.create_user(
+        user = self.model(
+            username=username,
             so_dien_thoai=so_dien_thoai,
-            password=password,
             ho_ten=ho_ten,
             cmnd_cccd = cmnd_cccd,
             dia_chi = dia_chi,
+            gioi_tinh=gioi_tinh,
         )
+        user.set_password(password)
         user.staff = True
         user.save(using=self._db)
         return user
@@ -105,7 +109,33 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-class User(AbstractBaseUser):
+    def with_perm(self, perm, is_active=True, include_superusers=True, backend=None, obj=None):
+        if backend is None:
+            backends = auth._get_backends(return_tuples=True)
+            if len(backends) == 1:
+                backend, _ = backends[0]
+            else:
+                raise ValueError(
+                    'You have multiple authentication backends configured and '
+                    'therefore must provide the `backend` argument.'
+                )
+        elif not isinstance(backend, str):
+            raise TypeError(
+                'backend must be a dotted import path string (got %r).'
+                % backend
+            )
+        else:
+            backend = auth.load_backend(backend)
+        if hasattr(backend, 'with_perm'):
+            return backend.with_perm(
+                perm,
+                is_active=is_active,
+                include_superusers=include_superusers,
+                obj=obj,
+            )
+        return self.none()
+
+class User(AbstractBaseUser, PermissionsMixin):
     file_prepend = 'user/img/'
     GENDER = (
         ('1', "Nam"),
@@ -124,6 +154,7 @@ class User(AbstractBaseUser):
     id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
     ma_benh_nhan = models.CharField(max_length=20, unique=True, null=True)
     phone_regex = RegexValidator(regex=r"(84|0[3|5|7|8|9])+([0-9]{8})\b")
+    username = models.CharField(max_length=255, unique=True, null=True, blank=True)
     so_dien_thoai = models.CharField(max_length=10, unique=True, validators=[phone_regex])
     ho_ten = models.CharField(max_length = 255)
 
@@ -141,9 +172,12 @@ class User(AbstractBaseUser):
     dia_chi = models.TextField(max_length=1000, null=True, blank=True)
     dan_toc = models.CharField(max_length=40, null=True, blank=True)
     chuc_nang = models.CharField(choices=ROLE, max_length = 1, default='1')
+
     active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser
+    superuser = models.BooleanField(default=False)
+
     # notice the absence of a "Password field", that is built in.
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='child')
     
@@ -160,6 +194,31 @@ class User(AbstractBaseUser):
 
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        permissions = (
+            ('can_add_user', 'Thêm người dùng'),
+            ('can_add_staff_user', 'Thêm nhân viên'),
+            ('can_change_user_info', 'Chỉnh sửa người dùng'),
+            ('can_change_staff_user_info', 'Chỉnh sửa nhân viên'),
+            ('can_change_password_user', 'Thay đổi mật khẩu người dùng'),
+            ('can_change_password_staff_user', 'Thay đổi mật khẩu nhân viên'),
+            ('can_view_user_info', 'Xem người dùng'),
+            ('can_view_staff_user_info', 'Xem nhân viên'),
+            ('can_delete_user', 'Xóa người dùng'),
+            ('can_delete_staff_user', 'Xóa nhân viên'),
+            ('general_view', 'Xem Tổng Quan Trang Chủ'),
+            ('reception_department_module_view', 'Phòng Ban Lễ Tân'),
+            ('finance_department_module_view', 'Phòng Ban Tài Chính'),
+            ('specialist_department_module_view', 'Phòng Ban Chuyên Gia'),
+            ('preclinical_department_module_view', 'Phòng Ban Lâm Sàng'),
+            ('medicine_department_module_view', 'Phòng Ban Thuốc'),
+            ('general_revenue_view', 'Xem Doanh Thu Phòng Khám'),
+            ('can_view_checkout_list', 'Xem Danh Sách Thanh Toán Tài Chính'),
+            ('export_insurance_data', 'Xuất Bảo Hiểm Tài Chính'),
+            ('can_export_list_of_patient_insurance_coverage', 'Xuất Danh Sách Bệnh Nhân Bảo Hiểm Chi Trả'),
+            ('can_view_list_of_patient', 'Xem Danh Sách Bệnh Nhân Chờ'),
+        )
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -178,16 +237,6 @@ class User(AbstractBaseUser):
     def __str__(self):       
         return self.ho_ten
 
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
     @property
     def is_staff(self):
         "Is the user a member of staff?"
@@ -202,6 +251,11 @@ class User(AbstractBaseUser):
     def is_active(self):
         "Is the user active?"
         return self.active
+
+    @property
+    def is_superuser(self):
+        "Is the user active?"
+        return self.superuser
 
     def getSubName(self):
         lstChar = []
@@ -294,6 +348,10 @@ class PhongKham(models.Model):
     class Meta:
         verbose_name = "Phòng Khám"
         verbose_name_plural = "Phòng Khám"
+        permissions = (
+            ('can_add_clinic_info', "Thêm thông tin phòng khám"),
+            ('can_change_clinic_info', "Thay đổi thông tin phòng khám"),
+        )
 
 class PhongChucNang(models.Model):
     """ Mỗi dịch vụ khám sẽ có một phòng chức năng riêng biệt, là nơi bệnh nhân sau khi được phân dịch vụ khám sẽ đến trong suốt chuỗi khám của bệnh nhân """
@@ -306,6 +364,12 @@ class PhongChucNang(models.Model):
     class Meta:
         verbose_name = "Phòng Chức Năng"
         verbose_name_plural = "Phòng Chức Năng"
+        permissions = (
+            ('can_add_consulting_room', 'Thêm phòng chức năng'),
+            ('can_change_consulting_room', 'Chỉnh sửa phòng chức năng'),
+            ('can_view_consulting_room', 'Xem phòng chức năng'),
+            ('can_delete_consulting_room', 'Xóa phòng chức năng'),
+        )
 
     def __str__(self):
         return self.ten_phong_chuc_nang
@@ -344,6 +408,7 @@ class DichVuKham(models.Model):
     
     chi_so = models.BooleanField(default=False)
     html = models.BooleanField(default=False)
+
     objects = BulkUpdateOrCreateQuerySet.as_manager()
 
     def __str__(self):
@@ -352,6 +417,15 @@ class DichVuKham(models.Model):
     class Meta:
         verbose_name = "Dịch Vụ Khám"
         verbose_name_plural = "Dịch Vụ Khám"
+        permissions = (
+            ('can_add_service', 'Thêm dịch vụ kỹ thuật'),
+            ('can_add_service_with_excel_file', 'Thêm dịch vụ kỹ thuật bằng Excel File'),
+            ('can_change_service', 'Thay đổi dịch vụ kỹ thuật'),
+            ('can_view_service', 'Xem dịch vụ kỹ thuật'),
+            ('can_delete_service', 'Xóa dịch vụ kỹ thuật'),
+            ('can_view_service_price', 'Xem giá dịch vụ kỹ thuật'),
+            ('can_export_list_of_service', 'Xuất danh sách dịch vụ kỹ thuật'),
+        )
 
     @property
     def check_chi_so(self):
@@ -476,6 +550,15 @@ class LichHenKham(models.Model):
     class Meta:
         verbose_name = "Lịch Hẹn Khám"
         verbose_name_plural = "Lịch Hẹn Khám"
+        permissions = (
+            ('can_add_appointment', 'Thêm lịch hẹn'),
+            ('can_change_appointment', 'Thay đổi lịch hẹn'),
+            ('can_view_appointment', 'Xem lịch hẹn'),
+            ('can_delete_appointment', 'Xóa lịch hẹn'),
+            ('can_make_reexamination', 'Thêm lịch hẹn tái khám'),
+            ('can_confirm_appoinment', 'Xác nhận lịch hẹn'),
+            ('can_confirm_do_examination', 'Xác nhận khám'),
+        )
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -484,10 +567,7 @@ class LichHenKham(models.Model):
             ma_lich_hen = "LH" + date_time
             self.ma_lich_hen = ma_lich_hen
         return super(LichHenKham, self).save(*args, **kwargs)
-
-
     # objects = LichHenKhamManager()
-
 
 class LichSuTrangThaiLichHen(models.Model):
     lich_hen_kham = models.ForeignKey(LichHenKham, on_delete=models.CASCADE, related_name="lich_hen")
@@ -545,6 +625,14 @@ class ChuoiKham(models.Model):
     class Meta:
         verbose_name = "Chuỗi Khám"
         verbose_name_plural = "Chuỗi Khám"
+        permissions = (
+            ('can_add_assignment_chain', 'Thêm chuỗi khám'),
+            ('can_change_assignment_chain', 'Thay đổi chuỗi khám'),
+            ('can_view_assignment_chain', 'Xem chuỗi khám'),
+            ('can_view_assignment_chain_result', 'Xem kết quả chuỗi khám'),
+            ('can_delete_assignment_chain', 'Xóa chuỗi khám'),
+            ('can_delete_assignment_chain_result', 'Xóa kết quả chuỗi khám'),
+        )
 
     def get_ma_benh(self):
         return self.ket_qua_tong_quat.all()[0].ma_benh.ma_benh
@@ -630,6 +718,7 @@ class PhanKhoaKham(models.Model):
     bac_si_lam_sang = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="bac_si", null=True)
     chuoi_kham = models.ForeignKey(ChuoiKham, on_delete=models.CASCADE, null=True, blank=True, related_name="phan_khoa_kham")
     bao_hiem = models.BooleanField(default=False)
+
     priority = models.SmallIntegerField(null=True, blank=True)
 
     thoi_gian_bat_dau = models.DateTimeField(null=True, blank=True)
@@ -643,6 +732,13 @@ class PhanKhoaKham(models.Model):
     class Meta:
         verbose_name = "Phân Khoa Khám"
         verbose_name_plural = "Phân Khoa Khám"
+        permissions = (
+            ('can_add_service_assignment', 'Thêm phân khoa khám'),
+            ('can_view_service_assignment', 'Xem phân khoa khám'),
+            ('can_delete_service_assignment', 'Xóa phân khoa khám'),
+            ('can_do_specialist_examination', 'Có thể khám chuyên khoa'),
+            ('can_stop_serivce_assignment', 'Dừng khám'),
+        )
 
     def get_ten_benh_nhan(self):
         if self.benh_nhan is not None:
@@ -715,7 +811,6 @@ class PhanKhoaKham(models.Model):
     def get_ma_pttt(self):
         return 1
     
-
 @receiver(post_save, sender=PhanKhoaKham)
 def send_func_room_info(sender, instance, created, **kwargs):
     if created:
@@ -765,6 +860,12 @@ class KetQuaTongQuat(models.Model):
     class Meta:
         verbose_name = "Kết Quả Tổng Quát"
         verbose_name_plural = "Kết Quả Tổng Quát"
+        permissions = (
+            ('can_add_general_result', 'Thêm kết quả tổng quát'),
+            ('can_view_general_result', 'Xem kết quả tổng quát'),
+            ('can_change_general_result', 'Thay đổi kết quả tổng quát'),
+            ('can_delete_general_result', 'Xóa kết quả tổng quát'),
+        )
 
     def get_mo_ta(self):
         if not self.mo_ta:
@@ -790,6 +891,14 @@ class KetQuaChuyenKhoa(models.Model):
     class Meta:
         verbose_name = "Kết Quả Chuyên Khoa"
         verbose_name_plural = "Kết Quả Chuyên Khoa"
+        permissions = (
+            ('can_add_specialty_result', 'Thêm kết quả chuyên khoa'),
+            ('can_view_specialty_result', 'Xem kết quả chuyên khoa'),
+            ('can_change_specialty_result', 'Thay đổi kết quả chuyên khoa'),
+            ('can_delete_specialty_result', 'Xóa kết quả chuyên khoa'),
+            ('can_view_history_specialty_result', 'Xem lịch sử khám chuyên khoa'),
+
+        )
 
     def get_mo_ta(self):
         if not self.mo_ta:
@@ -852,7 +961,6 @@ class FilePhongKham(models.Model):
         verbose_name = "Tài Liệu Phòng Khám"
         verbose_name_plural = "Tài Liệu Phòng Khám"
 
-
 class FileKetQuaChuyenKhoa(models.Model):
     file = models.ForeignKey(FileKetQua, on_delete=models.CASCADE, related_name="file_chuyen_khoa")
     ket_qua_chuyen_khoa = models.ForeignKey(KetQuaChuyenKhoa, on_delete=models.CASCADE, related_name="file_ket_qua_chuyen_khoa")
@@ -876,6 +984,12 @@ class BaiDang(models.Model):
     class Meta:
         verbose_name = "Bài Đăng"
         verbose_name_plural = "Bài Đăng"
+        permissions = (
+            ('can_add_news', 'Thêm bài đăng'),
+            ('can_change_news', 'Thay đổi bài đăng'),
+            ('can_view_news', 'Xem bài đăng'),
+            ('can_delete_news', 'Xóa bài đăng'),
+        )
 
     def get_truncated_noi_dung_chinh(self):
         noi_dung_chinh = (self.noi_dung_chinh[:75] + '...') if len(self.noi_dung_chinh) > 75 else self.noi_dung_chinh
@@ -893,6 +1007,14 @@ class ChiSoXetNghiem(models.Model):
     class Meta:
         verbose_name = "Chỉ Số Xét Nghiệm"
         verbose_name_plural = "Chỉ Số Xét Nghiệm"
+        permissions = (
+            ('can_add_test_values', 'Thêm chỉ số xét nghiệm'),
+            ('can_change_test_values', 'Thay đổi chỉ số xét nghiệm'),
+            ('can_view_test_values', 'Xem chỉ số xét nghiệm'),
+            ('can_delete_test_values', 'Xóa chỉ số xét nghiệm'),
+        )
+
+
     def __str__(self):
         return f"({self.ma_chi_so}){self.ten_chi_so}/{self.doi_tuong_xet_nghiem}"
 
@@ -1008,6 +1130,12 @@ class KetQuaXetNghiem(models.Model):
     class Meta:
         verbose_name = "Kết Quả Xét Nghiệm"
         verbose_name_plural = "Kết Quả Xét Nghiệm"
+        permissions = (
+            ('can_add_lab_result', 'Thêm kết quả xét nghiệm'),
+            ('can_change_lab_result', 'Thay đổi kết quả xét nghiệm'),
+            ('can_view_lab_result', 'Xem kết quả xét nghiệm'),
+            ('can_delete_lab_result', 'Xóa kết quả xét nghiệm'),
+        )
 
     def get_ten_chi_so(self):
         if self.chi_so_xet_nghiem is not None:
@@ -1053,8 +1181,6 @@ class KetQuaXetNghiem(models.Model):
 
     def get_ten_dvkt(self):
         return self.phan_khoa_kham.dich_vu_kham.ten_dvkt
-
-    
 
 class HtmlKetQua(models.Model):
     phan_khoa_kham = models.ForeignKey(PhanKhoaKham, on_delete=models.CASCADE, null=True, blank=True)
@@ -1162,7 +1288,6 @@ class DanhMucKhoa(models.Model):
     def __str__(self):
         return self.ten_khoa
 
-
 class ThietBi(models.Model):
     ma_may = models.CharField(max_length=50, null=True, blank=True)
     ten_may = models.CharField(max_length=255, null=True, blank=True)
@@ -1208,6 +1333,12 @@ class MauPhieu(models.Model):
     class Meta:
         verbose_name = "Mẫu Phiếu"
         verbose_name_plural = "Mẫu Phiếu"
+        permissions = (
+            ('can_add_analysis_note', 'Thêm mẫu phiếu'),
+            ('can_change_analysis_note', 'Thay đổi mẫu phiếu'),
+            ('can_view_analysis_note', 'Xem mấu phiếu'),
+            ('can_delete_analysis_note', 'Xóa mẫu phiếu'),
+        )
 
     def save(self, *args, **kwargs):
         if not self.id:

@@ -8,7 +8,6 @@ verify_ssl = true
 [packages]
 django = "*"
 djangorestframework = "*"
-django-filter = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
 markdown = "*"
@@ -24,6 +23,7 @@ pandas = "*"
 xlrd = "*"
 openpyxl = "*"
 xlsxwriter = "*"
+django-guardian = "*"
 
 [requires]
 python_version = "3.8"

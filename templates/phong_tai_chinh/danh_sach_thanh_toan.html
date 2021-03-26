@@ -300,9 +300,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 template: function(row) {
                     
                     return `
+                        {% if perms.clinic.can_checkout_clinical_receipt %}
                         <a href="javascript:;" class="btn btn-sm btn-clean mr-2 btn-thanh-toan" data-ten="${row.benh_nhan.ho_ten}" data-id="${row.id}" title="Edit details">
                             Thanh toán
                         </a>
+                        {% endif %}
                     `;
                 },
             }],
@@ -486,9 +488,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 template: function(row) {
                     
                     return `
+                        {% if perms.clinic.can_checkout_service_receipt %}
                         <a href="/phong_tai_chinh/hoa_don_dich_vu/${row.id}" class="btn btn-sm btn-clean mr-2" title="Edit details">
                             Hóa Đơn
                         </a>
+                        {% endif %}
                     `;
                 },
             }],
@@ -614,9 +618,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 template: function(row) {
                     
                     return `
+                        {% if perms.clinic.can_checkout_medicine_receipt %}
                         <a href="/phong_tai_chinh/hoa_don_thuoc/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
                             Hóa Đơn
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

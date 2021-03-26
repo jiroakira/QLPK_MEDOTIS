@@ -33,6 +33,13 @@ class CongTy(models.Model):
     class Meta:
         verbose_name = 'Công Ty'
         verbose_name_plural = 'Công Ty'
+        permissions = (
+            ('can_add_company', 'Thêm nguồn cung'),
+            ('can_change_company', 'Thay đổi nguồn cung'),
+            ('can_view_company', 'Xem nguồn cung'),
+            ('can_delete_company', 'Xóa nguồn cung'),
+            ('can_export_list_of_company', 'Xuất danh sách nguồn cung')
+        )
 
     def __str__(self):
         return self.ten_cong_ty
@@ -118,6 +125,15 @@ class Thuoc(models.Model):
     class Meta:
         verbose_name = "Thuốc"
         verbose_name_plural = "Thuốc"
+        permissions = (
+            ('can_add_medicine', 'Thêm thuốc'),
+            ('can_change_medicine', 'Thay đổi thuốc'),
+            ('can_view_medicine', 'Xem thuốc'),
+            ('can_delete_medicine', 'Xóa thuốc'),
+            ('can_view_import_medicine_price', 'Xem giá thuốc nhập'),
+            ('can_view_export_medicine_price', 'Xem giá thuốc bán ra'),
+            ('can_export_medicine_list', 'Xuất danh sách thuốc'),
+        )
 
     def __str__(self):
         return self.ten_thuoc
@@ -204,6 +220,14 @@ class DonThuoc(models.Model):
     class Meta:
         verbose_name = "Đơn Thuốc"
         verbose_name_plural = "Đơn Thuốc"
+        permissions = (
+            ('can_add_prescription', 'Thêm đơn thuốc'),
+            ('can_change_prescription', 'Thay đổi đơn thuốc'),
+            ('can_view_prescription', 'Xem đơn thuốc'),
+            ('can_delete_prescription', 'Xóa đơn thuốc'),
+            ('can_print_prescription', 'In đơn thuốc'),
+
+        )
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -234,6 +258,9 @@ class KeDonThuoc(models.Model):
     class Meta:
         verbose_name = "Kê Đơn Thuốc"
         verbose_name_plural = "Kê Đơn Thuốc"
+        permissions = (
+            ('can_prescribe', 'Kê đơn'),
+        )
 
     def gia_thuoc_theo_bao_hiem(self):
         gia_ban = self.thuoc.gia_thuoc.gia
@@ -385,6 +412,15 @@ class VatTu(models.Model):
     class Meta:
         verbose_name = "Vật Tư"
         verbose_name_plural = "Vật Tư"
+        permissions = (
+            ('can_add_medical_supplies', 'Thêm vật tư y tế'),
+            ('can_change_medical_supplies', 'Thay đổi vật tư y tế'),
+            ('can_view_medical_supplies', 'Xem vật tư y tế'),
+            ('can_delete_medical_supplies', 'Xóa vật tư y tế'),
+            ('can_export_medical_supplies_list', 'Xuất danh sách vật tư y tế'),
+            ('can_listed_supplies_at_the_end_of_month', 'Thống kê vật tư cuối tháng'),
+            ('can_add_supplies_using_excel_file', 'Thêm vật tư bằng Excel File'),
+        )
 
     def __str__(self):
         return self.ten_vtyt_bv
@@ -428,3 +464,6 @@ class KeVatTu(models.Model):
     class Meta:
         verbose_name = "Kê Vật Tư "
         verbose_name_plural = "Kê Vật Tư"
+        permissions = (
+            ('can_list_medical_supplies', 'Kê vật tư'),
+        )

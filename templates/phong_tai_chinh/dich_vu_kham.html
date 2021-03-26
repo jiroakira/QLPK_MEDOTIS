@@ -53,6 +53,7 @@
                                 <!--begin::Navigation-->
                                 <ul class="navi flex-column navi-hover py-2">
                                     <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Tùy chọn:</li>
+                                    {% if perms.clinic.can_add_service %}
                                     <li class="navi-item">
                                         <a href="{% url 'them_dich_vu_kham' %}" class="navi-link addLichHenKhamBtn">
                                             <span class="navi-icon">
@@ -61,6 +62,8 @@
                                             <span class="navi-text">Thêm DVK thường</span>
                                         </a>
                                     </li>
+                                    {% endif %}
+                                    {% if perms.clinic.can_add_service_with_excel_file %}
                                     <li class="navi-item">
                                         <a href="{% url 'them_dich_vu_kham_excel' %}" class="navi-link addLichHenKhamBtn">
                                             <span class="navi-icon">
@@ -69,6 +72,7 @@
                                             <span class="navi-text">Thêm DVK bằng Excel</span>
                                         </a>
                                     </li>
+                                    {% endif %}
                                 </ul>
                                 <!--end::Navigation-->
                             </div>
@@ -105,6 +109,7 @@
                                             </span>
                                         </div>
                                     </div>
+                                    {% if perms.clinic.can_export_list_of_service %}
                                     <div>
                                         <a href="#" class="btn btn-light-success font-weight-bolder ml-2" id="excelExport">
                                             <span class="navi-icon">
@@ -113,6 +118,7 @@
                                             <span class="navi-text">Xuất file excel</span>
                                         </a>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -234,9 +240,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_change_service %}
                         <a href="/danh_sach_dich_vu_kham/${row.id}/chinh_sua_dich_vu_kham" class="btn-edit btn btn-icon btn-clean" title="Chỉnh sửa thông tin dịch vụ khám">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -249,9 +257,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_delete_service %}
                         <a href="javascript:;" class="btn_delete btn btn-icon btn-clean" title="Xóa dịch vụ khám khỏi phòng khám" data-id="${row.id}" data-ten="${row.ten_dvkt}">
                             <i class="la la-trash-alt icon-lg text-danger"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

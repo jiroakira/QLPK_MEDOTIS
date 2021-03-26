@@ -93,6 +93,7 @@
                                                 <ul class="navi flex-column navi-hover py-2">
                                                     <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Tùy chọn:</li>
 
+                                                    {% if perms.medicine.can_export_medicine_list %}
                                                     <li class="navi-item">
                                                         <a href="javascript:;" class="navi-link" id="excelExport">
                                                             <span class="navi-icon">
@@ -101,6 +102,7 @@
                                                             <span class="navi-text">Xuất Thuốc Excel</span>
                                                         </a>
                                                     </li>
+                                                    {% endif %}
                                                 </ul>
                                                 <!--end::Navigation-->
                                             </div>
@@ -229,9 +231,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_change_medicine %}
                         <a href="/phong_thuoc/danh_sach_thuoc/${row.id}/cap_nhat_thuoc/" class="btn btn-sm btn-clean mr-2" title="Edit details">
                             Cập nhật
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

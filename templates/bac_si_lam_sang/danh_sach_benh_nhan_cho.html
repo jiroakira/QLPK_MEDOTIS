@@ -314,6 +314,7 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_view_history_specialty_result %}
                         <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-lich-su-kham" title="Lịch Sử Khám Của Bệnh Nhân ${row.benh_nhan.ho_ten}" data-user-id="${row.benh_nhan.id}">
                             <span class="svg-icon svg-icon-lg svg-icon-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -326,6 +327,7 @@ var KTDatatableModal = function() {
                                 </svg>
                             </span>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -337,6 +339,7 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_add_service_assignment %}
                         <a href="/danh_sach_benh_nhan_cho/phan_khoa_kham/${row.id}" class="btn btn-sm btn-clean btn-icon" title="Phân Khoa Khám Cho Bệnh Nhân ${row.benh_nhan.ho_ten}">
                             <span class="svg-icon svg-icon-lg svg-icon-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -348,6 +351,7 @@ var KTDatatableModal = function() {
                                 </svg>
                             </span>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -359,6 +363,7 @@ var KTDatatableModal = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.clinic.can_stop_serivce_assignment %}
                         <a data-ten="${row.benh_nhan.ho_ten}" data-id="${row.id}" class="btn-dung-kham btn btn-sm btn-clean btn-icon" title="Dừng Khám Có Lý Do" >
                             <span class="svg-icon svg-icon-lg svg-icon-danger">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -369,6 +374,7 @@ var KTDatatableModal = function() {
                                 </svg>
                             </span>
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

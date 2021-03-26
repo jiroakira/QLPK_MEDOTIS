@@ -42,10 +42,12 @@
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
+                        {% if perms.medicine.can_add_prescription %}
                         <a href="{% url 'create_don_thuoc_rieng' %}" class="btn btn-light-info font-weight-bolder mr-2" id="btn-add-don-thuoc">
                             <i class="la la-folder-plus icon-md"></i>
                             Thêm Đơn Thuốc Mới
                         </a>
+                        {% endif %}
                         <!--end::Button-->
                         
                         <!--begin::Button-->
@@ -237,9 +239,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_view_prescription %}
                         <a href="/phong_thuoc/don_thuoc/${row.id}" class="btn btn-sm btn-clean mr-2" title="Xem đơn thuốc">
                             Xem
                         </a>
+                        {% endif %}
                     `;
                 },
             }],

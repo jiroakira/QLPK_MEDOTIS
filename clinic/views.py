@@ -1,4 +1,6 @@
 
+
+import time
 from clinic.excelUtils import WriteToExcel, writeToExcelDichVu, writeToExcelThuoc
 from finance.models import (
     HoaDonChuoiKham, 
@@ -72,10 +74,11 @@ from django.db import transaction
 from django.contrib.auth import authenticate, views as auth_views
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from clinic.serializers import FilterHoaDonChuoiKhamBaoHiemSerializer, HoaDonChuoiKhamSerializer
+from clinic.serializers import FilterHoaDonChuoiKhamBaoHiemSerializer, GroupSerializer, HoaDonChuoiKhamSerializer, PermissionSerializer
 from django.contrib.auth import logout
 from django.urls import reverse
 import locale 
+from django.contrib.auth.models import Group, Permission
 
 from datetime import datetime
 format = '%m/%d/%Y %H:%M %p'
@@ -151,7 +154,6 @@ def index(request):
     # hoa_don_thuoc = HoaDonThuoc.objects.filter(thoi_gian_tao__gte=starting_day).annotate(day=TruncDay('thoi_gian_tao'), created_count=Count('thoi_gian_tao__date')).values('day', 'created_count')
     tong_tien_thuoc = [str(x['total_spent']) for x in hoa_don_thuoc]
     days_thuoc = [x["day"].strftime("%Y-%m-%d") for x in hoa_don_thuoc ]
-
 
     data = {
         'user': request.user,
@@ -4122,5 +4124,275 @@ def chinh_sua_bai_dang(request):
         }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
+def view_danh_sach_nhom_quyen(request):
+    permissions = Permission.objects.all()
+    context = {
+        'permissions': permissions
+    }
+    return render(request, 'danh_sach_nhom_quyen.html', context)
 
+def view_chinh_sua_nhom_quyen(request, **kwargs):
+    id_nhom_quyen = kwargs.get('id')
+    try:
+        group = Group.objects.get(id=id_nhom_quyen)
+        group_permissions = group.permissions.all()
+        group_permissions_str = [p.name for p in group_permissions]
+        code_name_permissions = [p.codename for p in group_permissions]
+        permissions = Permission.objects.all()
+        permissions = PermissionSerializer(permissions, many=True)
+        permissions_data = json.loads(json.dumps(permissions.data))
+        context = {
+            'group_permissions': group_permissions_str,
+            'code_name_permissions': code_name_permissions,
+            'group': group,
+            'permissions': permissions_data,
+
+        }
+        return render(request, 'chinh_sua_nhom_quyen.html', context)
+    except Group.DoesNotExist:
+        return render(request, '404.html')
+
+def view_danh_sach_nhan_vien(request):
+    province = Province.objects.all()
+    groups = Group.objects.all()
+    groups_serializer = GroupSerializer(groups, many=True)
+    groups_data = json.loads(json.dumps(groups_serializer.data))
+    context = {
+        'province': province,
+        'groups': groups_data,
+    }
+    return render(request, 'danh_sach_nhan_vien.html', context)
+
+def store_nhom_quyen(request):
+    if request.method == "POST":
+        ten_nhom_quyen = request.POST.get("ten_nhom_quyen")
+        danh_sach_quyen = request.POST.get("danh_sach_quyen")
+        groups = json.loads(danh_sach_quyen)
+
+        if ten_nhom_quyen == "":
+            response = {
+                'status': 404,
+                'message': 'Tên nhóm quyền không được để trống'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+        time.sleep(1)
+        new_group, created = Group.objects.get_or_create(name=ten_nhom_quyen)
+        for p in groups:
+            permission = Permission.objects.get(codename=p)
+            new_group.permissions.add(permission)
+            
+        response = {
+            'status': 200,
+            'message': 'Thêm nhóm quyền thành công'
+        }
+    else:
+        response = {
+            'status': 404,
+            'message': 'Không lưu được nhóm quyền'
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def update_nhom_quyen(request):
+    if request.method == "POST":
+        id = request.POST.get('id')
+        ten_nhom_quyen = request.POST.get('ten_nhom_quyen')
+        danh_sach_quyen = request.POST.get("danh_sach_quyen")
+        group_permissions = json.loads(danh_sach_quyen)
+
+        if ten_nhom_quyen == "":
+            response = {
+                'status': 404,
+                'message': 'Tên nhóm quyền không được để trống'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+        try:
+            group = Group.objects.get(id=id)
+            group.permissions.clear()
+
+            for codename in group_permissions:
+                permission = Permission.objects.get(codename=codename)
+                group.permissions.add(permission)
+
+        except Group.DoesNotExist:
+            response = {
+                'status': 404,
+                'message': 'Nhóm quyền không tồn tại'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+        response = {
+            'status': 200,
+            'message': 'Cập nhật nhóm quyền thành công'
+        }
+    else:
+        response = {
+            'status': 404,
+            'message': 'Không lưu được nhóm quyền'
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def store_uy_quyen(request):
+    if request.user.is_superuser or request.user.is_admin:
+        if request.method == "POST":
+            user_id = request.POST.get('user_id')
+            list_groups_id = request.POST.get('list_groups_id')
+            groups_id = json.loads(list_groups_id)
+            print('---1---')
+            print(groups_id)
+            try:
+                user = User.objects.get(id=user_id)
+                print('---2---')
+                print(user.ho_ten)
+                user.groups.clear()
+                print(user.groups.all())
+                for id in groups_id:
+                    group = Group.objects.get(id=id)
+                    user.groups.add(group)
+                print(user.groups.all())
+            except User.DoesNotExist:
+                response = {
+                    'status': 404,
+                    'message': 'Người dùng không tồn tại'
+                }
+                return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+            response = {
+                'status': 200,
+                'message': 'Ủy quyền thành công'
+            }
+        else:
+            response = {
+                'status': 404,
+                'message': 'Ủy quyền cho nhân viên không thành công'
+            }
+    else:
+        response = {
+            'status': 404,
+            'message': 'Bạn không có quyền ủy quyền'
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
     
+def create_staff_user(request):
+    if request.user.is_superuser or request.user.is_admin:
+        if request.method == "POST":
+            ho_ten         = request.POST.get('ho_ten')
+            username       = request.POST.get('username')
+            so_dien_thoai  = request.POST.get('so_dien_thoai')
+            password       = request.POST.get("password")
+            cmnd_cccd      = request.POST.get('cmnd_cccd')
+            ngay_sinh      = request.POST.get('ngay_sinh')
+            gioi_tinh      = request.POST.get('gioi_tinh')
+            dia_chi        = request.POST.get('dia_chi')
+
+            if User.objects.filter(username=username).exists():
+                response = {
+                    'status': 400,
+                    'message': "Username đã tồn tại, vui lòng chọn username mới"
+                }
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                )
+            elif User.objects.filter(so_dien_thoai=so_dien_thoai).exists():
+                response = {
+                    'status': 400,
+                    'message': "Số điện thoại đã tồn tại, vui lòng chọn số điện thoại mới"
+                }
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                )
+            elif User.objects.filter(cmnd_cccd=cmnd_cccd).exists():
+                response = {
+                    'status': 400,
+                    'message': "CMND đã tồn tại, vui lòng chọn CMND mới"
+                }
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                )
+
+            benh_nhan = User.objects.create_staffuser(
+                ho_ten         = ho_ten,
+                username       = username, 
+                so_dien_thoai  = so_dien_thoai, 
+                password       = password,
+                cmnd_cccd      = cmnd_cccd,
+                dia_chi        = dia_chi,
+                gioi_tinh      = gioi_tinh,
+            )
+
+            tinh_id = request.POST.get('tinh')
+            if tinh_id != '':      
+                tinh = Province.objects.filter(id=tinh_id).first()
+                benh_nhan.tinh = tinh
+            else:
+                response = {
+                    'status': 400,
+                    'message': "Không thể thiếu tỉnh thành"
+                }
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                )
+       
+            huyen_id = request.POST.get('huyen')
+            if huyen_id != '':
+                huyen = District.objects.filter(id=huyen_id).first()
+                benh_nhan.huyen = huyen
+            else:
+                response = {
+                    'status': 400,
+                    'message': "Không thể thiếu quận huyện"
+                }
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                )
+
+            xa_id = request.POST.get('xa')
+            if xa_id != '': 
+                xa = Ward.objects.filter(id=xa_id).first()  
+                benh_nhan.xa = xa
+            else:
+                response = {
+                    'status': 400,
+                    'message': "Không thể thiếu phường xã"
+                }
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                )
+
+            if ngay_sinh != '':
+                ngay_sinh = datetime.strptime(ngay_sinh, format_3)
+                ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
+                benh_nhan.ngay_sinh = ngay_sinh
+            
+            benh_nhan.save()
+
+            response = {
+                'status': 200,
+                'message': "Thêm nhân viên thành công"
+            }
+
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+        else:
+            response = {
+                'status': 400,
+                'message': "Xảy ra lỗi, không thể thêm nhân viên"
+            }
+            return HttpResponse(
+                json.dumps(response),
+                content_type="application/json"
+            )
+    else:
+        response = {
+            'status': 400,
+            'message': "Bạn Không Có Quyền Thêm Nhân Viên"
+        }
+        return HttpResponse(
+            json.dumps(response),
+            content_type="application/json", charset="utf-8"
+        )

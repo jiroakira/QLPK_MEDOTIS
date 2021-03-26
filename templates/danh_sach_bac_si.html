@@ -571,7 +571,6 @@ var KTDatatableRemoteAjaxDemo = function() {
             formData.append('ma_so_bao_hiem', $("#inputMaSoBaoHiemModal").val())
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
-
             $.ajax({
                 type: "POST",
                 url: "{% url 'create_bac_si' %}",

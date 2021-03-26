@@ -20,8 +20,12 @@ from .models import (
     BacSi, Ward
 )
 
+from django.contrib.auth.models import Permission
+
 class DichVuKhamAdmin(admin.ModelAdmin):
     search_fields = ('ten_dvkt',)
+
+
 
 admin.site.register(User)
 admin.site.register(PhongChucNang)
@@ -60,3 +64,4 @@ admin.site.register(HtmlKetQua)
 admin.site.register(Province)
 admin.site.register(District)
 admin.site.register(Ward)
+admin.site.register(Permission)

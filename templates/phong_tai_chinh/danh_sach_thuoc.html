@@ -43,9 +43,11 @@
                     <div class="card-toolbar">
  
                         <!-- begin::Button Thêm Thuốc -->
+                        {% if perms.medicine.can_add_medicine %}
                         <a href="{% url 'them_thuoc_phong_tai_chinh' %}" class="btn-them-thuoc btn btn-light-primary font-weight-bolder mr-2" id="btn-them-thuoc">
                             Thêm mới thuốc
                         </a>
+                        {% endif %}
                         <!-- end::Button Thêm Thuốc -->
  
                         <!-- begin::Button reload -->
@@ -106,6 +108,7 @@
                                                             <span class="navi-text">Thêm Thuốc Excel</span>
                                                         </a>
                                                     </li>
+                                                    {% if perms.medicine.can_export_medicine_list %}
                                                     <li class="navi-item">
                                                         <a href="javascript:;" class="navi-link" id="excelExport">
                                                             <span class="navi-icon">
@@ -114,6 +117,7 @@
                                                             <span class="navi-text">Xuất Thuốc Excel</span>
                                                         </a>
                                                     </li>
+                                                    {% endif %}
                                                 </ul>
                                                 <!--end::Navigation-->
                                             </div>
@@ -304,9 +308,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 textAlign: 'center',
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_change_medicine %}
                         <a href="/phong_tai_chinh/danh_sach_thuoc/${row.id}/cap_nhat_thuoc/" class="btn-edit btn btn-clean btn-icon mr-2" title="Chỉnh sửa thông tin của thuốc">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             }, {
@@ -319,9 +325,11 @@ var KTDatatableRemoteAjaxDemo = function() {
                 textAlign: 'center',
                 template: function(row) {
                     return `
+                        {% if perms.medicine.can_delete_medicine %}
                         <a href="javascript:;" class="btn_delete btn btn-clean btn-icon mr-2" title="Xóa thuốc khỏi danh sách" data-id="${row.id}" data-ten="${row.ten_thuoc}">
                             <i class="la la-trash-alt icon-lg text-danger"></i>
                         </a>
+                        {% endif %}
                     `;
                 },
             },],

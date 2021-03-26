@@ -19,6 +19,19 @@ class HoaDonThuoc(models.Model):
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
     bao_hiem = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = "Hóa Đơn Thuốc"
+        verbose_name_plural = "Hóa Đơn Thuốc",
+        permissions = (
+            ('can_checkout_medicine_receipt', 'Thanh toán hóa đơn thuốc'),
+            ('can_view_medicine_receipt', 'Xem hóa đơn thuốc'),
+            ('can_delete_medicine_receipt', 'Xóa hóa đơn thuốc'),
+            ('can_print_medicine_receipt', 'In hóa đơn thuốc'),
+            ('can_view_medicine_expense_coverage', 'Xem danh sách thuốc bảo hiểm chi trả'),
+            ('can_export_medicine_expense_coverage', 'Xuất danh sách thuốc bảo hiểm chi trả'),
+            ('can_view_medicine_revenue', 'Xem doanh thu thuốc'),
+        )
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.thoi_gian_tao = timezone.now()
@@ -47,6 +60,19 @@ class HoaDonChuoiKham(models.Model):
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
 
     bao_hiem = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Hóa Đơn Chuỗi Khám"
+        verbose_name_plural = "Hóa Đơn Chuỗi Khám",
+        permissions = (
+            ('can_checkout_service_receipt', 'Thanh toán hóa đơn dịch vụ kỹ thuật'),
+            ('can_view_service_receipt', 'Xem hóa đơn dịch vụ kỹ thuật'),
+            ('can_delete_service_receipt', 'Xóa hóa đơn dịch vụ kỹ thuật'),
+            ('can_print_service_receipt', 'In hóa đơn dịch vụ kỹ thuật'),
+            ('can_view_service_expense_coverage', 'Xem danh sách dịch vụ kỹ thuật bảo hiểm chi trả'),
+            ('can_export_service_expense_coverage', 'Xuất danh sách dịch vụ kỹ thuật bảo hiểm chi trả'),
+            ('can_view_service_revenue', 'Xem doanh thu dịch vụ kỹ thuật'),
+        )
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -133,6 +159,16 @@ class HoaDonLamSang(models.Model):
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "Hóa Đơn Lâm Sàng"
+        verbose_name_plural = "Hóa Đơn Lâm Sàng",
+        permissions = (
+            ('can_checkout_clinical_receipt', 'Thanh toán hóa đơn lâm sàng'),
+            ('can_view_clinical_receipt', 'Xem hóa đơn lâm sàng'),
+            ('can_delete_clinical_receipt', 'Xóa hóa đơn lâm sàng'),
+            ('can_view_clinical_revenue', 'Xem doanh thu lâm sàng'),
+        )
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.thoi_gian_tao = timezone.now()
@@ -170,6 +206,19 @@ class HoaDonVatTu(models.Model):
 
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Hóa Đơn Vật Tư Y Tế"
+        verbose_name_plural = "Hóa Đơn Vật Tư Y Tế",
+        permissions = (
+            ('can_checkout_medical_supplies_receipt', 'Thanh toán hóa đơn vật tư y tế'),
+            ('can_view_medical_supplies_receipt', 'Xem hóa đơn vật tư y tế'),
+            ('can_delete_medical_supplies_receipt', 'Xóa hóa đơn vật tư y tế'),
+            ('can_print_medical_supplies_receipt', 'In hóa đơn vật tư y tế'),
+            ('can_view_medical_supplies_expense_coverage', 'Xem danh sách vật tư y tế bảo hiểm chi trả'),
+            ('can_export_medical_supplies_expense_coverage', 'Xuất danh sách vật tư y tế bảo hiểm chi trả'),
+            ('can_view_medical_supplies_revenue', 'Xem doanh thu vật tư y tế'),
+        )
 
     def save(self, *args, **kwargs):
         if not self.id:
