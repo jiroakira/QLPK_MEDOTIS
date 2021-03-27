@@ -74,7 +74,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, ho_ten, username, so_dien_thoai, cmnd_cccd, dia_chi, gioi_tinh, password):
+    def create_staffuser(self, ho_ten, username, so_dien_thoai, cmnd_cccd, gioi_tinh, password):
         """
         Creates and saves a staff user with the given email and password.
         """
@@ -83,7 +83,6 @@ class UserManager(BaseUserManager):
             so_dien_thoai=so_dien_thoai,
             ho_ten=ho_ten,
             cmnd_cccd = cmnd_cccd,
-            dia_chi = dia_chi,
             gioi_tinh=gioi_tinh,
         )
         user.set_password(password)
@@ -158,7 +157,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     so_dien_thoai = models.CharField(max_length=10, unique=True, validators=[phone_regex])
     ho_ten = models.CharField(max_length = 255)
 
-    email = models.EmailField(null=True, unique=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
     cmnd_cccd = models.CharField(max_length=13, null=True, unique = True)
     ngay_sinh = models.DateField(null=True, blank=True)
     gioi_tinh = models.CharField(choices=GENDER, max_length = 10, null=True, blank=True)
@@ -326,6 +325,13 @@ class TinhTrangPhongKham(models.Model):
     # tọa độ địa lí của phòng khám sẽ được sử dụng để hiển thị lên map trong mobile app
     latitude = models.CharField(null=True, blank=True, max_length=50)
     longtitude = models.CharField(null=True, blank=True, max_length=50)
+
+    ip_range_start = models.CharField(max_length=50, null=True, blank=True)
+    ip_range_end = models.CharField(max_length=50, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Tình Trạng Phòng Khám'
+        verbose_name_plural = "Tình Trạng Phòng Khám"
     
 class PhongKham(models.Model):
     """ Thông tin chi tiết của phòng khám """
@@ -394,6 +400,7 @@ class DichVuKham(models.Model):
     ten_dvkt = models.CharField(max_length=255, null=True, blank=True)
     ma_gia = models.CharField(max_length=50, null=True, blank=True)
     don_gia = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=0)
+    don_gia_bhyt = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=0)
     quyet_dinh = models.CharField(max_length=10, null=True, blank=True)
     cong_bo = models.CharField(max_length=10, null=True, blank=True)
     ma_cosokcb = models.CharField(max_length=20, null=True, blank=True)
