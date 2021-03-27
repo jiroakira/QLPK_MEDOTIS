@@ -9,7 +9,7 @@ from .models import (
     FileKetQuaTongQuat, FilePhongKham, GoiThau, HtmlKetQua,  
     KetQuaChuyenKhoa, 
     KetQuaTongQuat, KetQuaXetNghiem, 
-    LichHenKham, MauPhieu, NhomChiPhi, NhomTaiNan,
+    LichHenKham, LichSuChuoiKham, MauPhieu, NhomChiPhi, NhomTaiNan,
     PhanKhoaKham, 
     PhongChucNang, 
     PhongKham, Province, 
@@ -65,3 +65,4 @@ admin.site.register(Province)
 admin.site.register(District)
 admin.site.register(Ward)
 admin.site.register(Permission)
+admin.site.register(LichSuChuoiKham)
