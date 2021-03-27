@@ -69,7 +69,7 @@
                             <div class="col-lg-6">
                                 <label>Ngày sinh</label>
                                 {% comment %} <input type="text" class="form-control" id="kt_datepicker_1" readonly="readonly" placeholder="Select date" /> {% endcomment %}
-                                {{ form.ngay_sinh|attr:"class:form-control"|attr:"name:ngay_sinh"|attr:"id:kt_datepicker_3"|attr:"readonly:readonly"|attr:"placeholder:Chọn ngày sinh"}}
+                                {{ form.ngay_sinh|attr:"class:form-control"|attr:"name:ngay_sinh"|attr:"id:inputNgaySinhModal"|attr:"placeholder:Chọn ngày sinh"}}
                                 {% comment %} <div class="col-lg-4 col-md-9 col-sm-12">
                                     <input type="text" class="form-control" readonly placeholder="Select date"/>
                                 </div> {% endcomment %}
@@ -174,25 +174,25 @@
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+
 <!--end::Global Theme Bundle-->
 
 <script>
 
-    
-
-    {% comment %} var ngay_sinh = $("input[name=ngay_sinh]").val();
-    ngay_sinh = new Date(ngay_sinh)
-    ngay_sinh = ngay_sinh.toLocaleDateString('vi-VN')
-    console.log(ngay_sinh)
+    var ngay_sinh = $("input[name=ngay_sinh]").val();
+    ngay_sinh = moment(new Date(ngay_sinh)).format('DD/MM/yyyy')
     if($('#inputNgaySinhModal').length){
         $("#inputNgaySinhModal").inputmask("99/99/9999", {
             "placeholder": "ng/th/nam ",
-            autoUnmask: false
+            autoUnmask: false,
         });
-    } else {
+    }
+    else{
         ngay_sinh
-    } {% endcomment %}
-    
+    }
+    $('#inputNgaySinhModal').val(ngay_sinh)
+
     var arrows;
     if (KTUtil.isRTL()) {
         arrows = {
@@ -238,14 +238,6 @@
         format: 'dd/mm/yyyy',
         autoclose:true,
     });
-    
-    var ngay_sinh
-    ngay_sinh = $('#kt_datepicker_3').val()
-    if (ngay_sinh != '') {
-        ngay_sinh = new Date(ngay_sinh)
-        ngay_sinh = ngay_sinh.toLocaleDateString('vi-VN')
-        $('#kt_datepicker_3').val(ngay_sinh)
-    }
 
     var gt_the_tu
     gt_the_tu = $('#kt_datepicker_4').val()
@@ -357,6 +349,8 @@
         var gioi_tinh = $('[name=gioi_tinh]').val()
         var id_benh_nhan = $(this).data('id')
         var formData = new FormData()
+        var ngay_sinh = $('#inputNgaySinhModal').val()
+        console.log(ngay_sinh)
 
         $("#benh_nhan_form").find("input").each(function(){
             formData.append($(this).attr("name"), $(this).val())
@@ -369,9 +363,10 @@
         var tinh_id = $('#kt_select2_1').val()
         var huyen_id = $('#kt_select2_2').val()
         var xa_id = $('#kt_select2_3').val()
-        var ngay_sinh = $('#kt_datepicker_3').val()
+        console.log(ngay_sinh)
 
         formData.append('gioi_tinh', gioi_tinh)
+        formData.append('ngay_sinh', ngay_sinh)
         formData.append('id_benh_nhan', id_benh_nhan)
         formData.append('tinh', tinh_id)
         formData.append('huyen', huyen_id)

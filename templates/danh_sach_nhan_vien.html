@@ -175,7 +175,7 @@
                                 <label>Ngày sinh<span class="text-danger">*</span></label>
                                 {% comment %} <input class="form-control" id="inputNgaySinhModal" type="text" /> {% endcomment %}
                                 {% comment %} {{ form.ngay_sinh|attr:"class:form-control"|attr:"name:ngay_sinh"|attr:"id:kt_datepicker_3"|attr:"readonly:readonly"|attr:"placeholder:Chọn ngày sinh"}} {% endcomment %}
-                                <input type="text" class="form-control" id="kt_datepicker_3" name="ngay_sinh" readonly="readonly" placeholder="Chọn ngày sinh"/>
+                                <input type="text" class="form-control" id="inputNgaySinhModal" name="ngay_sinh" placeholder="Chọn ngày sinh"/>
                                 <span class="form-text text-muted">Nhập ngày sinh dạng: 
                                 <code>ngày/tháng/năm</code></span>
                             </div>
@@ -185,16 +185,46 @@
                                 <label>Giới tính<span class="text-danger">*</span></label>
                                 <div class="radio-inline">
                                     <label class="radio">
-                                        <input type="radio" name="radio" class="inputGioiTinhModal" value="2" />
-                                        <span></span>Nữ
-                                    </label>
-                                    <label class="radio">
                                         <input type="radio" checked name="radio" class="inputGioiTinhModal" value="1" />
                                         <span></span>Nam
                                     </label>
+                                    <label class="radio">
+                                        <input type="radio" name="radio" class="inputGioiTinhModal" value="2" />
+                                        <span></span>Nữ
+                                    </label>
+                                    
                                 </div>
                             </div>
-
+                            <div class="col-lg-10">
+                                <label>Chức Năng<span class="text-danger">*</span></label>
+                                <div class="radio-inline">
+                                    <label class="radio radio-rounded">
+                                        <input type="radio" value="2" checked="checked" class='inputChucNangModal' name="radios15_1"/>
+                                        <span></span>
+                                        Lễ Tân
+                                    </label>
+                                    <label class="radio radio-rounded">
+                                        <input type="radio" value="3" class='inputChucNangModal' name="radios15_1"/>
+                                        <span></span>
+                                        Bác Sĩ Lâm Sàng
+                                    </label>
+                                    <label class="radio radio-rounded">
+                                        <input type="radio" value="4" class='inputChucNangModal' name="radios15_1"/>
+                                        <span></span>
+                                        Bác Sĩ Chuyên Khoa
+                                    </label>
+                                    <label class="radio radio-rounded">
+                                        <input type="radio" value="5" class='inputChucNangModal' name="radios15_1"/>
+                                        <span></span>
+                                        Nhân Viên Phòng Tài Chính
+                                    </label>
+                                    <label class="radio radio-rounded">
+                                        <input type="radio" value="6" class='inputChucNangModal' name="radios15_1"/>
+                                        <span></span>
+                                        Nhân Viên Phòng Thuốc
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group row">
@@ -342,6 +372,11 @@ var KTDatatableRemoteAjaxDemo = function() {
     var selectedOption = []
 
     var demo = function() {
+
+        $("#inputNgaySinhModal").inputmask("31/12/9999", {
+            "placeholder": "ng/th/nam ",
+            autoUnmask: false
+        });
         
         var arrows;
         if (KTUtil.isRTL()) {
@@ -456,24 +491,30 @@ var KTDatatableRemoteAjaxDemo = function() {
                 type: 'number',
                 selector: false,
                 textAlign: 'center',
+                autoHide: false,
             }, {
                 field: 'ho_ten',
                 title: 'Nhân Viên',
+                width: 160,
+                autoHide: false,
             }, {
                 field: 'username',
                 title: 'Username',
+                autoHide: false,
             }, {
                 field: 'so_dien_thoai',
                 title: 'Số điện thoại',
+                autoHide: false,
             }, {
                 field: 'cmnd_cccd',
                 title: 'CMND/CCCD',
-                
+                autoHide: false,
             }, {
                 field: 'chuc_nang',
-                title: 'Chức vụ',
+                title: 'Chức Năng',
                 width: 50,
                 textAlign: 'center',
+                autoHide: false,
                 template: function(row){
                     if (!row.chuc_nang) {
                         return '<span class="text-warning font-weight-bold ">Chưa có thông tin</span>'
@@ -484,6 +525,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             }, {
                 field: 'ngay_sinh',
                 title: 'Ngày sinh',
+                autoHide: false,
                 template: function(row) {
                     var date = new Date(row.ngay_sinh)
                     if(!row.ngay_sinh){
@@ -526,7 +568,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 sortable: false,
                 width: 60,
                 textAlign: 'center',
-                autoHide: false,
+                autoHide: true,
                 template: function(row) {
                     return `
                         <a href="javascript:;" class="btn-xoa-benh-nhan btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ho_ten}" title="Xóa bệnh nhân ${row.ho_ten}">
@@ -540,6 +582,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 sortable: false,
                 width: 60,
                 textAlign: 'center',
+                autoHide: true,
                 template: function(row) {
                     return `
                         <a href="javascript:;" class="btn_reset_password btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ho_ten}" title="Đặt lại mật khẩu cho người dùng: ${row.ho_ten}">
@@ -553,6 +596,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 sortable: false,
                 width: 60,
                 textAlign: 'center',
+                autoHide: true,
                 template: function(row) {
                     return `
                         <a href="javascript:;" class="btn_change_password btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ho_ten}" title="Đổi mật khẩu cho người dùng: ${row.ho_ten}">
@@ -627,12 +671,18 @@ var KTDatatableRemoteAjaxDemo = function() {
         })
         $(document).on("click", ".registerModalSubmit", function() {
 
-            var ele = document.getElementsByName('radio'); 
+            var ele = document.getElementsByName('radio');
+            var ele2 = document.getElementsByName('radios15_1');
             var i;
             for(i = 0; i < ele.length; i++) { 
                 if(ele[i].checked)
                 var gioi_tinh = ele[i].value
-            } 
+            }
+
+            for(i = 0; i < ele2.length; i++) {
+                if(ele2[i].checked)
+                var chuc_nang = ele2[i].value
+            }
 
             formData.append('ho_ten', $("#inputNameModal").val())
             formData.append('username', $("#inputUsernameModal").val())
@@ -640,8 +690,9 @@ var KTDatatableRemoteAjaxDemo = function() {
             formData.append('password', $("#inputPasswordModal").val())
             formData.append('cmnd_cccd', $("#inputCmtModal").val())
             formData.append('dia_chi', $("#inputDiaChiModal").val())
-            formData.append('ngay_sinh', $("#kt_datepicker_3").val())
+            formData.append('ngay_sinh', $("#inputNgaySinhModal").val())
             formData.append('gioi_tinh', gioi_tinh)
+            formData.append('chuc_nang', chuc_nang)
 
             formData.append('tinh', $('#kt_select2_1').val())
             formData.append('huyen', $('#kt_select2_2').val())
@@ -663,26 +714,28 @@ var KTDatatableRemoteAjaxDemo = function() {
                 processData: false,
                 contentType: false,
                 success: function(response){
-                    KTApp.unblockPage();
                     if (response.status == 400) {
-                        
+                        KTApp.unblockPage();
                         toastr.warning(response.message, "Xảy Ra Lỗi")
                     } else if (response.status == 409) {
-                        
+                        KTApp.unblockPage();
                         toastr.info(response.message, "Lỗi")
                     } else if (response.status == 403){
-                        
+                        KTApp.unblockPage();
                         toastr.info(response.message, "Lỗi")
-                    } else if (response.status == 200) { 
+                    } else if (response.status == 200) {
+                        KTApp.unblockPage();
                         toastr.success(response.message, "Thành Công")
                         $('#form_register').find("input, textarea").val("");
                         $('#error_phone').html('')
                         $('#success_phone').html('')
+                        $('#registerModal').modal('hide');
+                        $('#kt_datatable').KTDatatable('reload');
                     }
-                    $('#registerModal').modal('hide');
-                    $('#kt_datatable').KTDatatable('reload');
+                    
                 },
                 error: function(response){
+                    KTApp.unblockPage();
                     $('#registerModal').modal('hide');
                 }
             })
