@@ -4501,7 +4501,69 @@ def create_staff_user(request):
             content_type="application/json", charset="utf-8"
         )
 
+
+def update_nhan_vien(request, **kwargs):
+    id = kwargs.get('id')
+    instance = get_object_or_404(User, id=id)
+    form = UserForm(request.POST or None, instance=instance)
+    phong_chuc_nang = PhongChucNang.objects.all()
+    provinces = Province.objects.all()
+    data = {
+        'benh_nhan': instance,
+        'form': form,
+        'id': id,
+        'phong_chuc_nang': phong_chuc_nang,
+        'province': provinces
+    }
+    return render(request, 'update_nhan_vien.html', context=data)
+
+def cap_nhat_thong_tin_nhan_vien(request):
+    if request.method == "POST":
+        id             = request.POST.get('id')
+        ho_ten         = request.POST.get('ho_ten')
+        so_dien_thoai  = request.POST.get('so_dien_thoai')
+        username       = request.POST.get('username', None)
+        ngay_sinh      = request.POST.get('ngay_sinh')
+        cmnd_cccd      = request.POST.get('cmnd_cccd')
+        dia_chi        = request.POST.get('dia_chi')
+
+        tinh_id = request.POST.get('tinh')      
+        tinh = Province.objects.filter(id=tinh_id).first()       
+        huyen_id = request.POST.get('huyen')       
+        huyen = District.objects.filter(id=huyen_id).first()
+        xa_id = request.POST.get('xa')
+        xa = Ward.objects.filter(id=xa_id).first()
+
+        ngay_sinh = datetime.strptime(ngay_sinh, format_3)
+        ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
+    
+        nhan_vien = get_object_or_404(User, id=id)
+        nhan_vien.ho_ten            = ho_ten
+        nhan_vien.so_dien_thoai     = so_dien_thoai
+        nhan_vien.username          = username
+        nhan_vien.cmnd_cccd         = cmnd_cccd
+        nhan_vien.dia_chi           = dia_chi
+        nhan_vien.ngay_sinh         = ngay_sinh
+
+        nhan_vien.tinh = tinh
+        nhan_vien.huyen = huyen
+        nhan_vien.xa = xa
+
+        nhan_vien.save()
+
+        response = {
+            'status': 200,
+            'message': 'Cập Nhật Thông Tin Thành Công'
+        }
+    else:
+        response = {
+            'status': 404,
+            'message': 'Có lỗi xảy ra'
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
 def update_staff_user(request):
     if request.user.is_superuser or request.user.is_admin:
         if request.method == "POST":
             pass
+
