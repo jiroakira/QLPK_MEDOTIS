@@ -31,8 +31,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['duockalpharm.vn', '68.183.227.19', '127.0.0.1', '10.0.2.2']
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -93,6 +91,12 @@ CORS_ALLOW_HEADERS = [
 ROOT_URLCONF = 'clinic_ms.urls'
 
 AUTH_USER_MODEL = 'clinic.User'
+AUTHENTICATION_BACKENDS = [
+    #'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'clinic.backends.CredentialsBackend',
+] #custom backend authentication for both mobile phone no and username
+
 
 TEMPLATES = [
     {
@@ -161,9 +165,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend', # default
-)
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend', # default
+# )
 
 REST_FRAMEWORK = {
     # 'DEFAULT_AUTHENTICATION_CLASSES': [

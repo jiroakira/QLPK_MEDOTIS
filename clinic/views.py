@@ -61,7 +61,7 @@ from django.shortcuts import render
 import json
 from django.shortcuts import resolve_url
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import authenticate, login as auth_login
 
 from rest_framework.views import APIView
 from django.utils import timezone
@@ -71,7 +71,7 @@ import decimal
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
-from django.contrib.auth import authenticate, views as auth_views
+from django.contrib.auth import views as auth_views
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from clinic.serializers import FilterHoaDonChuoiKhamBaoHiemSerializer, GroupSerializer, HoaDonChuoiKhamSerializer, PermissionSerializer
@@ -83,6 +83,7 @@ from decimal import Decimal
 
 
 from datetime import datetime
+
 format = '%m/%d/%Y %H:%M %p'
 
 format_2 = '%d/%m/%Y %H:%M'
@@ -209,7 +210,7 @@ def update_benh_nhan(request, **kwargs):
 
 def xoa_benh_nhan(request, **kwargs):
     if request.method == 'POST':
-        if request.user.is_authenticated and request.user.chuc_nang == '2' or request.user.chuc_nang == '7':
+        if request.user.is_authenticated and request.user.is_staff:
             id_benh_nhan = request.POST.get('id')
             user = get_object_or_404(User, id=id_benh_nhan)
             user.delete()
@@ -243,16 +244,9 @@ def cap_nhat_thong_tin_benh_nhan(request):
         dan_toc        = request.POST.get('dan_toc')
         ma_so_bao_hiem = request.POST.get('ma_so_bao_hiem')
         dia_chi        = request.POST.get('dia_chi')
-
-        if email == '':
-            email = ''
-
-        tinh_id = request.POST.get('tinh')      
-        tinh = Province.objects.filter(id=tinh_id).first()       
-        huyen_id = request.POST.get('huyen')       
-        huyen = District.objects.filter(id=huyen_id).first()
+        tinh_id = request.POST.get('tinh') 
+        huyen_id = request.POST.get('huyen') 
         xa_id = request.POST.get('xa')
-        xa = Ward.objects.filter(id=xa_id).first()
 
         ma_dkbd = request.POST.get('ma_dkbd')
         gt_the_tu = request.POST.get('gt_the_tu')
@@ -262,14 +256,13 @@ def cap_nhat_thong_tin_benh_nhan(request):
             can_nang = request.POST.get('can_nang')
         else:
             can_nang = 0
-
+    
         ngay_sinh = datetime.strptime(ngay_sinh, format_3)
         ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
     
         benh_nhan = get_object_or_404(User, id=id_benh_nhan)
         benh_nhan.ho_ten         = ho_ten
         benh_nhan.so_dien_thoai  = so_dien_thoai
-        benh_nhan.email          = email
         benh_nhan.cmnd_cccd      = cmnd_cccd
         benh_nhan.dia_chi        = dia_chi
         benh_nhan.ngay_sinh      = ngay_sinh
@@ -277,9 +270,41 @@ def cap_nhat_thong_tin_benh_nhan(request):
         benh_nhan.dan_toc        = dan_toc
         benh_nhan.ma_so_bao_hiem = ma_so_bao_hiem
 
-        benh_nhan.tinh = tinh
-        benh_nhan.huyen = huyen
-        benh_nhan.xa = xa
+        if email != "":
+            benh_nhan.email = email
+        else:
+            benh_nhan.email = ''
+
+        if tinh_id != "":
+            tinh = Province.objects.filter(id=tinh_id).first()       
+            benh_nhan.tinh = tinh
+        else:
+            response = {
+                'status': 404,
+                'message': 'Không thể thiếu thông tin Tỉnh/Thành Phố'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+        if huyen_id != "":
+            huyen = District.objects.filter(id=huyen_id).first()
+            benh_nhan.huyen = huyen
+        else:
+            response = {
+                'status': 404,
+                'message': 'Không thể thiếu thông tin Quận/Huyện'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+        if xa_id != "":
+            xa = Ward.objects.filter(id=xa_id).first()     
+            benh_nhan.xa = xa
+        else:
+            response = {
+                'status': 404,
+                'message': 'Không thể thiếu thông tin Phường/Xã'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
         benh_nhan.can_nang = can_nang
         benh_nhan.ma_dkbd = ma_dkbd
 
@@ -311,7 +336,6 @@ class LoginView(auth_views.LoginView):
 
     def get_success_url(self):
         return resolve_url('trang_chu')
-
 
 # * Chức năng Lễ Tân
 # TODO đăng kí tài khoản cho bệnh nhân tại giao diện dashboard
@@ -1083,7 +1107,7 @@ def hoa_don_dich_vu(request, **kwargs):
     for khoa_kham in danh_sach_phan_khoa:
         if khoa_kham.bao_hiem:
             # gia = khoa_kham.dich_vu_kham.don_gia * decimal.Decimal((1 - (khoa_kham.dich_vu_kham.bao_hiem_dich_vu_kham.dang_bao_hiem)/100))
-            gia = khoa_kham.dich_vu_kham.don_gia
+            gia = khoa_kham.dich_vu_kham.don_gia_bhyt
             bao_hiem.append(gia)
         else:
             gia = khoa_kham.dich_vu_kham.don_gia
@@ -1528,19 +1552,81 @@ def thanh_toan_hoa_don_thuoc(request):
         response = {'status': 404, 'message': 'Xảy Ra Lỗi Trong Quá Trình Thanh Toán'}
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def check_staff_ip(ip_address):
+    phong_kham = PhongKham.objects.all().first()
+    if phong_kham is not None:
+        tinh_trang_phong_kham = phong_kham.tinh_trang
+        if tinh_trang_phong_kham is not None:
+            ip_range_start = tinh_trang_phong_kham.ip_range_start
+            ip_range_end = tinh_trang_phong_kham.ip_range_end
+
+            range_start = ip_range_start.split('.')[-1]
+            range_end = ip_range_end.split('.')[-1]
+            staff_ip = ip_address.split('.')[-1]
+
+            ip_range_start_3_elements = '.'.join(ip_range_start.split('.')[:-1])
+            # ip_range_end_3_elements = '.'.join(ip_range_end.split('.')[:-1])
+            staff_ip_3_elements = '.'.join(ip_address.split('.')[:-1])
+
+            if ip_range_start_3_elements == staff_ip_3_elements:
+                if int(staff_ip) >= int(range_start) and int(staff_ip) <= int(range_end):
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
+    
+
 def loginUser(request):
     so_dien_thoai = request.POST.get('so_dien_thoai')
     password = request.POST.get('password')
     
-    user = authenticate(so_dien_thoai=so_dien_thoai, password=password)
+    # staff_ip = get_client_ip(request)
+    user = authenticate(request, username=so_dien_thoai, password=password)
     if user is not None:
-        if user.is_active:
+        if user.is_active and user.is_staff:
+            # if check_staff_ip(staff_ip):
+            #     auth_login(request, user)
+            #     response = {
+            #         'status': 200, 
+            #     }
+            #     return HttpResponse(json.dumps(response), content_type="application/json")
+            # else:
+            #     response = {
+            #         'status': 400,
+            #         'message': "Không thể đăng nhập vì bạn không đăng nhập tại phòng khám"
+            #     }
+            #     return HttpResponse(json.dumps(response), content_type="application/json")
             auth_login(request, user)
-            return HttpResponse(json.dumps({'message': 'Success', 'url': '/trang_chu'}), content_type="application/json")
+            response = {
+                'status': 200,
+                'url': "/trang_chu/"
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json")
         else:
-            return HttpResponse(json.dumps({'message': 'inactive'}), content_type="application/json")
+            response = {
+                'status': 400,
+                'message': "Bạn không phải nhân viên phòng khám"
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json")
     else:
-        return HttpResponse(json.dumps({'message': 'invalid'}), content_type="application/json")
+        response = {
+            'status': 400,
+            'message': "Thông tin đăng nhập của bạn không đúng, vui lòng kiểm tra lại"
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
 def dung_kham(request):
     if request.method == "POST":
@@ -1932,38 +2018,41 @@ def import_dich_vu_excel(request):
         list_objects = json.loads(data)
         
         print(list_objects)
-        bulk_create_data = []
-    #     for obj in list_objects:
-    #         stt             = obj['STT']
-    #         ma_dvkt         = obj['MA_DVKT']
-    #         ten_dvkt        = obj['TEN_DVKT']
-    #         don_gia         = "DON_GIA"
-    #         don_gia_bhyt    = "DON_GIA_BHYT"
-            
-    #         bao_hiem        = True
-    #         quyet_dinh      = obj['QUYET_DINH']
-    #         cong_bo         = obj['CONG_BO']
-    #         phong_chuc_nang = 'PHONG_CHUC_NANG'
+        for obj in list_objects:
+            stt             = obj['STT']
+            ma_gia_key      = "MA_GIA"
+            ma_cosokcb_key  = "MA_COSOKCB"
+            ma_dvkt         = obj['MA_DVKT']
+            ten_dvkt        = obj['TEN_DVKT']
+            don_gia         = "DON_GIA"
+            don_gia         = Decimal('don_gia')
+            don_gia_bhyt    = obj['DON_GIA_BHYT']
+            don_gia_bhyt    = Decimal('don_gia_bhyt')
+            bao_hiem        = True
+            quyet_dinh      = obj['QUYET_DINH']
+            cong_bo         = obj['CONG_BO']
+            phong_chuc_nang = obj['PHONG_CHUC_NANG']
+            ma_nhom = obj['MA_NHOM']
 
-    #         if phong_chuc_nang in obj.keys():
-    #             phong_chuc_nang = obj[phong_chuc_nang]
-    #         else:
-    #             phong_chuc_nang = ""
+            group_phong_chuc_nang = PhongChucNang.objects.get_or_create(ten_phong_chuc_nang = phong_chuc_nang)[0]
+            nhom_chi_phi = NhomChiPhi.objects.get(ma_nhom=ma_nhom)
 
-    #         group_phong_chuc_nang = PhongChucNang.objects.get_or_create(ten_phong_chuc_nang = phong_chuc_nang)[0]
-    #         # nhom_chi_phi = NhomChiPhi.objects.get(ma_nhom=ma_nhom)
 
-    #         if don_gia in obj.keys():
-    #             don_gia = obj[don_gia]
-    #             gia     = Decimal(don_gia)
-    #         else:
-    #             gia=0
-            
-    #         if don_gia_bhyt in obj.keys():
-    #             don_gia_bhyt = obj[don_gia_bhyt]
-    #             don_gia_bhyt = Decimal(don_gia_bhyt)
-    #         else:
-    #             don_gia_bhyt=0
+            if ma_gia_key in obj.keys():
+                ma_gia = obj[ma_gia_key]
+            else:
+                ma_gia = ""
+
+            if ma_cosokcb_key in obj.keys():
+                ma_cosokcb = obj[ma_cosokcb_key]
+            else:
+                ma_cosokcb = ""
+
+            if don_gia in obj.keys():
+                don_gia = obj[don_gia]
+                gia     = Decimal(don_gia)
+            else:
+                gia=0
 
                 
     #         # print(ma_gia)
@@ -4293,6 +4382,10 @@ def create_staff_user(request):
             ngay_sinh      = request.POST.get('ngay_sinh')
             gioi_tinh      = request.POST.get('gioi_tinh')
             dia_chi        = request.POST.get('dia_chi')
+            chuc_nang = request.POST.get('chuc_nang')
+            tinh_id = request.POST.get('tinh')
+            huyen_id = request.POST.get('huyen')
+            xa_id = request.POST.get('xa')
 
             if User.objects.filter(username=username).exists():
                 response = {
@@ -4322,17 +4415,35 @@ def create_staff_user(request):
                     content_type="application/json"
                 )
 
+            if dia_chi == '':
+                response = {
+                    'status': 400,
+                    'message': "CMND đã tồn tại, vui lòng chọn CMND mới"
+                }
+                return HttpResponse(
+                    json.dumps(response),
+                    content_type="application/json"
+                )
+
             benh_nhan = User.objects.create_staffuser(
                 ho_ten         = ho_ten,
                 username       = username, 
                 so_dien_thoai  = so_dien_thoai, 
                 password       = password,
                 cmnd_cccd      = cmnd_cccd,
-                dia_chi        = dia_chi,
                 gioi_tinh      = gioi_tinh,
             )
 
-            tinh_id = request.POST.get('tinh')
+            if ngay_sinh != '':
+                ngay_sinh = datetime.strptime(ngay_sinh, format_3)
+                ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
+                benh_nhan.ngay_sinh = ngay_sinh
+
+            benh_nhan.chuc_nang = chuc_nang
+
+            if dia_chi != "":
+                benh_nhan.dia_chi = dia_chi
+            
             if tinh_id != '':      
                 tinh = Province.objects.filter(id=tinh_id).first()
                 benh_nhan.tinh = tinh
@@ -4346,7 +4457,6 @@ def create_staff_user(request):
                     content_type="application/json"
                 )
        
-            huyen_id = request.POST.get('huyen')
             if huyen_id != '':
                 huyen = District.objects.filter(id=huyen_id).first()
                 benh_nhan.huyen = huyen
@@ -4360,7 +4470,7 @@ def create_staff_user(request):
                     content_type="application/json"
                 )
 
-            xa_id = request.POST.get('xa')
+            
             if xa_id != '': 
                 xa = Ward.objects.filter(id=xa_id).first()  
                 benh_nhan.xa = xa
@@ -4374,11 +4484,6 @@ def create_staff_user(request):
                     content_type="application/json"
                 )
 
-            if ngay_sinh != '':
-                ngay_sinh = datetime.strptime(ngay_sinh, format_3)
-                ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
-                benh_nhan.ngay_sinh = ngay_sinh
-            
             benh_nhan.save()
 
             response = {
@@ -4405,6 +4510,7 @@ def create_staff_user(request):
             json.dumps(response),
             content_type="application/json", charset="utf-8"
         )
+
 
 def update_nhan_vien(request, **kwargs):
     id = kwargs.get('id')
@@ -4465,3 +4571,9 @@ def cap_nhat_thong_tin_nhan_vien(request):
             'message': 'Có lỗi xảy ra'
         }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def update_staff_user(request):
+    if request.user.is_superuser or request.user.is_admin:
+        if request.method == "POST":
+            pass
+
