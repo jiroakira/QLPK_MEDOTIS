@@ -76,6 +76,7 @@ class Thuoc(models.Model):
     ma_hoat_chat = models.CharField(max_length=15, null=True, blank=True, verbose_name="Mã hoạt chất")
     ten_hoat_chat = models.CharField(max_length=255, null=True, blank=True, verbose_name="Tên hoạt chất")
     duong_dung = models.CharField(max_length=255, null=True, blank=True, verbose_name="Đường dùng")
+    stt = models.IntegerField(null=True, blank=True)
     # duong_dung = models.ForeignKey(DuongDungThuoc, on_delete=models.SET_NULL, null=True, blank=True)
 
     ham_luong = models.CharField(max_length=50, null=True, blank=True, verbose_name="Hàm lượng")
@@ -155,11 +156,11 @@ class Thuoc(models.Model):
                 return False
 
     def get_don_gia(self):
-        don_gia = "{:,}".format(int(self.don_gia))
+        don_gia = "{:,}".format(float(self.don_gia))
         return don_gia
 
     def get_don_gia_tt(self):
-        don_gia_tt = "{:,}".format(int(self.don_gia_tt))
+        don_gia_tt = "{:,}".format(float(self.don_gia_tt))
         return don_gia_tt
 
     def get_so_luong_kha_dung(self):
