@@ -124,10 +124,11 @@
 
             formData.append("data", lstObj)
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
-
+            console.log(lstObj)
+            
             $.ajax({
-                type: "POST",
                 url: "{% url 'import_dich_vu_excel' %}",
+                type: "POST",
                 data: formData,
                 cache: false,
                 processData: false,

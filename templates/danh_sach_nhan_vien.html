@@ -515,7 +515,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
-                        <a href="/danh_sach_benh_nhan/${row.id}/cap_nhat_thong_tin_benh_nhan" class="btn btn-lg btn-clean btn-icon" title="Chỉnh sửa thông tin bệnh nhân ${row.ho_ten}">
+                        <a href="/update_nhan_vien/${row.id}/" class="btn btn-lg btn-clean btn-icon" title="Chỉnh sửa thông tin bệnh nhân ${row.ho_ten}">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
                     `;

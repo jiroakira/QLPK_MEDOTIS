@@ -79,6 +79,8 @@ from django.contrib.auth import logout
 from django.urls import reverse
 import locale 
 from django.contrib.auth.models import Group, Permission
+from decimal import Decimal
+
 
 from datetime import datetime
 format = '%m/%d/%Y %H:%M %p'
@@ -1923,77 +1925,72 @@ def them_dich_vu_kham(request):
     }
     return render(request, 'phong_tai_chinh/them_dich_vu_kham.html', context=data)
 
-
-from decimal import Decimal
 def import_dich_vu_excel(request):
     if request.method == 'POST':
-        data             = request.POST.get('data')  
-        list_objects     = json.loads(data)
+        data         = request.POST.get('data')
+        print(data)  
+        list_objects = json.loads(data)
         
-        bulk_create_data = []
         print(list_objects)
-        for obj in list_objects:
-            stt             = obj['STT']
-            ma_gia_key      = "MA_GIA"
-            ma_cosokcb_key  = "MA_COSOKCB"
-            ma_dvkt         = obj['MA_DVKT']
-            ten_dvkt        = obj['TEN_DVKT']
-            don_gia         = "DON_GIA"
+        bulk_create_data = []
+    #     for obj in list_objects:
+    #         stt             = obj['STT']
+    #         ma_dvkt         = obj['MA_DVKT']
+    #         ten_dvkt        = obj['TEN_DVKT']
+    #         don_gia         = "DON_GIA"
+    #         don_gia_bhyt    = "DON_GIA_BHYT"
             
-            bao_hiem        = True
-            quyet_dinh      = obj['QUYET_DINH']
-            cong_bo         = obj['CONG_BO']
-            phong_chuc_nang = obj['PHONG_CHUC_NANG']
-            ma_nhom = obj['MA_NHOM']
+    #         bao_hiem        = True
+    #         quyet_dinh      = obj['QUYET_DINH']
+    #         cong_bo         = obj['CONG_BO']
+    #         phong_chuc_nang = 'PHONG_CHUC_NANG'
 
-            group_phong_chuc_nang = PhongChucNang.objects.get_or_create(ten_phong_chuc_nang = phong_chuc_nang)[0]
-            nhom_chi_phi = NhomChiPhi.objects.get(ma_nhom=ma_nhom)
+    #         if phong_chuc_nang in obj.keys():
+    #             phong_chuc_nang = obj[phong_chuc_nang]
+    #         else:
+    #             phong_chuc_nang = ""
 
+    #         group_phong_chuc_nang = PhongChucNang.objects.get_or_create(ten_phong_chuc_nang = phong_chuc_nang)[0]
+    #         # nhom_chi_phi = NhomChiPhi.objects.get(ma_nhom=ma_nhom)
 
-            if ma_gia_key in obj.keys():
-                ma_gia = obj[ma_gia_key]
-            else:
-                ma_gia = ""
-
-            if ma_cosokcb_key in obj.keys():
-                ma_cosokcb = obj[ma_cosokcb_key]
-            else:
-                ma_cosokcb = ""
-
-            if don_gia in obj.keys():
-                don_gia = obj[don_gia]
-                gia     = Decimal(don_gia)
-            else:
-                gia=0
+    #         if don_gia in obj.keys():
+    #             don_gia = obj[don_gia]
+    #             gia     = Decimal(don_gia)
+    #         else:
+    #             gia=0
+            
+    #         if don_gia_bhyt in obj.keys():
+    #             don_gia_bhyt = obj[don_gia_bhyt]
+    #             don_gia_bhyt = Decimal(don_gia_bhyt)
+    #         else:
+    #             don_gia_bhyt=0
 
                 
-            # print(ma_gia)
-            model = DichVuKham(
-                stt             = stt,
-                ma_dvkt         = ma_dvkt,
-                ten_dvkt        = ten_dvkt,
-                ma_gia          = ma_gia,
-                don_gia         = gia,
-                bao_hiem        = bao_hiem,
-                quyet_dinh      = quyet_dinh,
-                cong_bo         = cong_bo,
-                ma_cosokcb      = ma_cosokcb,
-                phong_chuc_nang = group_phong_chuc_nang
-            )
-            bulk_create_data.append(model)
+    #         # print(ma_gia)
+    #         model = DichVuKham(
+    #             stt             = stt,
+    #             ma_dvkt         = ma_dvkt,
+    #             ten_dvkt        = ten_dvkt,
+    #             don_gia         = gia,
+    #             don_gia_bhyt    = don_gia_bhyt,
+    #             bao_hiem        = bao_hiem,
+    #             quyet_dinh      = quyet_dinh,
+    #             cong_bo         = cong_bo,
+    #             phong_chuc_nang = group_phong_chuc_nang
+    #         )
+    #         bulk_create_data.append(model)
         
-        DichVuKham.objects.bulk_update_or_create(bulk_create_data,[
-            'stt',
-            'ma_dvkt',
-            'ten_dvkt',
-            'ma_gia',
-            'don_gia',
-            'bao_hiem',
-            'quyet_dinh',
-            'cong_bo',
-            'ma_cosokcb',
-            'phong_chuc_nang' 
-        ], match_field = 'stt', batch_size=10)
+    #     DichVuKham.objects.bulk_update_or_create(bulk_create_data,[
+    #         'stt',
+    #         'ma_dvkt',
+    #         'ten_dvkt',
+    #         'don_gia',
+    #         'don_gia_bhyt',
+    #         'bao_hiem',
+    #         'quyet_dinh',
+    #         'cong_bo',
+    #         'phong_chuc_nang' 
+    #     ], match_field = 'ten_dvkt', batch_size=10)
 
         response = {
             'status': 200,
@@ -2020,6 +2017,8 @@ def import_thuoc_excel(request):
         list_objects = json.loads(data)
         bulk_create_data = []
 
+        print(list_objects)
+
         for obj in list_objects:
             ma_thuoc_key      = "MA_THUOC_BV"
             ma_hoat_chat_key  = "MA_HOAT_CHAT"
@@ -2028,8 +2027,8 @@ def import_thuoc_excel(request):
             duong_dung_key    = "DUONG_DUNG"
             ham_luong_key     = "HAM_LUONG"
             ten_thuoc         = obj['TEN_THUOC']
-            so_dang_ky        = obj['SO_DANG_KY']
-            dong_goi          = obj['DONG_GOI']
+            so_dang_ky        = 'SO_DANG_KY'
+            dong_goi          = 'DONG_GOI'
             don_vi_tinh       = obj['DON_VI_TINH']
             don_gia           = Decimal(obj['DON_GIA'])
             don_gia_tt        = Decimal(obj['DON_GIA_TT'])
@@ -2044,11 +2043,11 @@ def import_thuoc_excel(request):
             nha_thau          = obj['NHA_THAU']
             bao_hiem          = True
 
-            nhom_chi_phi = obj['NHOM_CHI_PHI']
+            # nhom_chi_phi = obj['NHOM_CHI_PHI']
 
             group_nhom_thau = NhomThau.objects.get_or_create(ten_nhom_thau=nhom_thau)[0]
             group_cong_ty = CongTy.objects.get_or_create(ten_cong_ty=nha_thau)[0]
-            nhom_chi_phi = NhomChiPhi.objects.get(ma_nhom=nhom_chi_phi)
+            # nhom_chi_phi = NhomChiPhi.objects.get(ma_nhom=nhom_chi_phi)
             
             if ma_hoat_chat_key in obj.keys():
                 ma_hoat_chat = obj[ma_hoat_chat_key]
@@ -2080,6 +2079,16 @@ def import_thuoc_excel(request):
             else:
                 ham_luong = ""
 
+            if so_dang_ky in obj.keys():
+                so_dang_ky = obj[so_dang_ky]
+            else:
+                so_dang_ky = ""
+
+            if dong_goi in obj.keys():
+                dong_goi = obj[dong_goi]
+            else:
+                dong_goi = ""
+
             model = Thuoc(
                 ma_thuoc          = ma_thuoc,
                 ma_hoat_chat      = ma_hoat_chat, 
@@ -2104,7 +2113,7 @@ def import_thuoc_excel(request):
                 nhom_thau         = group_nhom_thau,
                 cong_ty           = group_cong_ty,
                 bao_hiem          = bao_hiem,
-                nhom_chi_phi = nhom_chi_phi
+                # nhom_chi_phi = nhom_chi_phi
             )
 
             bulk_create_data.append(model)
@@ -2129,7 +2138,7 @@ def import_thuoc_excel(request):
             'cong_bo',
             'loai_thau',
             'nhom_thau', 
-            'nhom_chi_phi'
+            # 'nhom_chi_phi'
         ], match_field = 'ma_thuoc')
         response = {
             'status': 200,

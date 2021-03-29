@@ -383,7 +383,7 @@ urlpatterns = [
     path('api/nhom_quyen/nguoi_dung/', ApiListAllGroupOfUser.as_view()),
 
     # UPDATE LONG 27/3
-    path('update_nhan_vien/<int:id>', update_nhan_vien, name="update_nhan_vien"),
+    path('update_nhan_vien/<int:id>/', update_nhan_vien, name="update_nhan_vien"),
     path('cap_nhat_thong_tin_nhan_vien/', cap_nhat_thong_tin_nhan_vien, name="cap_nhat_thong_tin_nhan_vien"),
 
     # END UPDATE
