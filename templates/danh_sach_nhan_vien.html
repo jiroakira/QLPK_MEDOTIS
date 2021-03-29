@@ -519,7 +519,30 @@ var KTDatatableRemoteAjaxDemo = function() {
                     if (!row.chuc_nang) {
                         return '<span class="text-warning font-weight-bold ">Chưa có thông tin</span>'
                     } else {
-                        return row.chuc_nang
+                        var chuc_nang = {
+                            1: {
+                                'title': 'Người dùng',
+                            },
+                            2: {
+                                'title': 'Lễ Tân',
+                            },
+                            3: {
+                                'title': 'Bác Sĩ Lâm Sàng',
+                            },
+                            4: {
+                                'title': 'Bác Sĩ Chuyên Khoa',
+                            },
+                            5: {
+                                'title': 'Nhân Viên Phòng Tài Chính',
+                            },
+                            6: {
+                                'title': 'Nhân Viên Phòng Thuốc',
+                            },
+                            7: {
+                                'title': 'Quản Trị Viên',
+                            },
+                        };
+                        return '<span>' + chuc_nang[row.chuc_nang].title + '</span>';
                     }
                 }
             }, {

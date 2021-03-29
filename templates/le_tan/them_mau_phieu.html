@@ -86,7 +86,7 @@
                         <div class="row">
                             <div class="col-lg-12 ml-lg-auto text-center">
                                 <button type="button" class="btn btn-primary font-weight-bold mr-2" id="submitData" name="submitButton">Xác nhận</button>
-                                <button type="button" class="btn btn-light-primary font-weight-bold">Hủy</button>
+                                <button type="button" class="btn btn-light-primary font-weight-bold" id="cancelButton">Hủy</button>
                             </div>
                         </div>
                     </div>
@@ -257,6 +257,10 @@
                 })
             })
         }
+
+        $(document).on('click', '#cancelButton', function(){
+            window.history.back()
+        })
 
         return {
             // public functions

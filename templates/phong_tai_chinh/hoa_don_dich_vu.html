@@ -108,7 +108,11 @@
                                                 {% comment %} {{ khoa_kham.dich_vu_kham.bao_hiem }} {% endcomment %}
                                             </td>
                                             <td class="format-gia text-center pt-7" data-id={{khoa_kham.dich_vu_kham.don_gia}}>
-                                                {{ khoa_kham.dich_vu_kham.don_gia }}
+                                                {% if khoa_kham.bao_hiem == False %}
+                                                    {{ khoa_kham.dich_vu_kham.don_gia }}
+                                                {% else %}
+                                                    {{ khoa_kham.dich_vu_kham.don_gia_bhyt }}
+                                                {% endif %}
                                             </td>
                                             <td class="text-left pt-7">VND</td>
                                         </tr>

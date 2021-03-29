@@ -1130,6 +1130,7 @@ def hoa_don_dich_vu(request, **kwargs):
         'thanh_tien'         : thanh_tien,
         'hoa_don_dich_vu'    : hoa_don_dich_vu,
         'phong_kham'         : phong_kham,
+        'gia'                : gia,
     }
     return render(request, 'phong_tai_chinh/hoa_don_dich_vu.html', context=data)
 
@@ -3409,12 +3410,19 @@ def import_ma_benh_excel(request):
 
 
 def danh_sach_mau_phieu(request):
-    return render(request, 'le_tan/danh_sach_mau_phieu.html')
+    phong_chuc_nang = PhongChucNang.objects.all()
+
+    data = {
+        'phong_chuc_nang' : phong_chuc_nang,
+    }
+    return render(request, 'le_tan/danh_sach_mau_phieu.html', context = data)
 
 def them_mau_phieu(request):
     dich_vu = DichVuKham.objects.all()
+    phong_chuc_nang = PhongChucNang.objects.all()
     context = {
         'dich_vu': dich_vu,
+        'phong_chuc_nang' : phong_chuc_nang,
     }
     return render(request, 'le_tan/them_mau_phieu.html', context=context)
 
@@ -3761,7 +3769,12 @@ def create_tieu_chuan(request):
     return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
     
 def list_tieu_chuan_dich_vu(request):
-    return render(request, 'le_tan/danh_sach_tieu_chuan_dich_vu.html')
+    phong_chuc_nang = PhongChucNang.objects.all()
+
+    data = {
+        'phong_chuc_nang' : phong_chuc_nang,
+    }
+    return render(request, 'le_tan/danh_sach_tieu_chuan_dich_vu.html', context = data)
 
 def chi_tiet_tieu_chuan_dich_vu(request, **kwargs):
     id_dich_vu = kwargs.get('id')
@@ -3771,6 +3784,7 @@ def chi_tiet_tieu_chuan_dich_vu(request, **kwargs):
     all_doi_tuong = DoiTuongXetNghiem.objects.all()
 
     doi_tuong = dich_vu.chi_so_xet_nghiem.all()[0].doi_tuong_xet_nghiem
+    phong_chuc_nang = PhongChucNang.objects.all()
 
     context = {
         'dich_vu': dich_vu,
@@ -3778,6 +3792,7 @@ def chi_tiet_tieu_chuan_dich_vu(request, **kwargs):
         'all_dich_vu': all_dich_vu,
         'all_doi_tuong': all_doi_tuong,
         'doi_tuong': doi_tuong,
+        'phong_chuc_nang' : phong_chuc_nang,
     }
     return render(request, 'le_tan/chi_tiet_tieu_chuan.html', context=context)
 
@@ -3969,7 +3984,12 @@ def export_thuoc_bao_hiem_excel(request):
     return response  
 
 def ket_qua_benh_nhan_view(request):
-    return render(request, 'le_tan/ket_qua_benh_nhan.html')
+    phong_chuc_nang = PhongChucNang.objects.all()
+
+    data = {
+        'phong_chuc_nang' : phong_chuc_nang,
+    }
+    return render(request, 'le_tan/ket_qua_benh_nhan.html', context = data)
 
 def chi_tiet_chuoi_kham_benh_nhan(request, **kwargs):
     id_chuoi_kham = kwargs.get('id_chuoi_kham')
