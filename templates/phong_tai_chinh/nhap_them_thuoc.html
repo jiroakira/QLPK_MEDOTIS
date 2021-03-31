@@ -130,12 +130,9 @@
                         <thead>
                             <tr>
                                 <td>Tên Thuốc</td>
-                                <td>Bảo Hiểm</td>
-                                <td>Số Lượng</td>
                                 <td>Khả Dụng</td>
                                 <td>ĐVT</td>
-                                <td>Cách Dùng</td>
-                                <td>Ghi Chú</td>
+                                <td>Số Lượng</td>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -413,12 +410,6 @@ var KTDatatableRecordSelectionDemo = function() {
                             ${trVals.obj.ten_thuoc}
                             </td>
                             <td>
-                                <input type="checkbox" id="${trVals.obj.id}" class="checkbox checkbox-lg checkbox-light-success checkbox-inline flex-shrink-0 m-0 mx-4 big-checkbox" data-checked="True" data-unchecked="False" />
-                            </td>
-                            <td>
-                                <input type="number" class="big-input-quantity form-control" onwheel="return false;" min="0" oninput="this.value|=0" />
-                            </td>
-                            <td>
                                 <span>
                                     ${trVals.obj.so_luong_kha_dung}
                                 </span>
@@ -429,12 +420,7 @@ var KTDatatableRecordSelectionDemo = function() {
                                 </span>
                             </td>
                             <td>
-                                <span class="big-input-usage">
-                                    ${trVals.obj.duong_dung}
-                                </span>
-                            </td>
-                            <td>
-                                <input type="text" class="big-input-note form-control" />
+                                <input type="number" class="big-input-quantity form-control" onwheel="return false;" min="0" oninput="this.value|=0" />
                             </td>
                         </tr>
                     `);
