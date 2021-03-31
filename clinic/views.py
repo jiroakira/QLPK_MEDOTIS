@@ -584,6 +584,7 @@ def create_thuoc(request):
         don_vi_tinh       = request.POST.get('don_vi_tinh')
         don_gia           = request.POST.get("don_gia")
         don_gia_tt        = request.POST.get("don_gia_tt")
+        gia_bhyt        = request.POST.get("gia_bhyt")
         so_lo             = request.POST.get('so_lo')
         so_luong_kha_dung = request.POST.get("so_luong_kha_dung")
         hang_sx           = request.POST.get("hang_san_xuat")

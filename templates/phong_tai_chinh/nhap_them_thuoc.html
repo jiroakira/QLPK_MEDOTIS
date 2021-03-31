@@ -29,15 +29,15 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">Tạo Đơn Thuốc Mới</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">Nhập Thêm Thuốc Vào Kho</h5>
                     <!--end::Page Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
                         <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted">Phòng Thuốc</a>
+                            <a href="javascript:;" class="text-muted">Phòng Tài Chính</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted">Tạo Đơn Thuốc</a>
+                            <a href="javascript:;" class="text-muted">Nhập Thêm Thuốc</a>
                         </li>
                     </ul>
                     <!--end::Breadcrumb-->
@@ -141,26 +141,12 @@
                         <tbody></tbody>
                     </table>
                     <!--end: Table-->
-
-                    <div class="form-group mt-3">
-                        <label>Chọn Bệnh Nhân<span class="text-danger">*</span></label>
-                        <select id="selectBenhNhan" class="form-control selectpicker" data-size="7" data-live-search="true">
-                            <option value="" disabled selected>Chọn bệnh nhân</option>
-                            <option value="vang_lai">Khách Vãng Lai</option>
-                            <option value="benh_nhan">Bệnh Nhân Phòng Khám</option>
-                            
-                            {% comment %} {% for p in nguoi_dung %}
-                                <option value="{{ p.id }}">{{ p.ho_ten }} - {{ p.cmnd_cccd }}</option>
-                            {% endfor %} {% endcomment %}
-                        </select>
-                    </div>
-                    <div class="form-group" id="thongTinBenhNhan"></div>
                 </div>
                 <div class="card-footer">
                     <div class="card-toolbar">
                         <!--begin::Button-->
                         <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="get-table-data">
-                            <i class="la la-plus"></i>Kê Đơn Thuốc
+                            <i class="la la-plus"></i>Nhập Thuốc
                         </a>
                         <!--end::Button-->
                     </div>
@@ -411,9 +397,12 @@ var KTDatatableRecordSelectionDemo = function() {
             var objList = [];
             if($(this).is(":checked")){
                 var trVals = $(this).closest('tr').data();
+                // console.log($(this).val())
                 
                 console.log(trVals)
+                // console.log(objList)
                 lstData.push(trVals)
+                // $('#kt_datatable_3 tbody').empty();
 
                 console.log(lstData)
 
@@ -427,7 +416,7 @@ var KTDatatableRecordSelectionDemo = function() {
                                 <input type="checkbox" id="${trVals.obj.id}" class="checkbox checkbox-lg checkbox-light-success checkbox-inline flex-shrink-0 m-0 mx-4 big-checkbox" data-checked="True" data-unchecked="False" />
                             </td>
                             <td>
-                                <input type="number" class="big-input-quantity form-control" onwheel="return false;" min="0" oninput="this.value|=0"/>
+                                <input type="number" class="big-input-quantity form-control" />
                             </td>
                             <td>
                                 <span>
@@ -510,7 +499,7 @@ var KTDatatableRecordSelectionDemo = function() {
                 } 
             });
 
-            {% comment %} $.ajax({
+            $.ajax({
                 type: "POST",
                 url: "{% url 'store_don_thuoc_rieng' %}",
                 data: {
@@ -534,7 +523,7 @@ var KTDatatableRecordSelectionDemo = function() {
                 error: function (res) {
                     toastr.warning("Có Lỗi Xảy Ra Trong Quá Trình Xử Lý")
                 }
-            }); {% endcomment %}
+            });
         }
 
         function getPostData(user_id){
@@ -549,7 +538,11 @@ var KTDatatableRecordSelectionDemo = function() {
                 for (let i = 0; i < rowData.length; i++) {
                     if (rowData[i].obj.id == each) {
                         rowData[i].obj.bao_hiem  = checkBoxObj[each];
-                        rowData[i].obj.so_luong  = quantityObj[each];
+                        if (rowData[i].obj.so_luong_kha_dung > quantityObj[each]){
+                            rowData[i].obj.so_luong  = quantityObj[each];
+                        }else{
+                            toastr.warning('Lỗi Số Lượng Thuốc', rowData[i].obj.ten_thuoc)
+                        }
                         rowData[i].obj.cach_dung = usageObj[each];
                         rowData[i].obj.ghi_chu   = noteObj[each];
                         rowData[i].obj.benh_nhan = user_id;

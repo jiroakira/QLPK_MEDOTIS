@@ -41,7 +41,11 @@
                         </h3>
                     </div>
                     <div class="card-toolbar">
- 
+
+                        <a href="{% url 'nhap_them_thuoc' %}" class="btn-them-thuoc btn btn-light-primary font-weight-bolder mr-2" id="btn-them-thuoc">
+                            Nhập Thêm Thuốc
+                        </a>
+
                         <!-- begin::Button Thêm Thuốc -->
                         {% if perms.medicine.can_add_medicine %}
                         <a href="{% url 'them_thuoc_phong_tai_chinh' %}" class="btn-them-thuoc btn btn-light-primary font-weight-bolder mr-2" id="btn-them-thuoc">
