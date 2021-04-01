@@ -386,6 +386,7 @@ urlpatterns = [
     path('update_nhan_vien/<int:id>/', update_nhan_vien, name="update_nhan_vien"),
     path('cap_nhat_thong_tin_nhan_vien/', cap_nhat_thong_tin_nhan_vien, name="cap_nhat_thong_tin_nhan_vien"),
     path('nhap_them_thuoc/', nhap_them_thuoc, name="nhap_them_thuoc"),
+    
 
     # END UPDATE
 ]

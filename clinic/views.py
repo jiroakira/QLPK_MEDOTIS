@@ -4605,3 +4605,4 @@ def nhap_them_thuoc(request):
         'phong_chuc_nang' : phong_chuc_nang,
     }
     return render(request, 'phong_tai_chinh/nhap_them_thuoc.html', context = data)
+    

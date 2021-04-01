@@ -519,10 +519,9 @@ var KTDatatableRecordSelectionDemo = function() {
             var usageObj    = lstUsage;
             var noteObj     = lstNote;
 
-            for (const each in checkBoxObj) {
+            for (const each in quantityObj) {
                 for (let i = 0; i < rowData.length; i++) {
                     if (rowData[i].obj.id == each) {
-                        rowData[i].obj.bao_hiem  = checkBoxObj[each];
                         if (rowData[i].obj.so_luong_kha_dung > quantityObj[each]){
                             rowData[i].obj.so_luong  = quantityObj[each];
                         }else{
