@@ -484,31 +484,31 @@ var KTDatatableRecordSelectionDemo = function() {
                 } 
             });
 
-            $.ajax({
-                type: "POST",
-                url: "{% url 'store_don_thuoc_rieng' %}",
-                data: {
-                    // here data should be a string so that
-                    // in your views.py you can fetch the value using get('data')
-                    'data': JSON.stringify(getPostData(user_id)),
-                    'csrfmiddlewaretoken': csrftoken,
-                    'user': user_id,
-                },
-                dataType: 'json',
-                safe: false,
-                success: function (response) {
-                    if (response.status == 200){
-                        toastr.success(response.message, "Thành Công")
-                        setTimeout(function () {
-                            window.location.href = '/phong_thuoc/'; //redirect về danh sách chờ lâm sàng
-                        }, 1500);
-                    }
-
-                },
-                error: function (res) {
-                    toastr.warning("Có Lỗi Xảy Ra Trong Quá Trình Xử Lý")
-                }
-            });
+            //$.ajax({
+            //    type: "POST",
+            //    url: "{% url 'store_don_thuoc_rieng' %}",
+            //    data: {
+            //        // here data should be a string so that
+            //        // in your views.py you can fetch the value using get('data')
+            //        'data': JSON.stringify(getPostData(user_id)),
+            //        'csrfmiddlewaretoken': csrftoken,
+            //        'user': user_id,
+            //    },
+            //    dataType: 'json',
+            //    safe: false,
+            //    success: function (response) {
+            //        if (response.status == 200){
+            //            toastr.success(response.message, "Thành Công")
+            //            setTimeout(function () {
+            //                window.location.href = '/phong_thuoc/'; //redirect về danh sách chờ lâm sàng
+            //            }, 1500);
+            //        }
+//
+            //    },
+            //    error: function (res) {
+            //        toastr.warning("Có Lỗi Xảy Ra Trong Quá Trình Xử Lý")
+            //    }
+            //});
         }
 
         function getPostData(user_id){
@@ -522,11 +522,11 @@ var KTDatatableRecordSelectionDemo = function() {
             for (const each in quantityObj) {
                 for (let i = 0; i < rowData.length; i++) {
                     if (rowData[i].obj.id == each) {
-                        if (rowData[i].obj.so_luong_kha_dung > quantityObj[each]){
-                            rowData[i].obj.so_luong  = quantityObj[each];
-                        }else{
-                            toastr.warning('Lỗi Số Lượng Thuốc', rowData[i].obj.ten_thuoc)
-                        }
+                        rowData[i].obj.so_luong  = quantityObj[each];
+                        //if (rowData[i].obj.so_luong_kha_dung > quantityObj[each]){
+                        //}else{
+                        //    toastr.warning('Lỗi Số Lượng Thuốc', rowData[i].obj.ten_thuoc)
+                        //}
                         rowData[i].obj.cach_dung = usageObj[each];
                         rowData[i].obj.ghi_chu   = noteObj[each];
                         rowData[i].obj.benh_nhan = user_id;
