@@ -65,6 +65,7 @@ class Thuoc(models.Model):
         ('3', 'Vị thuốc YHCT'),
         ('4', 'Phóng xạ'),
         ('5', 'Thực phẩm bảo vệ sức khỏe'),
+        ('6', 'Vật Tư Y Tế'),
     )
     TYPE_CHOICES_LOAI_THAU = (
         ('1', 'Thầu tập trung'),
@@ -307,7 +308,7 @@ class ThuocLog(models.Model):
     ngay = models.DateTimeField(verbose_name="Ngày giờ")
     quy_trinh = models.CharField(max_length=1, choices=OPERATIONS, verbose_name="Quy trình")
     so_luong = models.IntegerField(default=0, verbose_name="Số lượng")
-
+    bao_hiem = models.BooleanField(default=True)
     class Meta:
         verbose_name = "Thuốc Log"
         verbose_name_plural = "Thuốc Log"

@@ -4,10 +4,10 @@ import time
 from clinic.excelUtils import WriteToExcel, writeToExcelDichVu, writeToExcelThuoc
 from finance.models import (
     HoaDonChuoiKham, 
-    HoaDonLamSang, 
+    HoaDonLamSang, HoaDonNhapHang, 
     HoaDonThuoc, 
     HoaDonTong, 
-    HoaDonVatTu
+    HoaDonVatTu, NhapHang
 )
 from clinic.forms import (
     BaiDangForm, MauPhieuForm, PhongKhamForm, 
@@ -4601,8 +4601,56 @@ def update_staff_user(request):
 def nhap_them_thuoc(request):
     phong_chuc_nang = PhongChucNang.objects.all()
 
+    user_id = request.user.id
+
     data = {
         'phong_chuc_nang' : phong_chuc_nang,
+        'user_id' : user_id
     }
     return render(request, 'phong_tai_chinh/nhap_them_thuoc.html', context = data)
     
+def store_nhap_thuoc(request):
+    if request.method == "POST":
+        request_data = request.POST.get('data', None)
+        user = request.POST.get('user', None)
+        data = json.loads(request_data)
+
+        now = datetime.now()
+        date_time = now.strftime("%m%d%y%H%M%S")
+
+        user = User.objects.get(id=user)
+        subName = getSubName(user.ho_ten)
+        ma_hoa_don = subName + '-' + date_time
+        hoa_don_nhap = HoaDonNhapHang.objects.get_or_create(nguoi_phu_trach=user, ma_hoa_don=ma_hoa_don)[0]
+         
+        bulk_create_data = []
+        for i in data:
+            thuoc = Thuoc.objects.only('id').get(id=i['obj']['id'])
+            so_luong = i['obj']['so_luong']
+            so_luong_kha_dung = thuoc.so_luong_kha_dung + int(so_luong)
+            thuoc.so_luong_kha_dung = so_luong_kha_dung
+            thuoc.save()
+
+            nhap_hang = NhapHang(hoa_don=hoa_don_nhap, thuoc=thuoc, so_luong=i['obj']['so_luong'], bao_hiem=i['obj']['bao_hiem'])
+            bulk_create_data.append(nhap_hang)
+
+        NhapHang.objects.bulk_create(bulk_create_data)
+        
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"prescription_user_{user.id}", {
+                'type':'prescription_notification'
+            }
+        )
+        response = {'status': 200, 'message': 'Nhập Hàng Thành Công'}
+    else:
+       response = {'message': 'oke'} 
+    return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+
+def bao_cao_thuoc(request):
+    phong_chuc_nang = PhongChucNang.objects.all()
+
+    data = {
+        'phong_chuc_nang' : phong_chuc_nang,
+    }
+    return render(request, 'phong_tai_chinh/bao_cao_thuoc.html', context=data)

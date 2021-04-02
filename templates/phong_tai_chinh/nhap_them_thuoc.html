@@ -130,6 +130,7 @@
                         <thead>
                             <tr>
                                 <td>Tên Thuốc</td>
+                                <td>Bảo Hiểm</td>
                                 <td>Khả Dụng</td>
                                 <td>ĐVT</td>
                                 <td>Số Lượng</td>
@@ -142,7 +143,7 @@
                 <div class="card-footer">
                     <div class="card-toolbar">
                         <!--begin::Button-->
-                        <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="get-table-data">
+                        <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="get-table-data" data-id="{{ user_id }}">
                             <i class="la la-plus"></i>Nhập Thuốc
                         </a>
                         <!--end::Button-->
@@ -241,76 +242,6 @@ var KTDatatableRecordSelectionDemo = function() {
         }],
     };
 
-    // basic demo
-    var localSelectorDemo = function() {
-        // enable extension
-        options.extensions = {
-            // boolean or object (extension options)
-            checkbox: true,
-        };
-
-        options.search = {
-            input: $('#kt_datatable_search_query'),
-            key: 'generalSearch'
-        };
-
-        var datatable = $('#kt_datatable').KTDatatable(options);
-
-        $('#kt_datatable_search_status').on('change', function() {
-            datatable.search($(this).val().toLowerCase(), 'Status');
-        });
-
-        $('#kt_datatable_search_type').on('change', function() {
-            datatable.search($(this).val().toLowerCase(), 'Type');
-        });
-
-        $('#kt_datatable_search_status, #kt_datatable_search_type').selectpicker();
-
-        datatable.on(
-            'datatable-on-check datatable-on-uncheck',
-            function(e) {
-                var checkedNodes = datatable.rows('.datatable-row-active').nodes();
-                var count = checkedNodes.length;
-                $('#kt_datatable_selected_records').html(count);
-                if (count > 0) {
-                    $('#kt_datatable_group_action_form').collapse('show');
-                } else {
-                    $('#kt_datatable_group_action_form').collapse('hide');
-                }
-            });
-
-        //datatable.on('mouseenter', 'tbody tr', function(){
-        //    alert($(this).data());
-        //    $(this).find('[data-toggle="tooltip"]').tooltip({
-        //        delay: 300,
-        //        title: $(this).data().obj.Country,
-        //        html: true,
-        //    });
-//
-        //})
-
-        $('#kt_datatable_fetch_modal').on('show.bs.modal', function(e) {
-            var ids = datatable.rows('.datatable-row-active').
-            nodes().
-            find('.checkbox > [type="checkbox"]').
-            map(function(i, chk) {
-                return $(chk).val();
-            });
-            console.log(ids);
-        
-            var c = document.createDocumentFragment();
-            for (var i = 0; i < ids.length; i++) {
-                var li = document.createElement('li');
-                li.setAttribute('data-id', ids[i]);
-                li.innerHTML = 'Selected record ID: ' + ids[i];
-                c.appendChild(li);
-            }
-            $('#kt_datatable_fetch_display').append(c);
-        }).on('hide.bs.modal', function(e) {
-            $('#kt_datatable_fetch_display').empty();
-        });
-    };
-
     var serverSelectorDemo = function() {
         // enable extension
         options.extensions = {
@@ -354,37 +285,18 @@ var KTDatatableRecordSelectionDemo = function() {
                 }
             });
 
-        datatable.on('mouseenter', 'tbody tr', function(){
-            // alert($(this).data());
-            $(this).find('[data-toggle="tooltip"]').tooltip({
-                delay: 300,
-
-                title: "<em>Tooltip</em> <u>with</u> <b>HTML</b>",
-                html: true,
-            });
-
-        })
-
         var lstData = [];
         var lstCheckbox = {};
         var lstQuantity = {};
-        var lstUsage = {};
-        var lstNote = {};
 
         $('#get-table-data').on('click', function (){
-            var user_id = $('#selectBenhNhan').val();
-            console.log(user_id)
-            var id_chuoi_kham = $(this).data('chuoi-kham-id');
+            var user_id = $(this).attr('data-id');
             lstCheckbox = {};
             lstQuantity = {};
-            lstUsage = {};
-            lstNote = {};
             getCheckbox();
             getInputQuantity();
-            getInputUsage();
-            getInputNote();
             getPostData(user_id);
-            postData(user_id, id_chuoi_kham); 
+            postData(user_id); 
         })
 
     
@@ -410,6 +322,9 @@ var KTDatatableRecordSelectionDemo = function() {
                             ${trVals.obj.ten_thuoc}
                             </td>
                             <td>
+                                <input type="checkbox" id="${trVals.obj.id}" class="checkbox checkbox-lg checkbox-light-success checkbox-inline flex-shrink-0 m-0 mx-4 big-checkbox" data-checked="True" data-unchecked="False" />
+                            </td>
+                            <td>
                                 <span>
                                     ${trVals.obj.so_luong_kha_dung}
                                 </span>
@@ -431,8 +346,6 @@ var KTDatatableRecordSelectionDemo = function() {
                 $(`.${trVals.obj.id}`).remove();
                 lstData = lstData.filter((item) => item!==trVals)
                 lstQuantity = {}
-                lstUsage = {}
-                lstNote = {}
             }
         })
 
@@ -440,17 +353,14 @@ var KTDatatableRecordSelectionDemo = function() {
             if($(this).is(":checked")){
                 lstCheckbox = {};
                 getCheckbox();
-                console.log(lstCheckbox);
             } else {
                 lstCheckbox = {}; 
                 getCheckbox();
-                console.log(lstCheckbox);
             }
         })
 
         function postData(user_id, id_chuoi_kham){
             var user_id = user_id
-            {% comment %} console.log(getPostData()); {% endcomment %}
             var checkBoxObj = lstCheckbox;
 
             var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -484,31 +394,31 @@ var KTDatatableRecordSelectionDemo = function() {
                 } 
             });
 
-            //$.ajax({
-            //    type: "POST",
-            //    url: "{% url 'store_don_thuoc_rieng' %}",
-            //    data: {
-            //        // here data should be a string so that
-            //        // in your views.py you can fetch the value using get('data')
-            //        'data': JSON.stringify(getPostData(user_id)),
-            //        'csrfmiddlewaretoken': csrftoken,
-            //        'user': user_id,
-            //    },
-            //    dataType: 'json',
-            //    safe: false,
-            //    success: function (response) {
-            //        if (response.status == 200){
-            //            toastr.success(response.message, "Thành Công")
-            //            setTimeout(function () {
-            //                window.location.href = '/phong_thuoc/'; //redirect về danh sách chờ lâm sàng
-            //            }, 1500);
-            //        }
-//
-            //    },
-            //    error: function (res) {
-            //        toastr.warning("Có Lỗi Xảy Ra Trong Quá Trình Xử Lý")
-            //    }
-            //});
+            $.ajax({
+                type: "POST",
+                url: "{% url 'store_nhap_thuoc' %}",
+                data: {
+                    // here data should be a string so that
+                    // in your views.py you can fetch the value using get('data')
+                    'data': JSON.stringify(getPostData(user_id)),
+                    'csrfmiddlewaretoken': csrftoken,
+                    'user': user_id,
+                },
+                dataType: 'json',
+                safe: false,
+                success: function (response) {
+                    if (response.status == 200){
+                        toastr.success(response.message, "Thành Công")
+                        setTimeout(function () {
+                            window.history.back(); //redirect về danh sách chờ lâm sàng
+                        }, 1500);
+                    }
+
+                },
+                error: function (res) {
+                    toastr.warning("Có Lỗi Xảy Ra Trong Quá Trình Xử Lý")
+                }
+            });
         }
 
         function getPostData(user_id){
@@ -516,20 +426,13 @@ var KTDatatableRecordSelectionDemo = function() {
             var rowData     = lstData;
             var checkBoxObj = lstCheckbox;
             var quantityObj = lstQuantity;
-            var usageObj    = lstUsage;
-            var noteObj     = lstNote;
 
-            for (const each in quantityObj) {
+            for (const each in checkBoxObj) {
                 for (let i = 0; i < rowData.length; i++) {
                     if (rowData[i].obj.id == each) {
-                        rowData[i].obj.so_luong  = quantityObj[each];
-                        //if (rowData[i].obj.so_luong_kha_dung > quantityObj[each]){
-                        //}else{
-                        //    toastr.warning('Lỗi Số Lượng Thuốc', rowData[i].obj.ten_thuoc)
-                        //}
-                        rowData[i].obj.cach_dung = usageObj[each];
-                        rowData[i].obj.ghi_chu   = noteObj[each];
-                        rowData[i].obj.benh_nhan = user_id;
+                        rowData[i].obj.bao_hiem        = checkBoxObj[each];
+                        rowData[i].obj.so_luong        = quantityObj[each];
+                        rowData[i].obj.nguoi_phu_trach = user_id;
                     }
                 }
             }
@@ -562,43 +465,6 @@ var KTDatatableRecordSelectionDemo = function() {
                 })
             });
         }
-
-        function getInputUsage(){
-            $('#kt_datatable_3 tbody tr').each(function() {
-                var sectionId = $(this).data('id');
-                $(this).find('input.big-input-usage').each(function(){
-                    console.log($(this).val());
-                    lstUsage[sectionId] = $(this).val();
-                })
-            });
-        }
-
-        function getInputNote(){
-            $('#kt_datatable_3 tbody tr').each(function() {
-                var sectionId = $(this).data('id');
-                $(this).find('input.big-input-note').each(function(){
-                    console.log($(this).val());
-                    lstNote[sectionId] = $(this).val();
-                })
-            });
-        }
-
-        $('#kt_datatable_fetch_modal_2').on('show.bs.modal', function(e) {
-            var ids = datatable.checkbox().getSelectedId();
-            
-            var recordID = [];
-            var c = document.createDocumentFragment();
-            for (var i = 0; i < ids.length; i++) {
-                var li = document.createElement('li');
-                li.setAttribute('data-id', ids[i]);
-                li.innerHTML = 'Selected record ID: ' + ids[i];
-                c.appendChild(li);
-            }
-
-            $('#kt_datatable_fetch_display_2').append(c);
-        }).on('hide.bs.modal', function(e) {
-            $('#kt_datatable_fetch_display_2').empty();
-        });
     };
 
     return {
