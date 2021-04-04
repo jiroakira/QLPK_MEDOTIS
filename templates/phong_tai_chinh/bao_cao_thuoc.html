@@ -73,48 +73,6 @@
                                             </span>
                                         </div>
                                     </div>
-                                    
-                                    <!--begin::Dropdown-->
-                                    <div class="dropdown dropdown-inline mr-2">
-                                        <button type="button" class="btn btn-light-primary font-weight-bolder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="svg-icon svg-icon-md">
-                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                        <rect x="0" y="0" width="24" height="24" />
-                                                        <path d="M3,16 L5,16 C5.55228475,16 6,15.5522847 6,15 C6,14.4477153 5.55228475,14 5,14 L3,14 L3,12 L5,12 C5.55228475,12 6,11.5522847 6,11 C6,10.4477153 5.55228475,10 5,10 L3,10 L3,8 L5,8 C5.55228475,8 6,7.55228475 6,7 C6,6.44771525 5.55228475,6 5,6 L3,6 L3,4 C3,3.44771525 3.44771525,3 4,3 L10,3 C10.5522847,3 11,3.44771525 11,4 L11,19 C11,19.5522847 10.5522847,20 10,20 L4,20 C3.44771525,20 3,19.5522847 3,19 L3,16 Z" fill="#000000" opacity="0.3" />
-                                                        <path d="M16,3 L19,3 C20.1045695,3 21,3.8954305 21,5 L21,15.2485298 C21,15.7329761 20.8241635,16.200956 20.5051534,16.565539 L17.8762883,19.5699562 C17.6944473,19.7777745 17.378566,19.7988332 17.1707477,19.6169922 C17.1540423,19.602375 17.1383289,19.5866616 17.1237117,19.5699562 L14.4948466,16.565539 C14.1758365,16.200956 14,15.7329761 14,15.2485298 L14,5 C14,3.8954305 14.8954305,3 16,3 Z" fill="#000000" />
-                                                    </g>
-                                                </svg>
-                                            </span>
-                                            Tùy Chọn
-                                        </button>
-                                        <!--begin::Dropdown Menu-->
-                                        <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                                            <!--begin::Navigation-->
-                                            <ul class="navi flex-column navi-hover py-2">
-                                                <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Tùy chọn:</li>
-                                                <li class="navi-item">
-                                                    <a href="javascript:;" class="navi-link">
-                                                        <span class="navi-text">Tổng Doanh Thu</span>
-                                                    </a>
-                                                </li>
-                                                {% comment %} <li class="navi-item">
-                                                    <a href="javascript:;" class="navi-link" id="doanh_thu_dich_vu">
-                                                        <span class="navi-text">Doanh Thu Dịch Vụ Khám</span>
-                                                    </a>
-                                                </li> {% endcomment %}
-                                                {% comment %} <li class="navi-it  {% endcomment %}
-                                                <li class="navi-item">
-                                                    <a href="javascript:;" class="navi-link" id="doanh_thu_vat_tu">
-                                                        <span class="navi-text">Doanh Thu Vật Tư Y Tế</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                            <!--end::Navigation-->
-                                        </div>
-                                        <!--end::Dropdown Menu-->
-                                    </div>
-                                    <!--end::Dropdown-->
 
                                     <div class="col-md-3">
                                         <a href="javascript:;" class="btn btn-md btn-light font-weight-bold" id="kt_dashboard_daterangepicker" data-toggle="tooltip" title="Chọn khoảng thời gian để hiển thị dữ liệu" data-placement="top">
@@ -141,12 +99,12 @@
 <!--end::Content-->
 
 <!--begin::Modal-->
-<div id="dich_vu_chi_tiet" class="modal fade" role="dialog" aria-hidden="true">
+<div id="nhap_hang_chi_tiet" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-scrollable modal-dialog-centered">
         <div class="modal-content" style="min-height: 590px;">
             <div class="modal-header py-5">
                 <h5 class="modal-title">
-                    Chi Tiết Doanh Thu Dịch Vụ
+                    Chi Tiết Hóa Đơn Nhập Hàng
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
@@ -156,27 +114,13 @@
                 <div class="card card-custom">
                     <div class="card-header flex-wrap border-0 pb-0">
                         <div class="card-title">
-                            <h3 class="card-label">Danh Sách Các Dịch Vụ Khám
+                            <h3 class="card-label">Danh Sách Những Thuốc Được Nhập
                             </h3>
                         </div>
                     </div>
                     <div class="card-body">
                         <!--begin: Datatable Dich Vu-->
-                        <div class="datatable datatable-bordered datatable-head-custom" id="kt_datatable_sub_dich_vu"></div>
-                        <!--end: Datatable-->
-                    </div>
-                </div>
-
-                <div class="card card-custom mt-5">
-                    <div class="card-header flex-wrap border-0 pb-0">
-                        <div class="card-title">
-                            <h3 class="card-label">Danh Sách Các Hóa Đơn Lâm Sàng
-                            </h3>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <!--begin: Datatable Lam Sang-->
-                        <div class="datatable datatable-bordered datatable-head-custom pt-4" id="kt_datatable_sub_lam_sang"></div>
+                        <div class="datatable datatable-bordered datatable-head-custom" id="sub_nhap_hang"></div>
                         <!--end: Datatable-->
                     </div>
                 </div>
@@ -216,13 +160,13 @@
 <!--end::Modal-->
 
 <!--begin::Modal-->
-<div id="doanh_thu_theo_phong" class="modal fade" role="dialog" aria-hidden="true">
+<div id="bao_cao_ton_chi_tiet" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-scrollable modal-dialog-centered">
         <div class="modal-content" style="min-height: 590px;">
             <div class="modal-header py-5">
                 <h5 class="modal-title">
-                    Chi Tiết Doanh Thu Theo Phòng Chức Năng
-                    <span class="d-block text-muted font-size-sm">Danh Sách Các Phòng Chức Năng</span>
+                    Báo Cáo Tồn Thuốc Theo Thời Gian
+                    <span class="d-block text-muted font-size-sm">Danh Sách Thuốc</span>
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
@@ -230,7 +174,7 @@
             </div>
             <div class="modal-body">
                 <!--begin: Datatable Dich Vu-->
-                <div class="datatable datatable-bordered datatable-head-custom" id="kt_datatable_sub_phong_chuc_nang"></div>
+                <div class="datatable datatable-bordered datatable-head-custom" id="sub_ton_hang"></div>
                 <!--end: Datatable-->
             </div>
             <div class="modal-footer">
@@ -263,16 +207,16 @@ var KTDatatableRemoteAjaxDemo = function() {
     var demo = function(range_start, range_end) {
         var range_start = range_start
         var range_end = range_end
-        var modal = $("#dich_vu_chi_tiet")
-        var el_1 = $('#kt_datatable_sub_dich_vu')
-        var datatable_dich_vu = $('#kt_datatable_sub_dich_vu').KTDatatable({
+        var modal = $("#nhap_hang_chi_tiet")
+        var el_1 = $('#sub_nhap_hang')
+        var datatable_nhap_hang = $('#sub_nhap_hang').KTDatatable({
             // datasource definition
             data: {
                 type: 'remote',
                 source: {
                     read: {
                         method: "GET",
-                        url: HOST_URL + '/api/danh_sach_doanh_thu_dich_vu/',
+                        url: HOST_URL + '/api/danh_sach_nhung_thuoc_duoc_nhap/',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
                         map: function(raw) {
@@ -320,101 +264,20 @@ var KTDatatableRemoteAjaxDemo = function() {
                 selector: false,
                 textAlign: 'center',
             }, {
-                field: 'dich_vu_kham__ten_dvkt',
-                title: 'Dịch Vụ Khám',
-                
+                field: 'thuoc.ten_thuoc',
+                title: 'Thuốc',
             }, {
-                field: 'tong_tien',
-                title: 'Tổng Tiền',
-                template: function(row){
-                    if(row.tong_tien == null){
-                        return "Chưa Thanh Toán!"
-                    }else{
-                        return row.tong_tien
-                    }
-                }
+                field: 'so_luong',
+                title: 'Số Lượng',
             }, {
-                field: 'thoi_gian_tao',
-                title: 'Thời Gian Tạo',
-                template: function(row) {
-                    var date = new Date(Date.parse(row.thoi_gian_tao))
-
-                    if(!row.thoi_gian_tao){
-                        return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
-                    } else {
-                        return date.toLocaleDateString('vi-VN')
-                    }
-                }
-            }],
-        });
-
-        var el_2 = $('#kt_datatable_sub_lam_sang')
-        var datatable_lam_sang = $('#kt_datatable_sub_lam_sang').KTDatatable({
-            data: {
-                type: 'remote',
-                source: {
-                    read: {
-                        method: "GET",
-                        url: HOST_URL + '/api/danh_sach_doanh_thu_lam_sang/',
-                        // sample custom headers
-                        // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
-                        map: function(raw) {
-                            // sample data mapping
-                            var dataSet = raw;
-                            if (typeof raw.data !== 'undefined') {
-                                dataSet = raw.data;
-                            }
-                            return dataSet;
-                        },
-                        params: {
-                            'range_start' : range_start,
-                            'range_end' : range_end,
-                        }
-                    },
-                },
-                pageSize: 10,
-                serverPaging: true,
-                //serverFiltering: true,
-                //serverSorting: true,
-            },
-
-            // layout definition
-            layout: {
-                scroll: false,
-                footer: false,
-            },
-
-            // column sorting
-            sortable: true,
-
-            pagination: true,
-
-            search: {
-                input: '#kt_datatable_search_query_2',
-                key: 'generalSearch1',
-            },
-
-            // columns definition
-            columns: [{
-                field: 'id',
-                title: 'Mã HĐ',
-                sortable: 'asc',
-                width: 100,
-                selector: false,
+                field: 'bao_hiem',
+                title: 'Bảo Hiểm',
                 textAlign: 'center',
-            }, {
-                field: 'lich_hen.benh_nhan.ho_ten',
-                title: 'Bệnh Nhân',
-                
-            }, {
-                field: 'tong_tien',
-                title: 'Tổng Tiền',
-                template: function(row){
-                    
-                    if(row.tong_tien == null){
-                        return "Chưa Thanh Toán!"
-                    }else{
-                        return row.tong_tien
+                template: function(row) {
+                    if(row.bao_hiem == true){
+                        return '<span class="label font-weight-bold label-lg label-light-success label-inline">Bảo Hiểm</span>';
+                    } else {
+                        return '<span class="label font-weight-bold label-lg label-light-warning label-inline">Dịch Vụ</span>';
                     }
                 }
             }, {
@@ -432,49 +295,30 @@ var KTDatatableRemoteAjaxDemo = function() {
             }],
         });
 
-        datatable_dich_vu.hide();
+        datatable_nhap_hang.hide();
         modal.on('shown.bs.modal', function() {
             var modalContent = $(this).find('.modal-content');
 
-            datatable_dich_vu.spinnerCallback(true, modalContent);
-            datatable_dich_vu.load();
+            datatable_nhap_hang.spinnerCallback(true, modalContent);
+            datatable_nhap_hang.load();
 
-            datatable_dich_vu.on('datatable-on-layout-updated', function() {
-                datatable_dich_vu.show();
-                datatable_dich_vu.spinnerCallback(false, modalContent);
-                datatable_dich_vu.redraw();
+            datatable_nhap_hang.on('datatable-on-layout-updated', function() {
+                datatable_nhap_hang.show();
+                datatable_nhap_hang.spinnerCallback(false, modalContent);
+                datatable_nhap_hang.redraw();
             });
             
         }).on('hidden.bs.modal', function() {
             el_1.KTDatatable('destroy');
         });
-
-        datatable_lam_sang.hide();
-        modal.on('shown.bs.modal', function() {
-            var modalContent = $(this).find('.modal-content');
-
-            datatable_lam_sang.spinnerCallback(true, modalContent);
-            datatable_lam_sang.load();
-
-            datatable_lam_sang.on('datatable-on-layout-updated', function() {
-                datatable_lam_sang.show();
-                datatable_lam_sang.spinnerCallback(false, modalContent);
-                datatable_lam_sang.redraw();
-            });
-            
-        }).on('hidden.bs.modal', function() {
-            el_2.KTDatatable('destroy');
-        });
-
     };
 
     var demo2 = function(range_start, range_end) {
         var range_start = range_start
         var range_end = range_end
-        console.log(range_start, range_end)
         var el = $('#kt_datatable_sub_thuoc')
         var modal = $("#thuoc_chi_tiet")
-        var datatable_sub_thuoc = $('#kt_datatable_sub_thuoc').KTDatatable({
+        var datatable_sub_thuoc = el.KTDatatable({
             // datasource definition
             data: {
                 type: 'remote',
@@ -573,96 +417,15 @@ var KTDatatableRemoteAjaxDemo = function() {
 
     };
 
-    var demo3 = function(range_start, range_end) {
+    var bao_cao_ton = function(range_start, range_end) {
         var range_start = range_start
         var range_end = range_end
-        console.log(range_start, range_end)
-        var el = $('#kt_datatable_sub_phong_chuc_nang')
-        var modal = $("#doanh_thu_theo_phong")
-        var datatable_sub_phong_chuc_nang = $('#kt_datatable_sub_phong_chuc_nang').KTDatatable({
-            // datasource definition
-            data: {
-                type: 'remote',
-                source: {
-                    read: {
-                        method: "GET",
-                        url: HOST_URL + '/api/danh_sach_doanh_thu_theo_phong_chuc_nang/',
-                        // sample custom headers
-                        // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
-                        map: function(raw) {
-                            // sample data mapping
-                            var dataSet = raw;
-                            if (typeof raw.data !== 'undefined') {
-                                dataSet = raw.data;
-                            }
-                            return dataSet;
-                        },
-                        params: {
-                            'range_start' : range_start,
-                            'range_end' : range_end,
-                        }
-                    },
-                },
-                pageSize: 10,
-                serverPaging: true,
-                //serverFiltering: true,
-                //serverSorting: true,
-            },
 
-            // layout definition
-            layout: {
-                scroll: false,
-                footer: false,
-            },
+        var ele = $('#sub_ton_hang')
+        var modal = $('#bao_cao_ton_chi_tiet')
 
-            // column sorting
-            sortable: true,
-
-            pagination: true,
-
-            search: {
-                input: $('#kt_datatable_search_query'),
-                key: 'generalSearch'
-            },
-
-            // columns definition
-            columns: [{
-                field: 'dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang',
-                title: 'Tên Phòng',
-            }, {
-                field: 'tong_tien',
-                title: 'Tổng Tiền',
-                template: function(row){
-                    return row.tong_tien
-                }
-            }, {
-                field: 'dich_vu_kham_count',
-                title: 'SL Dịch Vụ',
-                template: function(row) {
-                    return row.dich_vu_kham_count
-                }
-            },],
-
-        });
-
-        datatable_sub_phong_chuc_nang.hide();
-        modal.on('shown.bs.modal', function() {
-            var modalContent = $(this).find('.modal-content');
-
-            datatable_sub_phong_chuc_nang.spinnerCallback(true, modalContent);
-            datatable_sub_phong_chuc_nang.load();
-
-            datatable_sub_phong_chuc_nang.on('datatable-on-layout-updated', function() {
-                datatable_sub_phong_chuc_nang.show();
-                datatable_sub_phong_chuc_nang.spinnerCallback(false, modalContent);
-                datatable_sub_phong_chuc_nang.redraw();
-            });
-            
-        }).on('hidden.bs.modal', function() {
-            el.KTDatatable('destroy');
-        });
-
-    };
+        
+    }
 
     var table = function(range_start, range_end){
         var range_start = range_start
@@ -674,7 +437,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 type: 'remote',
                 source: {
                     read: {                        
-                        url: HOST_URL + '/api/danh_sach_doanh_thu_theo_thoi_gian/',
+                        url: HOST_URL + '/api/danh_sach_bao_cao_theo_thoi_gian/',
                         method: 'GET',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
@@ -717,7 +480,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 
             // columns definition
             columns: [{
-                field: 'thao_tac',
+                field: 'loai_bao_cao',
                 title: 'Thao Tác',
                 sortable: false,
                 selector: false,
@@ -756,24 +519,25 @@ var KTDatatableRemoteAjaxDemo = function() {
                 width: 125,
                 overflow: 'visible',
                 autoHide: false,
+                textAlign: 'center',
                 template: function(row) {
-                    if(row.type == "doanh_thu_dich_vu"){
+                    if(row.type == "bao_cao_nhap"){
                         return `
-                            <a href="javascript:;" class="btn btn-sm btn-clean" id="doanh_thu_dich_vu" title="Xem Chi Tiết">
+                            <button type="button" class="btn btn-sm btn-clean" id="bao_cao_nhap" title="Xem Chi Tiết">
                                 Chi tiết
-                            </a>
+                            </button>
                         `;
-                    } else if (row.type == "doanh_thu_thuoc"){
+                    } else if (row.type == "bao_cao_xuat"){
                         return `
-                            <a href="javascript:;" class="btn btn-sm btn-clean" id="doanh_thu_thuoc" title="Xem Chi Tiết">
+                            <button type="button" class="btn btn-sm btn-clean" id="bao_cao_xuat" title="Xem Chi Tiết">
                                 Chi tiết
-                            </a>
+                            </button>
                         `;
-                    } else if (row.type == "doanh_thu_phong_chuc_nang"){
+                    } else if (row.type == "bao_cao_ton"){
                         return `
-                            <a href="javascript:;" class="btn btn-sm btn-clean" id="phong_chuc_nang" title="Xem Chi Tiết">
-                                Chi tiết
-                            </a>
+                            <button type="button" class="btn btn-sm btn-clean" id="bao_cao_ton" title="Xem Chi Tiết">
+                                Xuất Báo Cáo
+                            </button>
                         `;
                     } else {
                         return ``
@@ -787,25 +551,39 @@ var KTDatatableRemoteAjaxDemo = function() {
             $('#kt_datatable').KTDatatable('reload');
         })
 
-        $('#kt_datatable').on('click', '#doanh_thu_dich_vu', function(){
-            $('#kt_datatable_sub_dich_vu').KTDatatable('destroy');
-            $('#kt_datatable_sub_lam_sang').KTDatatable('destroy');
+        $('#kt_datatable').on('click', '#bao_cao_nhap', function(){
             demo(range_start, range_end)
-            $('#dich_vu_chi_tiet').modal('show')
+            $('#nhap_hang_chi_tiet').modal('show')
+            
         })
 
-        $('#kt_datatable').on('click', '#doanh_thu_thuoc', function(){
+        $('#kt_datatable').on('click', '#bao_cao_xuat', function(){
             console.log(range_start, range_end)
             $('#kt_datatable_sub_thuoc').KTDatatable('destroy');
             demo2(range_start, range_end)
             $('#thuoc_chi_tiet').modal('show')
         })
 
-        $('#kt_datatable').on('click', '#phong_chuc_nang', function(){
-            console.log(range_start, range_end)
-            $('#kt_datatable_sub_phong_chuc_nang').KTDatatable('destroy');
-            demo3(range_start, range_end)
-            $('#doanh_thu_theo_phong').modal('show')
+        $('#kt_datatable').on('click', '#bao_cao_ton', function(){
+            {% comment %} var formData = new FormData()
+
+            formData.append('range_start', range_start)
+            formData.append('range_end', range_end)
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+            window.location.href = "/xuat_bao_cao_ton/"+ range_start +"/"+ range_end +"/"
+            $.ajax({
+                type: "POST",
+                url: "{% url 'xuat_bao_cao_ton' %}",
+                data : formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(response){
+
+                },
+                error: function(response){
+                }
+            }) {% endcomment %}
         })
 
     }

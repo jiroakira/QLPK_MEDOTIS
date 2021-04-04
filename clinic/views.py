@@ -1448,7 +1448,7 @@ class ThanhToanHoaDonThuocToggle(APIView):
         don_thuoc       = DonThuoc.objects.get(id = id_don_thuoc)
         danh_sach_thuoc = don_thuoc.ke_don.all()
         tong_tien       = request.GET.get('tong_tien', None)
-        bao_hiem = False
+        bao_hiem        = False
         now             = datetime.now()
         date_time       = now.strftime("%m%d%y%H%M%S")
         ma_hoa_don      = "HDT-" + date_time
@@ -4654,3 +4654,41 @@ def bao_cao_thuoc(request):
         'phong_chuc_nang' : phong_chuc_nang,
     }
     return render(request, 'phong_tai_chinh/bao_cao_thuoc.html', context=data)
+
+def xuat_bao_cao_ton(request, *args, **kwargs):
+    if request.method == "POST":
+        range_start = request.POST.get('range_start')
+        range_end = request.POST.get('range_end')
+
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+        start = datetime.strftime("%Y-%m-%d")
+        end = datetime.strptime(range_end, "%d-%m-%Y")
+        end = datetime.strftime("%Y-%m-%d")
+
+        tomorrow_start = start + timedelta(1)
+
+        if range_end == '':
+            tong_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=tomorrow_start).exclude(nhap_hang__bao_hiem=False).values("thuoc__ten_thuoc").annotate(so_luong=Sum('so_luong')).order_by('thuoc__ten_thuoc').annotate(c = Count('thuoc__ten_thuoc'))
+            list_nhap_hang = []
+            for i in tong_nhap_hang:
+                list_nhap_hang.append(i)
+            response = {
+                'data' : list_nhap_hang,
+            }
+            
+            return Response(response)
+        # danh_sach_dich_vu = PhanKhoaKham.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start).values('dich_vu_kham__ten_dvkt').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__ten_dvkt').annotate(dich_vu_kham_count = Count('dich_vu_kham__ten_dvkt'))
+
+
+            response = {
+                'status': 200,
+                'message': 'Thanh cong'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+        # data = {
+        #     'range_start' : range_start,
+        #     'range_end' : range_end,
+        # }
+
+        # return render(request, 'phong_tai_chinh/bao_cao_thuoc.html')

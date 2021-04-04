@@ -1,4 +1,4 @@
-from finance.models import HoaDonChuoiKham, HoaDonThuoc, HoaDonLamSang
+from finance.models import HoaDonChuoiKham, HoaDonNhapHang, HoaDonThuoc, HoaDonLamSang, NhapHang
 from medicine.serializers import CongTySerializer, ThuocSerializer, ThuocSerializerSimple
 # from finance.serializers import HoaDonChuoiKhamSerializer, HoaDonThuocSerializer
 from os import set_inheritable
@@ -894,3 +894,19 @@ class StaffUserSerializer(serializers.ModelSerializer):
             'chuc_nang',
             'ngay_sinh',
         )
+
+class HoaDonNhapHangSerializer(serializers.ModelSerializer):
+    nguoi_phu_trach = UserSerializerSimple()
+    class Meta:
+        model = HoaDonNhapHang
+        fields=(
+            'nguoi_phu_trach',
+            'ma_hoa_don',
+            'thoi_gian_tao',
+        )
+class NhapHangSerializer(serializers.ModelSerializer):
+    thuoc = ThuocSerializerSimple()
+    hoa_don = HoaDonNhapHangSerializer()
+    class Meta:
+        model = NhapHang
+        fields= '__all__'

@@ -250,8 +250,8 @@ class NhapHang(models.Model):
     so_luong = models.PositiveIntegerField(null=True, blank=True)
     bao_hiem = models.BooleanField(default=False)
 
-    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
-    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+    thoi_gian_tao = models.DateTimeField(null=True, blank=True, auto_now_add = True)
+    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True, auto_now = True)
     class Meta:
         verbose_name = "Nhập Hàng"
         

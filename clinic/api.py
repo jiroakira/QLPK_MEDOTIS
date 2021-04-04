@@ -1,7 +1,8 @@
 from finance.models import (
     HoaDonChuoiKham, 
     HoaDonThuoc, 
-    HoaDonLamSang
+    HoaDonLamSang,
+    NhapHang
 )
 from finance.serializers import HoaDonChuoiKhamSerializer
 from json import dump
@@ -30,7 +31,7 @@ from clinic.models import (
 )
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
-from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerFormatted, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuKhamBaoHiemSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer, GroupSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonLamSangSerializerFormatted, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, StaffUserSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
+from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer,DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer,DichVuKhamSerializer, DichVuKhamSerializerFormatted, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuKhamBaoHiemSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer, GroupSerializer,HoaDonChuoiKhamSerializerSimple, HoaDonLamSangSerializerFormatted, HoaDonThuocSerializer,HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer,LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer, MauPhieuSerializer, NhapHangSerializer,PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer,PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer,ProfilePhongChucNangSerializer, StaffUserSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer,UserLoginSerializer, UserSerializer, ChuoiKhamSerializer,UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer,UploadAvatarSerializer, AppointmentUpdateDetailSerializer,UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer,HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer,DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -2743,3 +2744,202 @@ class ApiListAllGroupOfUser(APIView):
             'data': serializer.data
         }
         return Response(response)
+
+class DanhSachBaoCaoTheoThoiGian(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+        # today_end = datetime.strptime(today_end, "%d-%m-%Y")
+        tomorrow_start = start + timedelta(1)
+
+        # print(start)
+        if range_end == '':
+
+            # tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=tomorrow_start).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+
+            # list_tong_tien = [x['total_spent'] for x in tong_tien_hoa_don_chuoi_kham_theo_thoi_gian]
+            # tong_tien_dich_vu_kham = sum(list_tong_tien)
+            
+            # tong_tien_lam_sang_theo_thoi_gian = HoaDonLamSang.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=tomorrow_start).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            # list_tong_tien_lam_sang = [x['total_spent'] for x in tong_tien_lam_sang_theo_thoi_gian]
+            # tong_tien_lam_sang = sum(list_tong_tien_lam_sang)
+
+            # tong_tien_dich_vu = tong_tien_dich_vu_kham + tong_tien_lam_sang
+            # tong_tien_dich_vu_formatted = "{:,}".format(int(tong_tien_dich_vu))
+
+            # tong_tien_hoa_don_thuoc_theo_thoi_gian = HoaDonThuoc.objects.filter( thoi_gian_tao__gt=start, thoi_gian_tao__lt=tomorrow_start).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            # list_tong_tien_don_thuoc = [x['total_spent'] for x in tong_tien_hoa_don_thuoc_theo_thoi_gian]
+
+            # tong_tien_don_thuoc = sum(list_tong_tien_don_thuoc)
+            # tong_tien_don_thuoc_formatted = "{:,}".format(int(tong_tien_don_thuoc))
+
+            # tong_doanh_thu = tong_tien_dich_vu + tong_tien_don_thuoc
+            # tong_doanh_thu_formatted = "{:,}".format(int(tong_doanh_thu))
+
+            # danh_sach_dich_vu = PhanKhoaKham.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start).values('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(dich_vu_kham_count = Count('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang'))
+            # list_tong_tien_without_format = [i['tong_tien'] for i in danh_sach_dich_vu]
+            # tong_tien_theo_phong = sum(list_tong_tien_without_format)
+            # tong_tien_theo_phong_formatted = "{:,}".format(int(tong_tien_theo_phong))
+
+            response = [
+                {   
+                    'type': 'bao_cao_nhap',
+                    'loai_bao_cao': 'Báo Cáo Nhập',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_doanh_thu_formatted
+                },
+                {   
+                    'type': 'bao_cao_xuat',
+                    'loai_bao_cao': 'Báo Cáo Xuất',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_dich_vu_formatted
+                },
+                {
+                    'type': 'bao_cao_ton',
+                    'loai_bao_cao': 'Báo Cáo Tồn',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_don_thuoc_formatted
+                },
+            ]
+            return Response(response)
+
+        else:
+
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+            print(end)
+            # tomorrow_end = end + timedelta(1)
+            if range_start == range_end:
+                end = end + timedelta(1)
+
+            # tong_tien_hoa_don_chuoi_kham_theo_thoi_gian = HoaDonChuoiKham.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lte=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+
+            # list_tong_tien = [x['total_spent'] for x in tong_tien_hoa_don_chuoi_kham_theo_thoi_gian]
+            # tong_tien_dich_vu_kham = sum(list_tong_tien)
+
+            # tong_tien_lam_sang_theo_thoi_gian = HoaDonLamSang.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lte=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            # list_tong_tien_lam_sang = [x['total_spent'] for x in tong_tien_lam_sang_theo_thoi_gian]
+            # tong_tien_lam_sang = sum(list_tong_tien_lam_sang)
+
+            # tong_tien_dich_vu = tong_tien_dich_vu_kham + tong_tien_lam_sang
+            # tong_tien_dich_vu_formatted = "{:,}".format(int(tong_tien_dich_vu))
+
+            # tong_tien_hoa_don_thuoc_theo_thoi_gian = HoaDonThuoc.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lte=end).exclude(tong_tien__isnull=True).annotate(day=TruncDay("thoi_gian_tao")).values("day").annotate(c=Count("id")).annotate(total_spent=Sum(F("tong_tien")))
+            # list_tong_tien_don_thuoc = [x['total_spent'] for x in tong_tien_hoa_don_thuoc_theo_thoi_gian]
+
+            # tong_tien_don_thuoc = sum(list_tong_tien_don_thuoc)
+            # tong_tien_don_thuoc_formatted = "{:,}".format(int(tong_tien_don_thuoc))
+
+            # tong_doanh_thu = tong_tien_dich_vu + tong_tien_don_thuoc
+            # tong_doanh_thu_formatted = "{:,}".format(int(tong_doanh_thu))
+            
+            # danh_sach_dich_vu = PhanKhoaKham.objects.filter(thoi_gian_tao__lte=end, thoi_gian_tao__gt=start).values('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang').annotate(dich_vu_kham_count = Count('dich_vu_kham__phong_chuc_nang__ten_phong_chuc_nang'))
+
+            # list_tong_tien_without_format = [i['tong_tien'] for i in danh_sach_dich_vu]
+            # tong_tien_theo_phong = sum(list_tong_tien_without_format)
+            # tong_tien_theo_phong_formatted = "{:,}".format(int(tong_tien_theo_phong))
+
+            response = [
+                {   
+                    'type': 'bao_cao_nhap',
+                    'loai_bao_cao': 'Báo Cáo Nhập',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': end,
+                    # 'tong_tien': tong_doanh_thu_formatted
+                },
+                {   
+                    'type': 'bao_cao_xuat',
+                    'loai_bao_cao': 'Báo Cáo Xuất',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': end,
+                    # 'tong_tien': tong_tien_dich_vu_formatted
+                },
+                {
+                    'type': 'bao_cao_ton',
+                    'loai_bao_cao': 'Báo Cáo Tồn',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': end,
+                    # 'tong_tien': tong_tien_don_thuoc_formatted
+                },
+            ]
+            return Response(response)
+       
+class DanhSachNhungThuocDuocNhap(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+        end = datetime.strptime(range_end, "%d-%m-%Y")
+
+        tomorrow_start = start + timedelta(1)
+
+        if range_end == '':
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
+
+            # serializer = NhapHangSerializer(danh_sach_nhap_hang, many=True, context={'request': request})
+            # data = serializer.data
+
+            # return Response(data)
+            list_nhap_hang = []
+
+            for i in danh_sach_nhap_hang:
+                list_nhap_hang.append(i)
+            response = {
+                'data' : list_nhap_hang,
+            }
+
+            return Response(response)
+        else: 
+            danh_sach_nhap_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
+            
+            # serializer = NhapHangSerializer(danh_sach_nhap_hang, many=True, context={'request': request})
+            # data = serializer.data
+
+            # return Response(data)
+            list_nhap_hang = []
+
+            for i in danh_sach_nhap_hang:
+                list_nhap_hang.append(i)
+            response = {
+                'data' : list_nhap_hang,
+            }
+
+            return Response(response)
+
+class DanhSachNhungThuocDuocXuat(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+        end = datetime.strptime(range_end, "%d-%m-%Y")
+
+        tomorrow_start = start + timedelta(1)
+
+        if range_end == '':
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
+            list_xuat_hang = []
+
+            for i in danh_sach_xuat_hang:
+                list_xuat_hang.append(i)
+            response = {
+                'data' : list_xuat_hang,
+            }
+
+            return Response(response)
+        else:
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
+            list_xuat_hang = []
+
+            for i in danh_sach_xuat_hang:
+                list_xuat_hang.append(i)
+            response = {
+                'data' : list_xuat_hang,
+            }
+
+            return Response(response)
+    
+# class DanhSachThuocDuocTon(APIView):
