@@ -2946,9 +2946,3 @@ class DanhSachNhungThuocDuocXuat(APIView):
             }
 
             return Response(response)
-
-class DanhSachNhungThuocTon(APIView):
-    def get(self, request, format=None):
-        
-        pass
-# class DanhSachThuocDuocTon(APIView):

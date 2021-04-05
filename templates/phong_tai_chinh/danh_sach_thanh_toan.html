@@ -609,17 +609,34 @@ var KTDatatableRemoteAjaxDemo = function() {
                     return '<span class="label font-weight-bold label-lg ' + status[row.trang_thai].class + ' label-inline">' + status[row.trang_thai].title + '</span>';
                 },
             }, {
-                field: 'Actions',
-                title: 'Thao tác',
+                field: 'HoaDonThuoc',
+                title: 'Hóa Đơn Thuốc',
                 sortable: false,
                 width: 125,
                 overflow: 'visible',
                 autoHide: false,
+                textAlign: 'center',
                 template: function(row) {
-                    
                     return `
                         {% if perms.clinic.can_checkout_medicine_receipt %}
                         <a href="/phong_tai_chinh/hoa_don_thuoc/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
+                            Hóa Đơn
+                        </a>
+                        {% endif %}
+                    `;
+                },
+            }, {
+                field: 'HoaDonTPCN',
+                title: 'Hóa Đơn TPCN',
+                sortable: false,
+                width: 125,
+                overflow: 'visible',
+                autoHide: false,
+                textAlign: 'center',
+                template: function(row) {
+                    return `
+                        {% if perms.clinic.can_checkout_medicine_receipt %}
+                        <a href="/phong_tai_chinh/hoa_don_tpcn/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
                             Hóa Đơn
                         </a>
                         {% endif %}

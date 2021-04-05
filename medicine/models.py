@@ -156,6 +156,13 @@ class Thuoc(models.Model):
                 return True 
             else: 
                 return False
+    
+    @property
+    def check_loai_thuoc(self):
+        if self.loai_thuoc == '5':
+            return True
+        else:
+            return False
 
     def get_don_gia(self):
         don_gia = "{:,}".format(float(self.don_gia))

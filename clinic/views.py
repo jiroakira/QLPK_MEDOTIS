@@ -4717,21 +4717,43 @@ def xuat_bao_cao_ton(request, *args, **kwargs):
         response = {'message': 'oke'} 
     return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
 
-            # response = {
-            #     'data' : list_nhap_hang,
-            # }
-            
-            # return Response(response)
-            
-            # response = {
-            #     'status': 200,
-            #     'message': 'Thanh cong'
-            # }
-            # return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+@login_required(login_url='/dang_nhap/')
+def hoa_don_tpcn(request, **kwargs):
+    id_don_thuoc = kwargs.get('id_don_thuoc')
+    don_thuoc = DonThuoc.objects.get(id = id_don_thuoc)
+    danh_sach_thuoc = don_thuoc.ke_don.all()
+    
+    bao_hiem = []
+    tong_tien = []
+    for thuoc_instance in danh_sach_thuoc:
+        if thuoc_instance.bao_hiem:
+            gia = int(thuoc_instance.thuoc.don_gia_tt) * \
+                thuoc_instance.so_luong
+            bao_hiem.append(gia)
+        else:
+            gia = int(thuoc_instance.thuoc.don_gia_tt) * \
+                thuoc_instance.so_luong
+        
+        tong_tien.append(gia)
 
-        # data = {
-        #     'range_start' : range_start,
-        #     'range_end' : range_end,
-        # }
+    total_spent = sum(tong_tien)
+    tong_bao_hiem = sum(bao_hiem)
+    thanh_tien = total_spent - tong_bao_hiem
+    
+    total_spent = sum(tong_tien)
+    tong_tien.clear()
+    bao_hiem.clear()
+    
+    phong_chuc_nang = PhongChucNang.objects.all()
+    phong_kham  = PhongKham.objects.all().first()
 
-        # return render(request, 'phong_tai_chinh/bao_cao_thuoc.html')
+    data = {
+        'danh_sach_thuoc': danh_sach_thuoc,
+        'tong_tien'      : total_spent,
+        'don_thuoc'      : don_thuoc,
+        'phong_chuc_nang': phong_chuc_nang,
+        'thanh_tien'     : thanh_tien,
+        'tong_bao_hiem'  : tong_bao_hiem,
+        'phong_kham'     : phong_kham,
+    }
+    return render(request, 'phong_tai_chinh/hoa_don_thuc_pham_ho_tro.html', context=data)
