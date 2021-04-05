@@ -2895,7 +2895,7 @@ class DanhSachNhungThuocDuocNhap(APIView):
 
             return Response(response)
         else: 
-            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(id=F('thuoc__id')).annotate(sum=Sum('so_luong')).annotate(count=Count('thuoc__ten_thuoc'))
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(id=F('thuoc__id')).annotate(so_luong=Sum('so_luong')).annotate(count=Count('thuoc__ten_thuoc')).annotate(bao_hiem=F('bao_hiem'))
             
             # serializer = NhapHangSerializer(danh_sach_nhap_hang, many=True, context={'request': request})
             # data = serializer.data
@@ -2905,7 +2905,7 @@ class DanhSachNhungThuocDuocNhap(APIView):
 
             for i in danh_sach_nhap_hang:
                 id_thuoc = i['id']
-                so_luong = i['sum']
+                so_luong = i['so_luong']
 
                 list_nhap_hang.append(i)
             
@@ -2936,7 +2936,7 @@ class DanhSachNhungThuocDuocXuat(APIView):
 
             return Response(response)
         else:
-            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id')).annotate(id=thuoc__id)
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem = F('bao_hiem'))
             list_xuat_hang = []
 
             for i in danh_sach_xuat_hang:
@@ -2946,5 +2946,9 @@ class DanhSachNhungThuocDuocXuat(APIView):
             }
 
             return Response(response)
-    
+
+class DanhSachNhungThuocTon(APIView):
+    def get(self, request, format=None):
+        
+        pass
 # class DanhSachThuocDuocTon(APIView):

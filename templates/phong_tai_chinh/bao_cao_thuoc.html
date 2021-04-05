@@ -139,17 +139,26 @@
         <div class="modal-content" style="min-height: 590px;">
             <div class="modal-header py-5">
                 <h5 class="modal-title">
-                    Chi Tiết Doanh Thu Thuốc
-                    <span class="d-block text-muted font-size-sm">Danh Sách Các Hóa Đơn Thuốc</span>
+                    Chi Tiết Hóa Đơn Xuất Hàng
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <!--begin: Datatable Dich Vu-->
-                <div class="datatable datatable-bordered datatable-head-custom" id="kt_datatable_sub_thuoc"></div>
-                <!--end: Datatable-->
+                <div class="card card-custom">
+                    <div class="card-header flex-wrap border-0 pb-0">
+                        <div class="card-title">
+                            <h3 class="card-label">Danh Sách Những Thuốc Được Nhập
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!--begin: Datatable Dich Vu-->
+                        <div class="datatable datatable-bordered datatable-head-custom" id="kt_datatable_sub_thuoc"></div>
+                        <!--end: Datatable-->
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-primary font-weight-bold text-uppercase" data-dismiss="modal">Đóng</button>
@@ -166,20 +175,70 @@
             <div class="modal-header py-5">
                 <h5 class="modal-title">
                     Báo Cáo Tồn Thuốc Theo Thời Gian
-                    <span class="d-block text-muted font-size-sm">Danh Sách Thuốc</span>
+                    <span class="d-block text-muted font-size-sm">Chỉ tồn những thuốc đã được xuất khỏi kho thuốc</span>
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <!--begin: Datatable Dich Vu-->
-                <div class="datatable datatable-bordered datatable-head-custom" id="sub_ton_hang"></div>
-                <!--end: Datatable-->
+                <!--begin::Entry-->
+                <div class="d-flex flex-column-fluid">
+                    <!--begin::Container-->
+                    <div class="container">
+                        <!-- begin::Card-->
+                        <div class="card card-custom overflow-hidden">
+                            <!-- begin: Invoice-->
+                            <div class="card-body p-0" id="hoa_don_thuoc">
+                                <!-- begin: Invoice header-->
+                                <div class="row justify-content-center bgi-no-repeat py-8 px-8 py-md-27 px-md-0" style="background-image: url({% static 'assets/media/bg/bg-6.jpg' %});">
+                                    <div class="col-md-9">
+                                        <div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
+                                            <h1 class="display-4 text-white font-weight-boldest mb-10">HÓA ĐƠN TỒN THUỐC</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end: Invoice header-->
+                                <!-- begin: Invoice body-->
+                                <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
+                                    <div class="col-md-9">
+                                        <div class="table-responsive">
+                                            <table class="table" id="invoice-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="pl-0 font-weight-bold text-muted text-uppercase">Tên Thuốc</th>
+                                                        <th class="text-center font-weight-bold text-muted text-uppercase">Số lượng</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end: Invoice body-->
+                            </div>
+                            <!-- end: Invoice-->
+                            <!-- begin: Invoice action-->
+                            <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
+                                <div class="col-md-9">
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-light-primary font-weight-bold text-uppercase" data-dismiss="modal">Đóng</button>
+                                        <button type="button" class="btn btn-light-primary font-weight-bold" id="printDiv">In Hóa Đơn</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end: Invoice action-->
+                        </div>
+                        <!-- end::Card-->
+                    </div>
+                    <!--end::Container-->
+                </div>
+                <!--end::Entry-->
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light-primary font-weight-bold text-uppercase" data-dismiss="modal">Đóng</button>
-            </div>
+            {% comment %} <div class="modal-footer">
+                
+            </div> {% endcomment %}
         </div>
     </div>
 </div>
@@ -256,19 +315,23 @@ var KTDatatableRemoteAjaxDemo = function() {
             },
 
             // columns definition
-            columns: [{
+            columns: [
+            {% comment %} {
                 field: 'id',
                 title: 'Mã',
                 sortable: 'asc',
                 width: 100,
                 selector: false,
                 textAlign: 'center',
-            }, {
-                field: 'thuoc.ten_thuoc',
+            },  {% endcomment %}
+            {
+                field: 'thuoc__ten_thuoc',
                 title: 'Thuốc',
-            }, {
+            }, 
+            {
                 field: 'so_luong',
                 title: 'Số Lượng',
+                textAlign: 'center'
             }, {
                 field: 'bao_hiem',
                 title: 'Bảo Hiểm',
@@ -280,19 +343,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                         return '<span class="label font-weight-bold label-lg label-light-warning label-inline">Dịch Vụ</span>';
                     }
                 }
-            }, {
-                field: 'thoi_gian_tao',
-                title: 'Thời Gian Tạo',
-                template: function(row) {
-                    var date = new Date(Date.parse(row.thoi_gian_tao))
-
-                    if(!row.thoi_gian_tao){
-                        return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
-                    } else {
-                        return date.toLocaleDateString('vi-VN')
-                    }
-                }
-            }],
+            }
+            ],
         });
 
         datatable_nhap_hang.hide();
@@ -325,7 +377,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 source: {
                     read: {
                         method: "GET",
-                        url: HOST_URL + '/api/danh_sach_doanh_thu_thuoc/',
+                        url: HOST_URL + '/api/danh_sach_nhung_thuoc_duoc_xuat/',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
                         map: function(raw) {
@@ -365,36 +417,37 @@ var KTDatatableRemoteAjaxDemo = function() {
             },
 
             // columns definition
-            columns: [{
-                field: 'ma_hoa_don',
-                title: 'Mã HĐ',
-                sortable: 'asc',
-                width: 80,
-                type: 'number',
-                selector: false,
+            columns: [
+           // {
+           //     field: 'thuoc__ten_thuoc',
+           //     title: 'Thuốc',
+           //     sortable: 'asc',
+           //     width: 80,
+           //     type: 'number',
+           //     selector: false,
+           //     textAlign: 'center',
+           // },
+            {
+                field: 'thuoc__ten_thuoc',
+                title: 'Thuốc',
+            },
+            {
+                field: 'so_luong',
+                title: 'Số Lượng',
+            },
+             {
+                field: 'bao_hiem',
+                title: 'Bảo Hiểm',
                 textAlign: 'center',
-            }, {
-                field: 'don_thuoc.benh_nhan.ho_ten',
-                title: 'Bệnh Nhân',
-            }, {
-                field: 'tong_tien',
-                title: 'Tổng Tiền',
-                template: function(row){
-                    return row.tong_tien
-                }
-            }, {
-                field: 'thoi_gian_tao',
-                title: 'Thời Gian Tạo',
                 template: function(row) {
-                    var date = new Date(Date.parse(row.thoi_gian_tao))
-
-                    if(!row.thoi_gian_tao){
-                        return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
+                    if(row.bao_hiem == true){
+                        return '<span class="label font-weight-bold label-lg label-light-success label-inline">Bảo Hiểm</span>';
                     } else {
-                        return date.toLocaleDateString('vi-VN')
+                        return '<span class="label font-weight-bold label-lg label-light-warning label-inline">Dịch Vụ</span>';
                     }
                 }
-            },],
+            }
+            ],
 
         });
 
@@ -417,14 +470,17 @@ var KTDatatableRemoteAjaxDemo = function() {
 
     };
 
-    var bao_cao_ton = function(range_start, range_end) {
-        var range_start = range_start
-        var range_end = range_end
+    var bao_cao_ton = function() {
+        $('#printDiv').on('click', function(){
+            var printContents = document.getElementById("hoa_don_thuoc").innerHTML;
+            var originalContents = document.body.innerHTML;
 
-        var ele = $('#sub_ton_hang')
-        var modal = $('#bao_cao_ton_chi_tiet')
+            document.body.innerHTML = printContents;
 
-        
+            window.print();
+
+            document.body.innerHTML = originalContents;
+        })
     }
 
     var table = function(range_start, range_end){
@@ -536,7 +592,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                     } else if (row.type == "bao_cao_ton"){
                         return `
                             <button type="button" class="btn btn-sm btn-clean" id="bao_cao_ton" title="Xem Chi Tiết">
-                                Xuất Báo Cáo
+                                Xem Báo Cáo
                             </button>
                         `;
                     } else {
@@ -565,12 +621,11 @@ var KTDatatableRemoteAjaxDemo = function() {
         })
 
         $('#kt_datatable').on('click', '#bao_cao_ton', function(){
-            {% comment %} var formData = new FormData()
-
+            var formData = new FormData()
             formData.append('range_start', range_start)
             formData.append('range_end', range_end)
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
-            window.location.href = "/xuat_bao_cao_ton/"+ range_start +"/"+ range_end +"/"
+            bao_cao_ton()
             $.ajax({
                 type: "POST",
                 url: "{% url 'xuat_bao_cao_ton' %}",
@@ -579,11 +634,26 @@ var KTDatatableRemoteAjaxDemo = function() {
                 processData: false,
                 contentType: false,
                 success: function(response){
-
+                    $('#bao_cao_ton_chi_tiet').modal('show')
+                    console.log(response.list_ton)
+                    $(response.list_ton).each(function(){
+                        $('#invoice-table tbody').append(
+                            `
+                            <tr class="font-weight-boldest font-size-lg">
+                                <td class="pl-0 pt-7">
+                                    <span>${this.ten_thuoc}</span>
+                                </td>
+                                <td class="text-center pt-7">
+                                    <span>${this.so_luong}</span>
+                                </td>
+                            </tr>
+                            `
+                        )
+                    })
                 },
                 error: function(response){
                 }
-            }) {% endcomment %}
+            }) 
         })
 
     }

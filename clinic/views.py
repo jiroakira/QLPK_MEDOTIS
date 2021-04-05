@@ -4671,23 +4671,58 @@ def xuat_bao_cao_ton(request, *args, **kwargs):
         range_end = request.POST.get('range_end')
 
         start = datetime.strptime(range_start, "%d-%m-%Y")
-        start = datetime.strftime("%Y-%m-%d")
         end = datetime.strptime(range_end, "%d-%m-%Y")
-        end = datetime.strftime("%Y-%m-%d")
 
         tomorrow_start = start + timedelta(1)
 
         if range_end == '':
-            tong_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__gt=start, thoi_gian_tao__lt=tomorrow_start).exclude(nhap_hang__bao_hiem=False).values("thuoc__ten_thuoc").annotate(so_luong=Sum('so_luong')).order_by('thuoc__ten_thuoc').annotate(c = Count('thuoc__ten_thuoc'))
+            tong_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__gte=start, thoi_gian_tao__lt=tomorrow_start).exclude(bao_hiem=False).values("thuoc__ten_thuoc").annotate(id=F('thuoc__id')).annotate(so_luong=Sum('so_luong')).annotate(c = Count('thuoc__ten_thuoc')).annotate(bao_hiem=F('bao_hiem'))
+            
             list_nhap_hang = []
+
             for i in tong_nhap_hang:
                 list_nhap_hang.append(i)
-            response = {
-                'data' : list_nhap_hang,
-            }
-            
-            return Response(response)
 
+            print(list_nhap_hang)
+            
+            pass 
+        else:
+            tong_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__gte=start, thoi_gian_tao__lt=end).exclude(bao_hiem=False).values("thuoc__ten_thuoc").annotate(id=F('thuoc__id')).annotate(so_luong=Sum('so_luong')).annotate(c = Count('thuoc__ten_thuoc')).annotate(bao_hiem=F('bao_hiem'))
+            
+            tong_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__gte=start, thoi_gian_tao__lt=end).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(id=F('thuoc__id')).annotate(so_luong=Sum('so_luong')).annotate(c = Count('thuoc__ten_thuoc')).annotate(bao_hiem=F('bao_hiem'))
+
+            list_ton = []
+
+            for i in tong_nhap_hang:
+                for j in tong_xuat_hang:
+                    if j['id'] in i.values():
+                        so_luong_nhap = i['so_luong']
+                        so_luong_xuat = j['so_luong']
+                        so_luong_ton = so_luong_nhap - so_luong_xuat
+                        ten_thuoc = j['thuoc__ten_thuoc']
+                        d = {}
+                        d['so_luong'] = so_luong_ton
+                        d['ten_thuoc'] = ten_thuoc
+                        list_ton.append(d)
+                        
+                        
+            print(list_ton)
+
+            response = {
+                'list_ton' : list_ton,
+            }
+        
+        return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+    else:
+        response = {'message': 'oke'} 
+    return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
+
+            # response = {
+            #     'data' : list_nhap_hang,
+            # }
+            
+            # return Response(response)
+            
             # response = {
             #     'status': 200,
             #     'message': 'Thanh cong'
