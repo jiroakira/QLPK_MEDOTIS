@@ -1434,13 +1434,23 @@ def xuat(request, id=None, so_luong=None):
     try:
         thuoc = Thuoc.objects.filter(id=id)
         if thuoc[0].kha_dung:
-            thuoc.update(so_luong_kha_dung=F('so_luong_kha_dung') - so_luong)
+            thuoc[0].update(so_luong_kha_dung=F('so_luong_kha_dung') - so_luong)
             ThuocLog.objects.create(thuoc=thuoc[0], ngay=timezone.now(), quy_trinh=ThuocLog.OUT, so_luong=so_luong)
         else:
             return Response({"error": True, "message": "So Luong Thuoc Kha Dung = 0, Khong The Xuat Thuoc"})  
         return Response({"error": False, "message": f"Xuat Thuoc Thanh Cong: {so_luong} {thuoc[0].ten_thuoc}"})
     except:
         return Response({"error": True, "message": "Loi Tao Log Thuoc"})
+
+@transaction.atomic
+def nhap(request, id=None, so_luong=None):
+    try:
+        thuoc = Thuoc.objects.filter(id=id).first()
+        thuoc.update(so_luong_kha_dung=F('so_luong_kha_dung') + so_luong)
+        ThuocLog.objects.create(thuoc=thuoc, ngay=timezone.now(), quy_trinh=ThuocLog.IN, so_luong=so_luong)
+        return Response({'error': False, 'message': 'Nhập Thuốc Thành Công'})
+    except:
+        return Response({'error': True, 'message': 'Không Thể Nhập Thuốc'})
 
 class ThanhToanHoaDonThuocToggle(APIView):
     def get(self, request, format=None):
@@ -4627,9 +4637,9 @@ def store_nhap_thuoc(request):
         for i in data:
             thuoc = Thuoc.objects.only('id').get(id=i['obj']['id'])
             so_luong = i['obj']['so_luong']
-            so_luong_kha_dung = thuoc.so_luong_kha_dung + int(so_luong)
-            thuoc.so_luong_kha_dung = so_luong_kha_dung
-            thuoc.save()
+            id = i['obj']['id']
+            
+            nhap(request, id = id, so_luong = so_luong)
 
             nhap_hang = NhapHang(hoa_don=hoa_don_nhap, thuoc=thuoc, so_luong=i['obj']['so_luong'], bao_hiem=i['obj']['bao_hiem'])
             bulk_create_data.append(nhap_hang)
@@ -4677,14 +4687,12 @@ def xuat_bao_cao_ton(request, *args, **kwargs):
             }
             
             return Response(response)
-        # danh_sach_dich_vu = PhanKhoaKham.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gte=start).values('dich_vu_kham__ten_dvkt').annotate(tong_tien=Sum('dich_vu_kham__don_gia')).order_by('dich_vu_kham__ten_dvkt').annotate(dich_vu_kham_count = Count('dich_vu_kham__ten_dvkt'))
 
-
-            response = {
-                'status': 200,
-                'message': 'Thanh cong'
-            }
-            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+            # response = {
+            #     'status': 200,
+            #     'message': 'Thanh cong'
+            # }
+            # return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
         # data = {
         #     'range_start' : range_start,

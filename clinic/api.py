@@ -2878,7 +2878,7 @@ class DanhSachNhungThuocDuocNhap(APIView):
         tomorrow_start = start + timedelta(1)
 
         if range_end == '':
-            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
 
             # serializer = NhapHangSerializer(danh_sach_nhap_hang, many=True, context={'request': request})
             # data = serializer.data
@@ -2888,13 +2888,14 @@ class DanhSachNhungThuocDuocNhap(APIView):
 
             for i in danh_sach_nhap_hang:
                 list_nhap_hang.append(i)
+                
             response = {
                 'data' : list_nhap_hang,
             }
 
             return Response(response)
         else: 
-            danh_sach_nhap_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(id=F('thuoc__id')).annotate(sum=Sum('so_luong')).annotate(count=Count('thuoc__ten_thuoc'))
             
             # serializer = NhapHangSerializer(danh_sach_nhap_hang, many=True, context={'request': request})
             # data = serializer.data
@@ -2903,7 +2904,11 @@ class DanhSachNhungThuocDuocNhap(APIView):
             list_nhap_hang = []
 
             for i in danh_sach_nhap_hang:
+                id_thuoc = i['id']
+                so_luong = i['sum']
+
                 list_nhap_hang.append(i)
+            
             response = {
                 'data' : list_nhap_hang,
             }
@@ -2931,7 +2936,7 @@ class DanhSachNhungThuocDuocXuat(APIView):
 
             return Response(response)
         else:
-            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id'))
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id')).annotate(id=thuoc__id)
             list_xuat_hang = []
 
             for i in danh_sach_xuat_hang:
