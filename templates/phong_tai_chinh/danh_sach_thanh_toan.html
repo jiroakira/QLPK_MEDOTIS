@@ -610,7 +610,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 },
             }, {
                 field: 'HoaDonThuoc',
-                title: 'Hóa Đơn Thuốc',
+                title: 'Hóa Đơn Thuốc + TPCN',
                 sortable: false,
                 width: 125,
                 overflow: 'visible',
@@ -625,24 +625,26 @@ var KTDatatableRemoteAjaxDemo = function() {
                         {% endif %}
                     `;
                 },
-            }, {
-                field: 'HoaDonTPCN',
-                title: 'Hóa Đơn TPCN',
-                sortable: false,
-                width: 125,
-                overflow: 'visible',
-                autoHide: false,
-                textAlign: 'center',
-                template: function(row) {
-                    return `
-                        {% if perms.clinic.can_checkout_medicine_receipt %}
-                        <a href="/phong_tai_chinh/hoa_don_tpcn/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
-                            Hóa Đơn
-                        </a>
-                        {% endif %}
-                    `;
-                },
-            }],
+            }, 
+            //{
+            //    field: 'HoaDonTPCN',
+            //    title: 'Hóa Đơn TPCN',
+            //    sortable: false,
+            //    width: 125,
+            //    overflow: 'visible',
+            //    autoHide: false,
+            //    textAlign: 'center',
+            //    template: function(row) {
+            //        return `
+            //            {% if perms.clinic.can_checkout_medicine_receipt %}
+            //            <a href="/phong_tai_chinh/hoa_don_tpcn/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
+            //                Hóa Đơn
+            //            </a>
+            //            {% endif %}
+            //        `;
+            //    },
+            //}
+            ],
 
         });
 
