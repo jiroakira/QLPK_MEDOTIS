@@ -44,7 +44,7 @@
                     <div class="row justify-content-center bgi-size-cover bgi-no-repeat py-8 px-8 py-md-27 px-md-0" style="background-image: url({% static 'assets/media/bg/bg-6.jpg' %});">
                         <div class="col-md-9">
                             <div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
-                                <h1 class="display-4 text-white font-weight-boldest mb-10">HÓA ĐƠN THUỐC</h1>
+                                <h1 class="display-4 text-white font-weight-boldest mb-10">HÓA ĐƠN THUỐC + THỰC PHẨM HỖ TRỢ</h1>
                                 <div class="d-flex flex-column align-items-md-end px-0">
                                     <!--begin::Logo-->
                                     <a href="javascript:;" class="mb-5">
@@ -80,10 +80,14 @@
                         </div>
                     </div>
                     <!-- end: Invoice header-->
+
                     <!-- begin: Invoice body-->
                     <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
                         <div class="col-md-9">
                             <div class="table-responsive">
+                                <h3 class="card-label mb-2 text-success">
+                                    Đơn thuốc
+                                </h3>
                                 <table class="table" id="invoice-table">
                                     <thead>
                                         <tr>
@@ -98,6 +102,7 @@
                                     </thead>
                                     <tbody>
                                     {% for thuoc in danh_sach_thuoc %}
+                                        {% if not thuoc.thuoc.check_loai_thuoc %}
                                         <tr class="font-weight-boldest font-size-lg">
                                             <td class="pl-0 pt-7">{{ thuoc.thuoc.ten_thuoc }}</td>
                                             <td class="text-right text-center pt-7">
@@ -119,6 +124,7 @@
                                                 {{ thuoc.gia_ban }}
                                             </td>
                                         </tr>
+                                        {% endif %}
                                     {% endfor %}
                                     </tbody>
                                     {% comment %} <tfoot>
@@ -137,6 +143,59 @@
                         </div>
                     </div>
                     <!-- end: Invoice body-->
+
+                    <!-- begin: Invoice body TPCN-->
+                    <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <h3 class="card-label mb-2 text-primary">
+                                    Đơn thực phẩm hỗ trợ
+                                </h3> 
+                                <table class="table" id="invoice-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="pl-0 font-weight-bold text-muted text-uppercase">Tên Thực Phẩm Hỗ Trợ</th>
+                                            
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">Áp dụng bảo hiểm</th>
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">Đơn giá</th>
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">Số lượng</th>
+                                            <th class="text-center font-weight-bold text-muted text-uppercase">DVT</th>
+                                            <th class="text-right pr-0 font-weight-bold text-muted text-uppercase">Tổng tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for thuoc in danh_sach_thuoc %}
+                                        {% if thuoc.thuoc.check_loai_thuoc %}
+                                        <tr class="font-weight-boldest font-size-lg">
+                                            <td class="pl-0 pt-7">{{ thuoc.thuoc.ten_thuoc }}</td>
+                                            <td class="text-right text-center pt-7">
+                                                {% if thuoc.bao_hiem == True %}
+                                                    Đã áp dụng
+                                                {% else %}
+                                                    Chưa áp dụng
+                                                {% endif %}    
+                                                <!--{{ thuoc.bao_hiem }}-->
+                                            </td>
+                                            <td class="format-gia text-center pt-7" data-id={{thuoc.thuoc.don_gia_tt}}>
+                                                {{ thuoc.thuoc.don_gia_tt }}
+                                            </td>
+                                            <td class="text-center pt-7">{{ thuoc.so_luong }}</td>
+                                            <td class="text-center pt-7" data-id={{thuoc.thuoc.don_vi_tinh}}>
+                                                {{ thuoc.thuoc.don_vi_tinh }}
+                                            </td>
+                                            <td class="format-gia text-danger pr-0 pt-7 text-right" data-id={{thuoc.gia_ban}}>
+                                                {{ thuoc.gia_ban }}
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end: Invoice body-->
+
                     <!-- begin: Invoice footer-->
                     <div class="row justify-content-center bg-gray-100 py-8 px-8 py-md-10 px-md-0">
                         <div class="col-md-9">
@@ -230,7 +289,7 @@
     $('#button-payment').on('click', function(){
         var id_don_thuoc = $(this).attr('data-id')
         var tong_tien = $(this).attr('data-tong-tien')
-        console.log(tong_tien)
+        {% comment %} console.log(tong_tien) {% endcomment %}
         $.ajax({
             type: "GET",
             url: "{% url 'thanh_toan_don_thuoc_api' %}",
