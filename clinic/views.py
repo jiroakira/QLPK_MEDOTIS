@@ -1080,10 +1080,12 @@ def upload_view_lam_sang(request, **kwargs):
 def phong_tai_chinh_danh_sach_cho(request):
     trang_thai = TrangThaiChuoiKham.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_kham = PhongKham.objects.all().first()
 
     data = {
         'trang_thai' : trang_thai,
         'phong_chuc_nang' : phong_chuc_nang,
+        'phong_kham' : phong_kham,
     }
     return render(request, 'phong_tai_chinh/danh_sach_thanh_toan.html', context= data)
 
