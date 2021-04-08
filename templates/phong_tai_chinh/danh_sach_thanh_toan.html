@@ -174,6 +174,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" id="printDiv" class="btn btn-light-primary font-weight-bold">In</button>
                 <button type="button" class="btn btn-light-primary font-weight-bold text-uppercase" data-dismiss="modal">Hủy</button>
                 <button type="button" id="btn_submit" class="btn btn-primary font-weight-bold text-uppercase">Xác nhận</button>
             </div>
@@ -181,6 +182,91 @@
     </div>
 </div>
 <!--end::Modal-->
+
+<!-- begin: Invoice-->
+<div class="card-body p-0" style="display: none;" id="hoa_don_dich_vu">
+    <!-- begin: Invoice header-->
+    <div class="row justify-content-center bgi-size-cover bgi-no-repeat py-8 px-8 py-md-27 px-md-0" style="background-image: url({% static 'assets/media/bg/bg-6.jpg' %});">
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
+                <h1 class="display-4 text-white font-weight-boldest mb-10">Hóa Đơn Khám Lâm Sàng</h1>
+                <div class="d-flex flex-column align-items-md-end px-0">
+                    <!--begin::Logo-->
+                    <a href="javascript:;" class="mb-5">
+                        <img src="{{phong_kham.logo.url}}" class="bgi-size-cover min-h-100px w-100px" />
+                    </a>
+                    <!--end::Logo-->
+                    <span class="text-white d-flex flex-column align-items-md-end opacity-70">
+                        <span>Phòng Khám {{phong_kham.ten_phong_kham}}</span>
+                        <span>Địa chỉ: {{phong_kham.dia_chi}}</span>
+                        <span>Hotline: {{phong_kham.so_dien_thoai}}</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end: Invoice header-->
+    <!-- begin: Invoice body-->
+    <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
+        <div class="col-md-9">
+            <div class="table-responsive">
+                <table class="table" id="invoice-table">
+                    <thead>
+                        <tr>
+                            <th class="pl-0 font-weight-bold text-muted text-uppercase">Dịch Vụ Khám</th>
+                            <th class="text-center font-weight-bold text-muted text-uppercase text-danger ">Thanh Toán</th>
+                            <th class="text-left pr-0 font-weight-bold text-muted text-uppercase">DVT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="font-weight-boldest font-size-lg">
+                            <td class="pl-0 pt-7">Khám Lâm Sàng</td>
+                            <td class="format-gia text-center pt-7" id="tien_lam_sang"></td>
+                            <td class="text-left pt-7">VND</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- end: Invoice body-->
+    <!-- begin: Invoice footer-->
+    <div class="row justify-content-center bg-gray-100 py-8 px-8 py-md-10 px-md-0">
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between flex-column flex-md-row font-size-lg">
+                <div class="d-flex flex-column mb-10 mb-md-0">
+                    <div class="font-weight-bolder font-size-lg mb-3">THÔNG TIN CHUYỂN KHOẢN</div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="mr-15 font-weight-bold">Chủ Khoản:</span>
+                        <span class="text-right">{{phong_kham.chu_khoan}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="mr-15 font-weight-bold">Số Tài Khoản:</span>
+                        <span class="text-right">{{phong_kham.so_tai_khoan}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="mr-15 font-weight-bold">Ngân Hàng:</span>
+                        <span class="text-right">{{phong_kham.thong_tin_ngan_hang}}</span>
+                    </div>
+                </div>
+                <div class="d-flex flex-column text-md-right">
+                    <div class="border-bottom border-bottom-warning w-100 mb-4"></div>
+                    <span class="font-size-lg font-weight-bolder mb-1">TIỀN BỆNH NHÂN CẦN THANH TOÁN</span>
+                    {% comment %} <span class="format-tien font-size-h2 font-weight-boldest text-danger mb-1">{{tong_tien}}</span> {% endcomment %}
+                    <span id="format-money-thanh-tien" class="font-size-h2 font-weight-boldest text-danger mb-1"></span>
+                    <span>VND</span>
+                </div>
+                {% comment %} <div class="d-flex flex-column text-md-right">
+                    <span class="font-size-lg font-weight-bolder mb-1">TỔNG TIỀN</span>
+                    <span id="format-money-tong-tien" class="font-size-h2 font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}" data-hoa-don="{{chuoi_kham.hoa_don_dich_vu.ma_hoa_don}}">{{tong_tien}}</span>
+                    <span>VND</span>
+                </div> {% endcomment %}
+            </div>
+        </div>
+    </div>
+    <!-- end: Invoice footer-->
+</div>
+<!-- end: Invoice-->
 
 {% endblock content %}
 
@@ -282,7 +368,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 // callback function support for column rendering
                 template: function(row) {
                     var trang_thai = {
-                        2: {
+                        4: {
                             'title': 'Chờ Thanh Toán LS',
                             'class': ' label-light-warning'
                         },
@@ -300,7 +386,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 template: function(row) {
                     
                     return `
-                        {% if perms.clinic.can_checkout_clinical_receipt %}
+                        {% if perms.finance.can_checkout_clinical_receipt %}
                         <a href="javascript:;" class="btn btn-sm btn-clean mr-2 btn-thanh-toan" data-ten="${row.benh_nhan.ho_ten}" data-id="${row.id}" title="Edit details">
                             Thanh toán
                         </a>
@@ -319,6 +405,69 @@ var KTDatatableRemoteAjaxDemo = function() {
 		$('#kt_datatable_search_status').on('change', function() {
             datatable.search($(this).val().toLowerCase(), 'Status');
         });
+        
+        var afterPrint = function(){
+            $('#lam_sang_modal').modal('hide');
+        }
+
+        $('#printDiv').on('click', function(){
+            {% comment %} var tien_lam_sang = $('#gia_tien').val()
+            console.log(tien_lam_sang)
+            $('#hoa_don_dich_vu').find('#tien_lam_sang').html(tien_lam_sang)
+            $('#hoa_don_dich_vu').find('#format-money-thanh-tien').html(tien_lam_sang) {% endcomment %}
+            printDiv(hoa_don_dich_vu)
+        })
+
+        //function myPrint(hoa_don_dich_vu) {
+        //    var myPrintContent = document.getElementById('hoa_don_dich_vu');
+        //    var myPrintWindow = window.open(windowUrl, windowName, 'left=300,top=100,width=400,height=400');
+        //    myPrintWindow.document.write(myPrintContent.innerHTML);
+        //    myPrintWindow.document.getElementById('hoa_don_dich_vu').style.display='block'
+        //    myPrintWindow.document.close();
+        //    myPrintWindow.focus();
+        //    myPrintWindow.print();
+        //    {% comment %} myPrintWindow.close();     {% endcomment %}
+        //    return false;
+        //}
+//
+        function printDiv(hoa_don_dich_vu){
+            var tien_lam_sang = $('#gia_tien').val();
+            console.log(tien_lam_sang);
+            $('#hoa_don_dich_vu').find('#tien_lam_sang').html(tien_lam_sang);
+            $('#hoa_don_dich_vu').find('#format-money-thanh-tien').html(tien_lam_sang);
+
+            var printContents = document.getElementById("hoa_don_dich_vu").innerHTML;
+            var originalContents = document.body.innerHTML;
+           
+            document.body.innerHTML = printContents;
+
+            window.print();
+
+            $('#lam_sang_modal').modal('hide');
+
+            window.location.reload()
+
+            document.body.innerHTML = originalContents;
+
+        }
+
+        //function PrintElem(elem)
+        //{
+        //    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+//
+        //    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+        //    mywindow.document.write('</head><body >');
+        //    mywindow.document.write('<p>' + document.title  + '</p>');
+        //    mywindow.document.write(document.getElementById(elem).innerHTML);
+        //    mywindow.document.write('</body></html>');
+        //    mywindow.document.close(); // necessary for IE >= 10
+        //    mywindow.focus(); // necessary for IE >= 10*/ 
+        //    
+        //    mywindow.print();
+        //    // mywindow.close();
+//
+        //    return true;
+        //}
 
         datatable.on('click', '.btn-thanh-toan', function(){
             var ten = $(this).attr('data-ten')
@@ -358,7 +507,6 @@ var KTDatatableRemoteAjaxDemo = function() {
             })
         })
 
-        $('#kt_datatable_search_status').selectpicker();
     };
 
     var hoa_don_dich_vu = function() {
@@ -488,7 +636,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 template: function(row) {
                     
                     return `
-                        {% if perms.clinic.can_checkout_service_receipt %}
+                        {% if perms.finance.can_checkout_service_receipt %}
                         <a href="/phong_tai_chinh/hoa_don_dich_vu/${row.id}" class="btn btn-sm btn-clean mr-2" title="Edit details">
                             Hóa Đơn
                         </a>
@@ -574,7 +722,13 @@ var KTDatatableRemoteAjaxDemo = function() {
             }, {
                 field: 'benh_nhan.ho_ten',
                 title: 'Bệnh Nhân',
-                
+                template: function(row) {
+                    if (row.benh_nhan === null) {
+                        return row.benh_nhan_vang_lai
+                    } else {
+                        return row.benh_nhan.ho_ten
+                    }
+                }
             }, {
                 field: 'bac_si_ke_don.ho_ten',
                 title: 'Bác Sĩ',
@@ -610,15 +764,16 @@ var KTDatatableRemoteAjaxDemo = function() {
                 },
             }, {
                 field: 'HoaDonThuoc',
-                title: 'Hóa Đơn Thuốc + TPCN',
+                title: 'Hóa Đơn Thuốc + TPHTĐT',
                 sortable: false,
                 width: 125,
                 overflow: 'visible',
                 autoHide: false,
                 textAlign: 'center',
                 template: function(row) {
+                    
                     return `
-                        {% if perms.clinic.can_checkout_medicine_receipt %}
+                        {% if perms.finance.can_checkout_medicine_receipt %}
                         <a href="/phong_tai_chinh/hoa_don_thuoc/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
                             Hóa Đơn
                         </a>
