@@ -2630,6 +2630,7 @@ def create_bac_si(request):
         loai_cong_viec = request.POST.get('loai_cong_viec', None)
         chuc_nang      = request.POST.get('chuc_nang',      None)
 
+        username = request.POST.get('username')
 
         ngay_sinh = datetime.strptime(ngay_sinh, format_3)
         ngay_sinh = ngay_sinh.strftime("%Y-%m-%d")
@@ -2655,6 +2656,9 @@ def create_bac_si(request):
             ma_so_bao_hiem = ma_so_bao_hiem,
             chuc_nang      = chuc_nang,
         )
+        if username != '':
+            user.username = username
+
         user.save()
 
         bac_si = BacSi.objects.create(
