@@ -429,12 +429,15 @@ var KTDatatableRemoteAjaxDemo = function() {
         })
 
         var submit_data = function(id, gia_tien){
+            
+        }
+
+        $('#lam_sang_modal').on('click', '#btn_submit', function(){
+            var id = $('#ten_benh_nhan').attr('data-lich-hen');
+            var gia_tien = $('#gia_tien').val();
+
             var formData = new FormData();
             
-            var id = id;
-            var gia_tien = Number(gia_tien);
-            
-            console.log(id, gia_tien);
             formData.append('id', id);
             formData.append('gia_tien', gia_tien);
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -459,12 +462,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                     alert(res)                         
                 }
             })
-        }
-
-        $('#lam_sang_modal').on('click', '#btn_submit', function(){
-            var id = $('#ten_benh_nhan').attr('data-lich-hen')
-            var gia_tien = $('#gia_tien').val()
-            submit_data(id, gia_tien)
         })
 
         $('#kt_datatable_search_status').selectpicker();
