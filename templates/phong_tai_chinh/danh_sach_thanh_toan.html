@@ -431,15 +431,15 @@ var KTDatatableRemoteAjaxDemo = function() {
         var submit_data = function(id, gia_tien){
             var formData = new FormData();
             
-            var id = id
-            var gia_tien = Number(gia_tien)
+            var id = id;
+            var gia_tien = Number(gia_tien);
             
-            console.log(id, gia_tien)
-            formData.append('id', id)
-            formData.append('gia_tien', gia_tien)
-            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+            console.log(id, gia_tien);
+            formData.append('id', id);
+            formData.append('gia_tien', gia_tien);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
             
-            {% comment %} $.ajax({
+            $.ajax({
                 type: "POST",
                 url: "{% url 'store_thanh_toan_lam_sang' %}",
                 data: formData,
@@ -458,7 +458,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 error: function (response) {
                     alert(res)                         
                 }
-            }) {% endcomment %}
+            })
         }
 
         $('#lam_sang_modal').on('click', '#btn_submit', function(){
@@ -539,10 +539,33 @@ var KTDatatableRemoteAjaxDemo = function() {
 
             window.onafterprint = $(document).ready(function(e) {
                 console.log('This will be called after the user prints');
-                var id = $('#lam_sang_modal').find('#ten_benh_nhan').data()
+                var id = $('#lam_sang_modal').find('#ten_benh_nhan').data();
+                var gia_tien = id.money;
+                //id = id.lich_hen;
+
+                console.log(id.lichHen, id.money);
+                var formData = new FormData();
+                formData.append('id', id.lichHen);
+                formData.append('gia_tien', gia_tien);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
                 
-                console.log(id, id.money)
-                submit_data(id, gia_tien)
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'store_thanh_toan_lam_sang' %}",
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function (response) {
+                        setTimeout(function () {
+                            location.reload(); //redirect về danh sách chờ lâm sàng
+                        }, 500);
+                    },
+                    error: function (response) {
+                        alert(res);                        
+                    }
+                })
             });
         }
         
