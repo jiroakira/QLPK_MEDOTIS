@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% comment %} {% block stylesheet %}
+<link rel="stylesheet" href="{% static 'assets/plugins/custom/jQueryWebcam/jquery.jqcam.css' %}" type="text/css"/>
+<link rel="stylesheet" href="{% static 'assets/plugins/custom/jQueryWebcam/Jcrop/dist/jcrop.css' %}" type="text/css"/>
+
+{% endblock stylesheet %} {% endcomment %}
+
 
 {% block content %}
 <!--begin::Content-->
@@ -111,13 +117,23 @@
                                         <span class="form-text text-muted">Dung lượng tối đa mỗi file là 1Mb và có thể tải lên tối đa 5 file.</span>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label text-lg-right">Tải lên kết quả:</label>
+                                    <div class="col-lg-9">
+                                        <div class="dropzone dropzone-multi" id="kt_dropzone_4">
+                                            <div class="dropzone-panel mb-lg-0 mb-2">
+                                                <a href="javascript:;" class="btn btn-light-primary font-weight-bold btn-sm" id="openCamera" data-name="{{ ho_ten_benh_nhan }}">Mở máy ảnh</a>
+                                            </div>
+                                        </div>
+                                        <span class="form-text text-muted">Dung lượng tối đa mỗi file là 1Mb và có thể tải lên tối đa 5 file.</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-lg-3"></div>
                                     <div class="col-lg-9">
                                         <button type="button" id="upload" data-id-chuoi-kham="{{id_chuoi_kham}}" class="dropzone-upload btn btn-primary mr-2">Tải lên</button>
-                                        {% comment %} <button id="upload" class="dropzone-upload btn btn-primary mr-2">Submit</button> {% endcomment %}
                                         <button type="reset" class="btn btn-light-primary">Hủy</button>
                                     </div>
                                 </div>
@@ -127,7 +143,6 @@
                     </div>
                     <!--end::Card-->
                 </div>
-            
             </div>
         </div>
         <!--end::Container-->
@@ -135,6 +150,41 @@
     <!--end::Entry-->
 </div>
 <!-- end::Content -->
+
+<!-- Open Camera Modal-->
+<div class="modal fade" id="CameraModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chụp ảnh siêu âm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <video id="webcam" autoplay playsinline width="640" height="480"></video>
+                            <canvas id="canvas" class="d-none"></canvas>
+                            <div class="flash"></div>
+                            <audio id="snapSound" src="{% static 'assets/plugins/custom/webcam-easy/demo/audio/snap.wav' %}" preload="auto"></audio>
+                        </div>
+                        <div id="cameraControls" class="col-lg-6">
+                            <a href="javascript:;" id="take-photo" class="btn btn-primary">Chụp Ảnh</a>
+                            <a href="javascript:;" id="download-photo" download="{{ ho_ten_benh_nhan }}.png" target="_blank" title="Save Photo" class="d-none"><i class="fas fa-download"></i>Tải Về</a>  
+                            <a href="javascript:;" id="resume-camera" title="Resume Camera" class="d-none"><i class="fas fa-camera-retro"></i>Chụp Thêm</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Đóng</button>
+                <button type="button" class="registerModalSubmit btn btn-primary font-weight-bold">Tạo Tài Khoản</button>
+            </div>     
+        </div>
+    </div>
+</div>
 
 {% endblock content %}
 
@@ -144,6 +194,7 @@
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+<script src="{% static 'assets/plugins/custom/webcam-easy/dist/webcam-easy.min.js' %}"></script>
 <!--end::Global Theme Bundle-->
 
 
@@ -161,7 +212,6 @@
     })
 
 </script>
-
 
 <script>
 
@@ -200,6 +250,110 @@ var KTDropzoneDemo = function () {
     });
     // Private functions
     
+    var initCamera = function() {
+        $('#openCamera').click(function(){
+            $('#CameraModal').modal('show');
+            webcam.start()
+                .then(result =>{
+                    cameraStarted();
+                    console.log("webcam started");
+                })
+                .catch(err => {
+                    displayError();
+                });
+        });
+
+        var benh_nhan = $('#openCamera').attr('data-name');
+
+        const webcamElement = document.getElementById('webcam');
+
+        const canvasElement = document.getElementById('canvas');
+
+        const snapSoundElement = document.getElementById('snapSound');
+
+        const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+
+        function cameraStarted(){
+            $("#errorMsg").addClass("d-none");
+            $('.flash').hide();
+            $("#webcam-caption").html("on");
+            $("#webcam-control").removeClass("webcam-off");
+            $("#webcam-control").addClass("webcam-on");
+            $(".webcam-container").removeClass("d-none");
+            if( webcam.webcamList.length > 1){
+                $("#cameraFlip").removeClass('d-none');
+            }
+            $("#wpfront-scroll-top-container").addClass("d-none");
+            window.scrollTo(0, 0); 
+            $('body').css('overflow-y','hidden');
+        }
+
+        function cameraStopped(){
+            $("#errorMsg").addClass("d-none");
+            $("#wpfront-scroll-top-container").removeClass("d-none");
+            $("#webcam-control").removeClass("webcam-on");
+            $("#webcam-control").addClass("webcam-off");
+            $("#cameraFlip").addClass('d-none');
+            $(".webcam-container").addClass("d-none");
+            $("#webcam-caption").html("Click to Start Camera");
+            $('.md-modal').removeClass('md-show');
+        }
+
+        $('#take-photo').click(function(){
+            beforeTakePhoto();
+            var picture = webcam.snap();
+            document.querySelector('#download-photo').href = picture;
+            afterTakePhoto();
+        })
+
+        function beforeTakePhoto(){
+            $('.flash')
+                .show() 
+                .animate({opacity: 0.3}, 500) 
+                .fadeOut(500)
+                .css({'opacity': 0.7});
+            window.scrollTo(0, 0); 
+            $('#webcam-control').addClass('d-none');
+            $('#cameraControls').addClass('d-none');
+        }
+
+        function afterTakePhoto(){
+            webcam.stop();
+            $('#canvas').removeClass('d-none');
+            $('#take-photo').addClass('d-none');
+            $('#exit-app').removeClass('d-none');
+            $('#download-photo').removeClass('d-none');
+            $('#download-photo').addClass('btn btn-success');
+            $('#resume-camera').removeClass('d-none');
+            $('#resume-camera').addClass('btn btn-primary');
+            $('#cameraControls').removeClass('d-none');
+            $('#webcam').addClass('d-none');
+        }
+
+        function removeCapture(){
+            $('#webcam').removeClass('d-none');
+            $('#canvas').addClass('d-none');
+            $('#webcam-control').removeClass('d-none');
+            $('#cameraControls').removeClass('d-none');
+            $('#take-photo').removeClass('d-none');
+            $('#exit-app').addClass('d-none');
+            $('#download-photo').addClass('d-none');
+            $('#resume-camera').addClass('d-none');
+        }
+
+        $("#resume-camera").click(function () {
+            webcam.stream()
+                .then(facingMode =>{
+                    removeCapture();
+                });
+        });
+
+        $("#exit-app").click(function () {
+            removeCapture();
+            $("#webcam-switch").prop("checked", false).change();
+        });
+
+    }
 
     var demo2 = function () {
         // set the dropzone container id
@@ -339,8 +493,8 @@ var KTDropzoneDemo = function () {
     return {
         // public functions
         init: function() {
+            initCamera();
             demo2();
-      
         }
     };
 }();

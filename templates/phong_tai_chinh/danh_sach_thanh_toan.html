@@ -397,7 +397,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 textAlign: 'center',
                 template: function(row) {
-                    
                     return `
                         {% if perms.finance.can_checkout_clinical_receipt %}
                         <a href="javascript:;" class="btn btn-sm btn-clean mr-2 btn-thanh-toan" data-ten="${row.benh_nhan.ho_ten}" data-id="${row.id}" data-time="${row.thoi_gian_tao}" data-phone="${row.benh_nhan.so_dien_thoai}" data-address="${row.benh_nhan.dia_chi}" title="Edit details">
@@ -420,12 +419,12 @@ var KTDatatableRemoteAjaxDemo = function() {
         });
 
         datatable.on('click', '.btn-thanh-toan', function(){
-            var ten = $(this).attr('data-ten')
-            var id  = $(this).data('id')
+            var ten = $(this).attr('data-ten');
+            var id  = $(this).data('id');
 
-            $('#lam_sang_modal').modal('show')
-            $('#lam_sang_modal').find('#ten_benh_nhan').html(ten)
-            $('#lam_sang_modal').find('#ten_benh_nhan').attr("data-lich-hen", id)
+            $('#lam_sang_modal').modal('show');
+            $('#lam_sang_modal').find('#ten_benh_nhan').html(ten);
+            $('#lam_sang_modal').find('#ten_benh_nhan').attr("data-lich-hen", id);
         })
 
         $('#lam_sang_modal').on('click', '#btn_submit', function(){
@@ -455,7 +454,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                     $('#lam_sang_modal').modal('hide');
                 },
                 error: function (response) {
-                    alert(res)                         
+                    alert(res);
                 }
             })
         })
@@ -463,23 +462,23 @@ var KTDatatableRemoteAjaxDemo = function() {
         $('#kt_datatable_search_status').selectpicker();
 
         $('#printDiv').on('click', function(){
-            printDiv(hoa_don_dich_vu)
+            printDiv(hoa_don_dich_vu);
         })
 
         datatable.on('click', '.btn-thanh-toan', function(){
-            var ten = $(this).attr('data-ten')
-            var id  = $(this).data('id')
-            var thoi_gian = $(this).attr('data-time')
-            var sdt = $(this).attr('data-phone')
-            var add = $(this).attr('data-address')
+            var ten = $(this).attr('data-ten');
+            var id  = $(this).data('id');
+            var thoi_gian = $(this).attr('data-time');
+            var sdt = $(this).attr('data-phone');
+            var add = $(this).attr('data-address');
 
-            $('#lam_sang_modal').modal('show')
-            $('#lam_sang_modal').find('#ten_benh_nhan').html(ten)
-            $('#lam_sang_modal').find('#ten_benh_nhan').attr("data-lich-hen", id)
-            $('#lam_sang_modal').find('#btn_submit').attr("data-time", thoi_gian)
-            $('#lam_sang_modal').find('#btn_submit').attr("data-name", ten)
-            $('#lam_sang_modal').find('#btn_submit').attr("data-phone", sdt)
-            $('#lam_sang_modal').find('#btn_submit').attr("data-address", add)
+            $('#lam_sang_modal').modal('show');
+            $('#lam_sang_modal').find('#ten_benh_nhan').html(ten);
+            $('#lam_sang_modal').find('#ten_benh_nhan').attr("data-lich-hen", id);
+            $('#lam_sang_modal').find('#btn_submit').attr("data-time", thoi_gian);
+            $('#lam_sang_modal').find('#btn_submit').attr("data-name", ten);
+            $('#lam_sang_modal').find('#btn_submit').attr("data-phone", sdt);
+            $('#lam_sang_modal').find('#btn_submit').attr("data-address", add);
         })
 
         function formatMoney(amount, decimalCount = 0, decimal = ",", thousands = ".") {
@@ -500,23 +499,23 @@ var KTDatatableRemoteAjaxDemo = function() {
 
         function printDiv(hoa_don_dich_vu){
             var gia_tien = $('#gia_tien').val();
-            $('#lam_sang_modal').find('#ten_benh_nhan').attr("data-money", gia_tien)
-            gia_tien = formatMoney(gia_tien)
-            var thoi_gian = $('#btn_submit').attr('data-time')
-            var nguoi_thanh_toan = $('#btn_submit').attr('data-name')
-            var sdt = $('#btn_submit').attr('data-phone')
-            var add = $('#btn_submit').attr('data-address')
-            var id = $('#ten_benh_nhan').attr('data-lich-hen')
+            $('#lam_sang_modal').find('#ten_benh_nhan').attr("data-money", gia_tien);
+            gia_tien = formatMoney(gia_tien);
+            var thoi_gian = $('#btn_submit').attr('data-time');
+            var nguoi_thanh_toan = $('#btn_submit').attr('data-name');
+            var sdt = $('#btn_submit').attr('data-phone');
+            var add = $('#btn_submit').attr('data-address');
+            var id = $('#ten_benh_nhan').attr('data-lich-hen');
 
-            thoi_gian = new Date(Date.parse(thoi_gian))
-            thoi_gian = thoi_gian.toLocaleString('vi-VN')
+            thoi_gian = new Date(Date.parse(thoi_gian));
+            thoi_gian = thoi_gian.toLocaleString('vi-VN');
 
             $('#hoa_don_dich_vu').find('#tien_lam_sang').html(gia_tien);
             $('#hoa_don_dich_vu').find('#format-money-thanh-tien').html(gia_tien);
-            $('#hoa_don_dich_vu').find('#thoi_gian_thanh_toan').html(thoi_gian)
-            $('#hoa_don_dich_vu').find('#nguoi_thanh_toan').html(nguoi_thanh_toan)
-            $('#hoa_don_dich_vu').find('#phone_number').html(sdt)
-            $('#hoa_don_dich_vu').find('#address').html(add)
+            $('#hoa_don_dich_vu').find('#thoi_gian_thanh_toan').html(thoi_gian);
+            $('#hoa_don_dich_vu').find('#nguoi_thanh_toan').html(nguoi_thanh_toan);
+            $('#hoa_don_dich_vu').find('#phone_number').html(sdt);
+            $('#hoa_don_dich_vu').find('#address').html(add);
 
 
             var printContents = document.getElementById("hoa_don_dich_vu").innerHTML;
@@ -689,7 +688,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                 overflow: 'visible',
                 autoHide: false,
                 template: function(row) {
-                    
                     return `
                         {% if perms.finance.can_checkout_service_receipt %}
                         <a href="/phong_tai_chinh/hoa_don_dich_vu/${row.id}" class="btn btn-sm btn-clean mr-2" title="Edit details">
@@ -703,17 +701,12 @@ var KTDatatableRemoteAjaxDemo = function() {
         });
 
         $('#btn-reload').on('click', function() {
-			// datatable.reload();
 			$('#kt_datatable').KTDatatable('reload');
 		});
 
 		$('#kt_datatable_search_status').on('change', function() {
             datatable.search($(this).val().toLowerCase(), 'Status');
         });
-
-        //$('#kt_datatable_search_type').on('change', function() {
-        //    datatable.search($(this).val().toLowerCase(), 'Type');
-        //});
 
         $('#kt_datatable_search_status, #kt_datatable_search_type').selectpicker();
     };
@@ -806,13 +799,13 @@ var KTDatatableRemoteAjaxDemo = function() {
                 // callback function support for column rendering
                 template: function(row) {
                     var status = {
-                        2: {
-                            'title': 'Chờ Thanh Toán',
-                            'class': ' label-light-warning'
-                        },
                         1: {
                             'title': 'Đã Thanh Toán',
                             'class': ' label-light-primary'
+                        },
+                        2: {
+                            'title': 'Chờ Thanh Toán',
+                            'class': ' label-light-warning'
                         },
                     };
                     return '<span class="label font-weight-bold label-lg ' + status[row.trang_thai].class + ' label-inline">' + status[row.trang_thai].title + '</span>';
@@ -834,25 +827,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                         {% endif %}
                     `;
                 },
-            }, 
-            //{
-            //    field: 'HoaDonTPCN',
-            //    title: 'Hóa Đơn TPCN',
-            //    sortable: false,
-            //    width: 125,
-            //    overflow: 'visible',
-            //    autoHide: false,
-            //    textAlign: 'center',
-            //    template: function(row) {
-            //        return `
-            //            {% if perms.clinic.can_checkout_medicine_receipt %}
-            //            <a href="/phong_tai_chinh/hoa_don_tpcn/${row.id}" class="btn btn-sm btn-clean mr-2" title="Hóa Đơn Thuốc">
-            //                Hóa Đơn
-            //            </a>
-            //            {% endif %}
-            //        `;
-            //    },
-            //}
+            },
             ],
 
         });
@@ -865,11 +840,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 		$('#kt_datatable_search_status').on('change', function() {
             datatable.search($(this).val().toLowerCase(), 'trang_thai');
         });
-
-        //$('#kt_datatable_search_type').on('change', function() {
-        //    datatable.search($(this).val().toLowerCase(), 'Type');
-        //});
-
+        
         $('#kt_datatable_search_status, #kt_datatable_search_type').selectpicker();
     };
 

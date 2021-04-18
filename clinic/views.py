@@ -1073,6 +1073,7 @@ def upload_view_lam_sang(request, **kwargs):
         'id_chuoi_kham' : id_chuoi_kham,
         'phong_chuc_nang' : phong_chuc_nang,
         'ma_ket_qua' : ma_ket_qua,
+        'ho_ten_benh_nhan' : ho_ten_benh_nhan,
     }
     return render(request, 'bac_si_lam_sang/upload_ket_qua.html', context=data)
 

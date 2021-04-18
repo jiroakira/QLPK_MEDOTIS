@@ -303,15 +303,14 @@
                 <div class="card-footer">
                     <div class="card-toolbar text-right">
                         <!--begin::Button-->
-                        <a href="javascript:;" id='printPhanKhoa' class="btn btn-light-primary font-weight-bolder" >
-                            <i class="la la-plus"></i>
+                        <a href="javascript:;" id='printPhanKhoa' class="btn btn-light-success font-weight-bolder float-left" >
+                            <i class="la la-print "></i>
                             In DS Phân Khoa
                         </a>
                         <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="get-table-data" data-id="{{ id_lich_hen }}" data-user-id = {{ lich_hen.benh_nhan.id }} >
                             <i class="la la-plus"></i>
                             Phân khoa khám
                         </a>
-                        
                         <!--end::Button-->
                     </div>
                 </div>
@@ -405,9 +404,6 @@ var KTDatatableRecordSelectionDemo = function() {
         }, {
             field: 'ten_dvkt',
             title: 'Tên Dịch Vụ',
-            template: function(row) {
-                return '<a href id=' + '"' + row.id + '"' + 'data-id="' + row.id + '"' + ' class="tooltip-ajax" data-title="This is my tooltip content for:'+row.ten_dvkt+'" data-toggle="tooltip" data-trigger="hover">'+row.ten_dvkt+'</a>'
-            }
         }, {
             field: 'quyet_dinh',
             title: 'Quyết Định',
@@ -466,16 +462,6 @@ var KTDatatableRecordSelectionDemo = function() {
                     $('#kt_datatable_group_action_form').collapse('hide');
                 }
             });
-
-        datatable.on('mouseenter', 'tbody tr', function(){
-            // alert($(this).data());
-            $(this).find('[data-toggle="tooltip"]').tooltip({
-                delay: 300,
-                title: $(this).data().obj.Country,
-                html: true,
-            });
-
-        })
 
         $('#kt_datatable_fetch_modal').on('show.bs.modal', function(e) {
             var ids = datatable.rows('.datatable-row-active').
