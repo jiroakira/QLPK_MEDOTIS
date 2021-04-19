@@ -144,29 +144,27 @@
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js" integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==" crossorigin="anonymous"></script> {% endcomment %}
 
 <!--end::Global Theme Bundle-->
 
 <script>
     var ngay_sinh = $("input[name=ngay_sinh]").val();
-    ngay_sinh = moment(new Date(ngay_sinh)).format('DD/MM/yyyy')
-    ngay_sinh = ngay_sinh
-    console.log(ngay_sinh)
+    ngay_sinh = moment(new Date(ngay_sinh)).format('DD/MM/yyyy');
+    ngay_sinh = ngay_sinh;
+    {% comment %} console.log(ngay_sinh) {% endcomment %}
     if($('#inputNgaySinhModal').length){
         $("#inputNgaySinhModal").inputmask("99/99/9999", {
-            "placeholder": "ng/th/nam ",
+            "placeholder": "dd/mm/yyyy",
             autoUnmask: false
         });
-    }
-    else{
-        ngay_sinh
-    }
-    $('#inputNgaySinhModal').val(ngay_sinh)
+    }else{
+        ngay_sinh;
+    };
+    $('#inputNgaySinhModal').val(ngay_sinh);
     
     $('#cancelButton').click(function(){
         window.history.back();
-    })
+    });
 
     $(document).on('click', '#submitData', function(){
         var loai_cong_viec = $('[name=loai_cong_viec]').val()

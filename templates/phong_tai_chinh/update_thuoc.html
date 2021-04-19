@@ -201,7 +201,7 @@
 <script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
 <script src="{% static 'assets/js/scripts.bunsdle9cd7.js' %} "></script>
-{% comment %} <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker9cd7.js' %} "></script> {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
 
 
 <script>
@@ -250,39 +250,36 @@
                 }
             );
 
-        }
+        };
 
         var dateMasks = function(){
-            //fill ngay san xuat
+            // fill ngay san xuat
             var ngay_san_xuat = $("input[name=ngay_san_xuat]").val();
-            ngay_san_xuat = new Date(ngay_san_xuat)
-            ngay_san_xuat = ngay_san_xuat.toLocaleDateString('vi-VN')
+            ngay_san_xuat = moment(new Date(ngay_san_xuat)).format('DD/MM/yyyy');
+            ngay_san_xuat = ngay_san_xuat;
             if($('#inputNgaySanXuat').length){
                 $("#inputNgaySanXuat").inputmask("99/99/9999", {
-                    "placeholder": "ng/th/nam ",
+                    "placeholder": "dd/mm/yyyy",
                     autoUnmask: false
                 });
-            }
-            else{
-                ngay_san_xuat
-            }
-            $('#inputNgaySanXuat').val(ngay_san_xuat)
+            }else{
+                ngay_san_xuat;
+            };
+            $('#inputNgaySanXuat').val(ngay_san_xuat);
 
-            //fill han su dung
+            // fill han su dung
             var han_su_dung = $("input[name=han_su_dung]").val();
-            han_su_dung = new Date(han_su_dung)
-            han_su_dung = han_su_dung.toLocaleDateString('vi-VN')
+            han_su_dung = moment(new Date(ngay_san_xuat)).format('DD/MM/yyyy');
             if($('#inputHanSuDung').length){
                 $("#inputHanSuDung").inputmask("99/99/9999", {
-                    "placeholder": "ng/th/nam ",
+                    "placeholder": "dd/mm/yyyy",
                     autoUnmask: false
                 });
-            }
-            else{
-                han_su_dung
-            }
-            $('#inputHanSuDung').val(han_su_dung)
-        }
+            }else{
+                han_su_dung;
+            };
+            $('#inputHanSuDung').val(han_su_dung);
+        };
 
         var _formAddThuocSubmit = function () {
             var formData = new FormData();
