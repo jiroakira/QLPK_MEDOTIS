@@ -154,33 +154,31 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-12">
-                                <label>Họ Tên <span class="text-danger">*</span></label>
+                                <label>Họ Tên </label>
                                 <input type="text" class="form-control" id="inputNameModal"  placeholder="Nhập Đầy Đủ Họ Tên Của Bạn"/>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>Số Điện Thoại <span class="text-danger">*</span></label>
+                                <label>Số Điện Thoại </label>
                                 <input type="text" class="form-control" id="inputPhoneModal"  placeholder="Nhập Số Điện Thoại"/>
                                 <span class="form-text text-muted" >Chúng tôi sẽ không chia sẻ dữ liệu này với bất kì ai</span>
                                 <span class="text-success" id="success_phone"></span>
                                 <span class="text-warning" id="error_phone"></span>    
                             </div>
                             <div class="col-lg-6">
-                                <label for="inputPasswordModal">Mật khẩu <span class="text-danger">*</span></label>
+                                <label for="inputPasswordModal">Mật khẩu </label>
                                 <input type="password" class="form-control" id="inputPasswordModal" placeholder="Nhập mật khẩu"/>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>CMND/CCCD <span class="text-danger">*</span></label>
+                                <label>CMND/CCCD </label>
                                 <input type="text" class="form-control" id="inputCmtModal" placeholder="Nhập CMND/CCCD"/>
                             </div>
                             <div class="col-lg-6">
                                 <label>Ngày sinh</label>
-                                {% comment %} <input class="form-control" id="inputNgaySinhModal" type="text" /> {% endcomment %}
-                                {% comment %} {{ form.ngay_sinh|attr:"class:form-control"|attr:"name:ngay_sinh"|attr:"id:kt_datepicker_3"|attr:"readonly:readonly"|attr:"placeholder:Chọn ngày sinh"}} {% endcomment %}
-                                <input type="text" class="form-control" id="kt_datepicker_3" name="ngay_sinh" readonly="readonly" placeholder="Chọn ngày sinh"/>
+                                <input type="text" class="form-control" id="inputNgaySinhModal" name="ngay_sinh" placeholder="Chọn ngày sinh"/>
                                 <span class="form-text text-muted">Nhập ngày sinh dạng: 
                                 <code>ngày/tháng/năm</code></span>
                             </div>
@@ -200,22 +198,22 @@
                                 </div>
                             </div>
                             <div class="col-lg-2">
-                                <label>Dân tộc <span class="text-danger">*</span></label>
+                                <label>Dân tộc </label>
                                 <input type="text" class="form-control" id="inputDanTocModal" placeholder="Nhập dân tộc của bệnh nhân"/>
                             </div>
                             <div class="col-lg-4">
-                                <label>Cân Nặng <span class="text-danger">*</span></label>
+                                <label>Cân Nặng </label>
                                 <input type="number" min="0" class="form-control" id="inputCanNangModal" placeholder="Nhập cân nặng của bệnh nhân"/>
                             </div>
                             <div class="col-lg-4">
-                                <label>Mã số bảo hiểm <span class="text-danger">*</span></label>
+                                <label>Mã số bảo hiểm </label>
                                 <input type="text" class="form-control" id="inputMaSoBaoHiemModal" placeholder="Nhập mã số bảo hiểm của bệnh nhân"/>
                             </div>
                         </div>
                         
                         <div class="form-group row">
                             <div class="col-lg-4">
-                                <label>Mã Nơi ĐK KCB BĐ<span class="text-danger">*</span></label>
+                                <label>Mã Nơi ĐK KCB BĐ</label>
                                 {% comment %} {{ form.ma_dkbd|attr:"class:form-control"|attr:"name:ma_dkbd"|attr:"placeholder:Nhập mã nơi đăng kí khám chữa bệnh ban đầu"}} {% endcomment %}
                                 <input type="text" class="form-control" id="inputMaDkbdModal" placeholder="Nhập mã nơi đăng kí khám chữa bệnh ban đầu"/>
                             </div>
@@ -229,7 +227,7 @@
                                 <input type="text" class="form-control" id="kt_datepicker_4" name="gt_the_tu" readonly="readonly" placeholder="Chọn thời điểm thẻ có giá trị"/>
                             </div>
                             <div class="col-lg-4">
-                                <label>Liên Tiếp 5 Năm Từ<span class="text-danger">*</span></label>
+                                <label>Liên Tiếp 5 Năm Từ</label>
                                 {% comment %} {{ form.lien_tuc_5_nam_tu|attr:"class:form-control"|attr:"name:lien_tuc_5_nam_tu"|attr:"id:kt_datepicker_5"|attr:"readonly:readonly"|attr:"placeholder:Chọn thời điểm 5 năm liên tục từ"}} {% endcomment %}
                                 <input type="text" class="form-control" id="kt_datepicker_5" name="lien_tuc_5_nam_tu" readonly="readonly" placeholder="Chọn thời điểm 5 năm liên tục từ"/>
                             </div>
@@ -238,7 +236,7 @@
 
                         <div class="form-group row">
                             <div class="col-lg-4">
-                                <label>Tỉnh/Thành Phố<span class="text-danger">*</span></label>
+                                <label>Tỉnh/Thành Phố</label>
                                 {% comment %} <input type="text" class="form-control" id="inputCmtModal" placeholder="Nhập CMND/CCCD"/> {% endcomment %}
                                 <select class="form-control selectpicker" id="kt_select2_1" data-live-search="true" name="param">
                                     <option value="" selected disabled>Chọn Tỉnh/Thành phố</option>
@@ -264,7 +262,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Địa chỉ cụ thể (Đường/Số nhà)<span class="text-danger">*</span></label>
+                            <label>Địa chỉ cụ thể (Đường/Số nhà)</label>
                             <textarea class="form-control" id="inputDiaChiModal" placeholder="Địa chỉ người dùng" rows="3"></textarea>
                         </div>
                     </form>
@@ -305,7 +303,7 @@
                         </div>
                         <div class="form-group" id="thongTinBenhNhan"></div>
                         <div class="form-group">
-                            <label>Chọn Dịch Vụ Khám <span class="text-danger">*</span></label>
+                            <label>Chọn Dịch Vụ Khám </label>
                             <select id="selectDichVuKham" class="form-control selectpicker">
                                 <option value="kham_chua_benh" selected>Khám Chữa Bệnh</option>
                                 <option value="kham_sua_khoe">Khám Sức Khỏe</option>
@@ -347,18 +345,18 @@
                 <form>
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="inputPassword1">Mật khẩu hiện tại <span class="text-danger">*</span></label>
+                            <label for="inputPassword1">Mật khẩu hiện tại </label>
                             <input type="password" class="form-control" id="inputPassword1" placeholder="Mật khẩu hiện tại"/>
                         </div>
                         <div class="form-group">
-                            <label for="inputPassword2">Mật khẩu mới <span class="text-danger">*</span></label>
+                            <label for="inputPassword2">Mật khẩu mới </label>
                             <input type="password" class="form-control" id="inputPassword2" placeholder="Mật khẩu mới"/>
                             <span class="form-text text-muted"><code>Mật khẩu phải có ít nhất 8 ký tự.</code></span>
                             <span class="form-text text-muted"><code>Mật khẩu phải có các chữ cái từ a-z.</code></span>
                             <span class="form-text text-muted"><code>Mật khẩu phải có ít nhất 1 chữ số từ 0-9.</code></span>
                         </div>
                         <div class="form-group">
-                            <label for="inputPassword3">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <label for="inputPassword3">Xác nhận mật khẩu </label>
                             <input type="password" class="form-control" id="inputPassword3" placeholder="Xác nhận mật khẩu"/>
                         </div>
                     </div>
@@ -376,17 +374,11 @@
 
 
 {% block scripts %}
-{% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 <!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker9cd7.js' %} "></script>
-{% comment %} <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datepicker9cd7.js' %} "></script> {% endcomment %}
 <script src="{% static 'assets/js/excelexportjs.js' %} "></script>
 <!--end::Global Theme Bundle-->
-{% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
-{% comment %} <script src="{% static 'assets/js/pages/crud/ktdatatable/base/data-ajax9cd7.js' %} "></script> {% endcomment %}
 <script>
 
 "use strict";
@@ -417,13 +409,18 @@ var KTDatatableRemoteAjaxDemo = function() {
             arrows = {
                 leftArrow: '<i class="la la-angle-right"></i>',
                 rightArrow: '<i class="la la-angle-left"></i>'
-            }
+            };
         } else {
             arrows = {
                 leftArrow: '<i class="la la-angle-left"></i>',
                 rightArrow: '<i class="la la-angle-right"></i>'
-            }
-        }
+            };
+        };
+
+        $("#inputNgaySinhModal").inputmask("31/12/9999", {
+            "placeholder": "dd/mm/yyyy",
+            autoUnmask: false
+        });
 
         $('#kt_datepicker_3').datepicker({
             rtl: KTUtil.isRTL(),
@@ -529,8 +526,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                 },
                 pageSize: 10,
                 serverPaging: true,
-                // serverFiltering: true,
-                //serverSorting: true,
+                serverFiltering: true,
+                serverSorting: true,
             },
 
             // layout definition
@@ -554,7 +551,6 @@ var KTDatatableRemoteAjaxDemo = function() {
             {
                 field: 'id',
                 title: 'STT',
-                sortable: 'asc',
                 width: 30,
                 type: 'number',
                 selector: false,
@@ -562,9 +558,31 @@ var KTDatatableRemoteAjaxDemo = function() {
             }, {
                 field: 'ho_ten',
                 title: 'Bệnh Nhân',
+                width: 180
             }, {
                 field: 'so_dien_thoai',
                 title: 'Số điện thoại',
+            }, {
+                field: 'cmnd_cccd',
+                title: 'CMND/CCCD',
+                
+            }, {
+                field: 'dia_chi',
+                title: 'Địa chỉ',
+                width: 200,
+                autoHide: false,
+            }, {
+                field: 'dan_toc',
+                title: 'Dân tộc',
+                width: 50,
+                textAlign: 'center',
+                template: function(row){
+                    if (!row.dan_toc) {
+                        return '<span class="label font-weight-bold label-lg label-light-warning label-inline">Chưa có thông tin</span>'
+                    } else {
+                        return row.dan_toc
+                    }
+                }
             }, {
                 field: 'email',
                 title: 'Email',
@@ -576,27 +594,9 @@ var KTDatatableRemoteAjaxDemo = function() {
                     }
                 }
             }, {
-                field: 'cmnd_cccd',
-                title: 'CMND/CCCD',
-                
-            }, {
-                field: 'dia_chi',
-                title: 'Địa chỉ',
-            }, {
-                field: 'dan_toc',
-                title: 'Dân tộc',
-                width: 50,
-                textAlign: 'center',
-                template: function(row){
-                    if (!row.dan_toc) {
-                        return '<span class="text-warning font-weight-bold ">Chưa có thông tin</span>'
-                    } else {
-                        return row.dan_toc
-                    }
-                }
-            }, {
                 field: 'ngay_sinh',
                 title: 'Ngày sinh',
+                autoHide: false,
                 template: function(row) {
                     var date = new Date(row.ngay_sinh)
                     if(!row.ngay_sinh){
@@ -785,46 +785,48 @@ var KTDatatableRemoteAjaxDemo = function() {
     }
 
     var _registerUser = function(){
-        var formData = new FormData();
-        $('#inputPhoneModal').on("change", function(){
-            console.log(1)
-            var phone = document.getElementById("inputPhoneModal").value;
-            if(phone== "") {
-                document.getElementById('error_phone').innerHTML = 'Không được để trống';
-                document.getElementById('success_phone').innerHTML = '';
-                return false;
-            }
-            else{
-                var regex_phone = /(84|0[3|5|7|8|9])+([0-9]{8})\b/gm;
-
-                var test_phone = regex_phone.test(phone);
-
-                if(test_phone==true){
-                    document.getElementById('success_phone').innerHTML = 'Hợp lệ';
-                    document.getElementById('error_phone').innerHTML = '';
-                }
-                else{
-                    document.getElementById('success_phone').innerHTML = '';
-                    document.getElementById('error_phone').innerHTML = 'Không hợp lệ';
-                    return false;
-                }
-            }
-        })
+        //var formData = new FormData();
+        //$('#inputPhoneModal').on("change", function(){
+        //    console.log(1)
+        //    var phone = document.getElementById("inputPhoneModal").value;
+        //    if(phone== "") {
+        //        document.getElementById('error_phone').innerHTML = 'Không được để trống';
+        //        document.getElementById('success_phone').innerHTML = '';
+        //        return false;
+        //    }
+        //    else{
+        //        var regex_phone = /(84|0[3|5|7|8|9])+([0-9]{8})\b/gm;
+//
+        //        var test_phone = regex_phone.test(phone);
+//
+        //        if(test_phone==true){
+        //            document.getElementById('success_phone').innerHTML = 'Hợp lệ';
+        //            document.getElementById('error_phone').innerHTML = '';
+        //        }
+        //        else{
+        //            document.getElementById('success_phone').innerHTML = '';
+        //            document.getElementById('error_phone').innerHTML = 'Không hợp lệ';
+        //            return false;
+        //        }
+        //    }
+        //})
         $(document).on("click", ".registerModalSubmit", function() {
+
+            var formData = new FormData()
 
             var ele = document.getElementsByName('radio'); 
             var i;
             for(i = 0; i < ele.length; i++) { 
                 if(ele[i].checked)
                 var gioi_tinh = ele[i].value
-            } 
+            }
 
             formData.append('ho_ten', $("#inputNameModal").val())
             formData.append('so_dien_thoai', $("#inputPhoneModal").val())
             formData.append('password', $("#inputPasswordModal").val())
             formData.append('cmnd_cccd', $("#inputCmtModal").val())
             formData.append('dia_chi', $("#inputDiaChiModal").val())
-            formData.append('ngay_sinh', $("#kt_datepicker_3").val())
+            formData.append('ngay_sinh', $("#inputNgaySinhModal").val())
             formData.append('gioi_tinh', gioi_tinh)
             formData.append('dan_toc', $("#inputDanTocModal").val())
             formData.append('ma_so_bao_hiem', $("#inputMaSoBaoHiemModal").val())
@@ -851,27 +853,28 @@ var KTDatatableRemoteAjaxDemo = function() {
                 processData: false,
                 contentType: false,
                 success: function(response){
-                    KTApp.unblockPage();
-                    if (response.status == 400) {
-                        
+                    if (response.status == 404) {
+                        KTApp.unblockPage();
                         toastr.warning(response.message, "Xảy Ra Lỗi")
+
                     } else if (response.status == 409) {
-                        
+                        KTApp.unblockPage();
                         toastr.info(response.message, "Lỗi")
                     } else if (response.status == 403){
-                        
+                        KTApp.unblockPage();
                         toastr.info(response.message, "Lỗi")
-                    } else {
-                        
+                    } else if (response.status == 200) {
+                        KTApp.unblockPage();
                         toastr.success(response.message, "Thành Công")
-                        $('#form_register').find("input, textarea").val("");
+                        $('#form_register').find('input:not([type="radio"]), textarea').val("");
                         $('#error_phone').html('')
                         $('#success_phone').html('')
+                        $('#registerModal').modal('hide');
+                        $('#kt_datatable').KTDatatable('reload');
                     }
-                    $('#registerModal').modal('hide');
-                    $('#kt_datatable').KTDatatable('reload');
                 },
                 error: function(response){
+                    KTApp.unblockPage();
                     $('#registerModal').modal('hide');
                 }
             })
@@ -1062,6 +1065,47 @@ var KTDatatableRemoteAjaxDemo = function() {
         })
     }
 
+    var checkSoDienThoai = function() {
+        $(document).ready(function() {
+            $('#inputPhoneModal').on('keyup', function() {
+                var so_dien_thoai = $('#inputPhoneModal').val().trim()
+                var formData = new FormData()
+                
+                if (so_dien_thoai != '') {
+                    $("#success_phone").html("<img src='{% static 'assets/media/loader/loader.gif' %}' /> Đang kiểm tra...")
+                    $("#error_phone").html("")
+                    setTimeout(function () {
+                        formData.append('so_dien_thoai', so_dien_thoai)     
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'check_exists_so_dien_thoai' %}",
+                            data: formData,
+                            cache: false,
+                            processData: false,
+                            contentType: false,
+                            success: function(response){
+                                if (response.status == 200) {
+                                    $("#success_phone").html("") 
+                                    $("#error_phone").html(response.message)
+                                } else if (response.status == 404) {
+                                    $("#success_phone").html(response.message)
+                                    $("#error_phone").html("")
+                                } else if (response.status == 406) {
+                                    $("#success_phone").html("") 
+                                    $("#error_phone").html(response.message)
+                                }
+                            }
+                        })
+                    }, 1500);
+                } else {
+                    $("#success_phone").html("")
+                    $("#error_phone").html("")
+                }
+            })
+            
+        })
+    }
+
     return {
         init: function() {
             demo();
@@ -1071,6 +1115,7 @@ var KTDatatableRemoteAjaxDemo = function() {
             deleteBenhNhan();
             resetPassword();
             changePassword();
+            checkSoDienThoai();
         },
     };
 }();

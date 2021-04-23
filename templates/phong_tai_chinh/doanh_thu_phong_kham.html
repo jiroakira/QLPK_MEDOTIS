@@ -243,9 +243,7 @@
 {% block scripts %}
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 <!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker9cd7.js' %} "></script>
 <!--end::Global Theme Bundle-->
 
@@ -330,7 +328,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                         return row.tong_tien
                     }
                 }
-            }, {
+            }, 
+            {% comment %} {
                 field: 'thoi_gian_tao',
                 title: 'Thời Gian Tạo',
                 template: function(row) {
@@ -342,7 +341,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                         return date.toLocaleDateString('vi-VN')
                     }
                 }
-            }],
+            } {% endcomment %}
+            ],
         });
 
         var el_2 = $('#kt_datatable_sub_lam_sang')

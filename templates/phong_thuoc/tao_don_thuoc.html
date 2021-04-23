@@ -143,21 +143,44 @@
                     <!--end: Table-->
 
                     <div class="form-group mt-3">
-                        <label>Chọn Bệnh Nhân<span class="text-danger">*</span></label>
-                        <select id="selectBenhNhan" class="form-control selectpicker" data-size="7" data-live-search="true">
-                            <option value="" disabled selected>Chọn bệnh nhân</option>
+                        <label>Chọn kiểu</label>
+                        <select id="selectOption" class="form-control selectpicker" data-size="7" data-live-search="true" >
+                            <option value="" disabled selected>Chọn kiểu bệnh nhân</option>
+                            <option value="vang_lai">Khách Vãng Lai</option>
+                            <option value="benh_nhan">Bệnh Nhân Phòng Khám</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-3" style="display: none" id="benh_nhan_pk">
+                        <label>Chọn Bệnh Nhân </label>
+                        <select id="selectBenhNhan" name="selectBenhNhan" class="form-control selectpicker" data-size="7" data-live-search="true">
+                            <option value selected>Chọn bệnh nhân</option>
                             {% for p in nguoi_dung %}
                                 <option value="{{ p.id }}">{{ p.ho_ten }} - {{ p.cmnd_cccd }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group" id="thongTinBenhNhan"></div>
+                     
+                    <div class="form-group mt-3 row" style="display: none" id="khach_vang_lai">
+                        <div class="col-lg-9">
+                            <label>Nhập tên người mua </label>
+                            <input type="text" class="form-control" id="ten_khach_vang_lai" />
+                        </div>
+                        <div class="col-lg-3">
+                            <label>Số điện thoại người mua </label>
+                            <input type="text" class="form-control" id="so_dien_thoai_khach" />
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <div class="card-toolbar">
                         <!--begin::Button-->
                         <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="get-table-data">
                             <i class="la la-plus"></i>Kê Đơn Thuốc
+                        </a>
+                        <a href="javascript:;" class="btn btn-primary font-weight-bolder" id="printDonThuoc">
+                            In Đơn Thuốc
                         </a>
                         <!--end::Button-->
                     </div>
@@ -171,25 +194,40 @@
 </div>
 <!-- end::Content -->
 
+<div id='divDonThuoc' style="display: none;">
+{{ mau_hoa_don.noi_dung|safe }}
+</div>
+
+
 {% endblock content %}
 
 {% block scripts %}
 
-
-<!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
-<!--end::Global Theme Bundle-->
-
-<!--begin::Custom Javascripts(used by this page)-->
 <script>
 
 "use strict";
 // Class definition
 
+function printDiv() 
+{
+    var divToPrint=document.getElementById('divDonThuoc');
+
+    var newWin=window.open('','Print-Window');
+
+    newWin.document.open();
+
+    newWin.document.write('<html><body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
+
+    newWin.document.close();
+
+    setTimeout(function(){newWin.close();},10);
+
+}
+
 var KTDatatableRecordSelectionDemo = function() {
     // Private functions
+
+    var keDonHtml = ''
 
     var options = {
         // datasource definition
@@ -203,8 +241,8 @@ var KTDatatableRecordSelectionDemo = function() {
             },
             pageSize: 10,
             serverPaging: true,
-            // serverFiltering: true,
-            // serverSorting: true,
+            serverFiltering: true,
+            serverSorting: true,
         },
 
         // layout definition
@@ -231,9 +269,6 @@ var KTDatatableRecordSelectionDemo = function() {
         }, {
             field: 'ten_thuoc',
             title: 'Tên thuốc',
-            template: function(row) {
-                return '<a href id=' + '"' + row.id + '"' + ' data-title="This is my tooltip content for:'+row.ten_thuoc+'" data-toggle="tooltip" data-trigger="hover">'+row.ten_thuoc+'</a>'
-            }
         }, {
             field: 'loai_thuoc',
             title: 'Loại',
@@ -259,7 +294,7 @@ var KTDatatableRecordSelectionDemo = function() {
     var localSelectorDemo = function() {
         // enable extension
         options.extensions = {
-            // boolean or object (extension options)
+
             checkbox: true,
         };
 
@@ -292,16 +327,6 @@ var KTDatatableRecordSelectionDemo = function() {
                     $('#kt_datatable_group_action_form').collapse('hide');
                 }
             });
-
-        //datatable.on('mouseenter', 'tbody tr', function(){
-        //    alert($(this).data());
-        //    $(this).find('[data-toggle="tooltip"]').tooltip({
-        //        delay: 300,
-        //        title: $(this).data().obj.Country,
-        //        html: true,
-        //    });
-//
-        //})
 
         $('#kt_datatable_fetch_modal').on('show.bs.modal', function(e) {
             var ids = datatable.rows('.datatable-row-active').
@@ -354,11 +379,7 @@ var KTDatatableRecordSelectionDemo = function() {
                 // datatable.checkbox() access to extension methods
                 var ids = datatable.checkbox().getSelectedId();
                 var count = ids.length;
-                // console.log(datatable.checkbox())
-                // console.log(datatable.checkbox().selectedRows)
 
-                // var lst_ids = datatable.checkbox().selectedRows;
-                // console.log(datatable.getRecord(lst_ids).getColumn('Country').getValue())
                 $('#kt_datatable_selected_records_2').html(count);
 
                 if (count > 0) {
@@ -368,39 +389,97 @@ var KTDatatableRecordSelectionDemo = function() {
                 }
             });
 
-        datatable.on('mouseenter', 'tbody tr', function(){
-            // alert($(this).data());
-            $(this).find('[data-toggle="tooltip"]').tooltip({
-                delay: 300,
-
-                title: "<em>Tooltip</em> <u>with</u> <b>HTML</b>",
-                html: true,
-            });
-
-        })
-
         var lstData = [];
         var lstCheckbox = {};
         var lstQuantity = {};
         var lstUsage = {};
         var lstNote = {};
+        var benh_nhan = ''
+
+        $('#selectOption').change(function(){
+            if($(this).val() === "vang_lai"){
+                $('#khach_vang_lai').show();
+                $('#benh_nhan_pk').hide();
+                $('#selectBenhNhan').prop('selectedIndex', 0);
+            }else{
+                $('#benh_nhan_pk').show();
+                $('#khach_vang_lai').hide();
+                $('#ten_khach_vang_lai').val('');
+            }
+        })
 
         $('#get-table-data').on('click', function (){
-            var user_id = $('#selectBenhNhan').val();
-            console.log(user_id)
-            var id_chuoi_kham = $(this).data('chuoi-kham-id');
-            lstCheckbox = {};
-            lstQuantity = {};
-            lstUsage = {};
-            lstNote = {};
+            var user_id             = $('#selectBenhNhan').val();
+            var ten_khach_vang_lai  = $("#ten_khach_vang_lai").val();
+            var so_dien_thoai_khach = $("#so_dien_thoai_khach").val();
+            lstCheckbox             = {};
+            lstQuantity             = {};
+            lstUsage                = {};
+            lstNote                 = {};
             getCheckbox();
             getInputQuantity();
             getInputUsage();
             getInputNote();
-            getPostData(user_id);
-            postData(user_id, id_chuoi_kham); 
+            getPostData();
+            postData(user_id, ten_khach_vang_lai, so_dien_thoai_khach); 
         })
 
+        $('#printDonThuoc').on('click', function() {
+            var ten_khach_vang_lai  = $("#ten_khach_vang_lai").val();
+            var so_dien_thoai_khach = $("#so_dien_thoai_khach").val();
+            lstCheckbox             = {};
+            lstQuantity             = {};
+            lstUsage                = {};
+            lstNote                 = {};
+            getCheckbox();
+            getInputQuantity();
+            getInputUsage();
+            getInputNote();
+            var data_thuoc = getPostData();
+            var data_thoi_gian = '';
+            var data_nguoi_thuc_hien = '';
+            var thoi_gian_thanh_toan = "{{ thoi_gian_thanh_toan|safe }}";
+            var nguoi_thanh_toan = "{{nguoi_thanh_toan|safe}}";
+
+            $('#divDonThuoc tbody tr').each(function() {
+                if ($(this).find('td').eq(0).text() == '{thoi_gian_thanh_toan}'){
+                    var innerHtml = $(this).html()
+                    var start_tr = '<tr>'
+                    var end_tr = '</tr>'
+                    var c = start_tr + innerHtml + end_tr
+     
+                    data_thoi_gian += c.replace(/{thoi_gian_thanh_toan}/, thoi_gian_thanh_toan)
+
+                    $(this).replaceWith(data_thoi_gian) 
+                }
+
+                if ($(this).find('td').eq(1).text() == '{nguoi_thanh_toan}'){
+                    var innerHtml = $(this).html()
+                    var start_tr = '<tr>'
+                    var end_tr = '</tr>'
+                    var c = start_tr + innerHtml + end_tr
+
+                    data_nguoi_thuc_hien += c.replace(/{nguoi_thanh_toan}/, nguoi_thanh_toan)
+
+                    $(this).replaceWith(data_nguoi_thuc_hien) 
+                }
+
+                if ($(this).find('td').eq(0).text() == '{ten_thuoc}'){
+                    var innerHtml = $(this).html()
+                    var start_tr = '<tr>'
+                    var end_tr = '</tr>'
+                    var c = start_tr + innerHtml + end_tr
+
+                    for (var i=0; i < data_thuoc.length; i++) {
+                        keDonHtml += c.replace(/{ten_thuoc}/, data_thuoc[i].obj.ten_thuoc).replace(/{so_luong}/, data_thuoc[i].obj.so_luong).replace(/{cach_su_dung}/, data_thuoc[i].obj.ghi_chu)
+                    }
+
+                    $(this).replaceWith(keDonHtml) 
+                }
+            })
+            
+            printDiv();
+        })
     
         datatable.on('click', 'tbody input[type="checkbox"]', function () {
             $(this).toggleClass('selected');
@@ -414,9 +493,6 @@ var KTDatatableRecordSelectionDemo = function() {
                 // console.log(objList)
                 lstData.push(trVals)
                 // $('#kt_datatable_3 tbody').empty();
-
-                console.log(lstData)
-
                 $(trVals).each(function () {
                     $('#kt_datatable_3 tbody').append(`
                         <tr class="${trVals.obj.id}" data-id = "${trVals.obj.id}" name="true" >
@@ -427,7 +503,7 @@ var KTDatatableRecordSelectionDemo = function() {
                                 <input type="checkbox" id="${trVals.obj.id}" class="checkbox checkbox-lg checkbox-light-success checkbox-inline flex-shrink-0 m-0 mx-4 big-checkbox" data-checked="True" data-unchecked="False" />
                             </td>
                             <td>
-                                <input type="number" class="big-input-quantity form-control" />
+                                <input type="number" class="big-input-quantity form-control" onwheel="return false;" min="0" oninput="this.value|=0" />
                             </td>
                             <td>
                                 <span>
@@ -438,7 +514,6 @@ var KTDatatableRecordSelectionDemo = function() {
                                 <span>
                                     ${trVals.obj.don_vi_tinh}
                                 </span>
-                                {% comment %} <input type="text" class="big-input-usage"> {% endcomment %}
                             </td>
                             <td>
                                 <span class="big-input-usage">
@@ -446,10 +521,21 @@ var KTDatatableRecordSelectionDemo = function() {
                                 </span>
                             </td>
                             <td>
-                                <input type="text" class="big-input-note form-control" />
+                                <input type="text" class="big-input-note form-control" list="dataList"/>
+                                <datalist id="dataList">
+                                    <option>Uống trước khi ăn 15'</option>
+                                    <option>Uống trước khi ăn 30'</option>
+                                    <option>Uống trước khi ăn 1h</option>
+                                    <option>Uống trước khi ăn 2h</option>
+                                    <option>Uống sau khi ăn 15'</option>
+                                    <option>Uống sau khi ăn 30'</option>
+                                    <option>Uống sau khi ăn 1h</option>
+                                    <option>Uống sau khi ăn 2h</option>
+                                </datalist>
                             </td>
                         </tr>
                     `);
+
                 })
 
             } else {
@@ -474,10 +560,11 @@ var KTDatatableRecordSelectionDemo = function() {
             }
         })
 
-        function postData(user_id, id_chuoi_kham){
-            var user_id = user_id
-            {% comment %} console.log(getPostData()); {% endcomment %}
-            var checkBoxObj = lstCheckbox;
+        function postData(user_id, ten_khach_vang_lai, so_dien_thoai_khach){
+            var user_id             = user_id;
+            var ten_khach_vang_lai  = ten_khach_vang_lai;
+            var so_dien_thoai_khach = so_dien_thoai_khach;
+            var checkBoxObj         = lstCheckbox;
 
             var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
 
@@ -516,9 +603,11 @@ var KTDatatableRecordSelectionDemo = function() {
                 data: {
                     // here data should be a string so that
                     // in your views.py you can fetch the value using get('data')
-                    'data': JSON.stringify(getPostData(user_id)),
+                    'data': JSON.stringify(getPostData()),
                     'csrfmiddlewaretoken': csrftoken,
-                    'user': user_id,
+                    'user_id': user_id,
+                    'ten_khach_vang_lai' : ten_khach_vang_lai,
+                    'so_dien_thoai_khach' : so_dien_thoai_khach,
                 },
                 dataType: 'json',
                 safe: false,
@@ -528,6 +617,8 @@ var KTDatatableRecordSelectionDemo = function() {
                         setTimeout(function () {
                             window.location.href = '/phong_thuoc/'; //redirect về danh sách chờ lâm sàng
                         }, 1500);
+                    } else if (response.status == 404) {
+                        toastr.warning(response.message, "Lỗi")
                     }
 
                 },
@@ -537,26 +628,20 @@ var KTDatatableRecordSelectionDemo = function() {
             });
         }
 
-        function getPostData(user_id){
-            var user_id     = user_id
-            var rowData     = lstData;
-            var checkBoxObj = lstCheckbox;
-            var quantityObj = lstQuantity;
-            var usageObj    = lstUsage;
-            var noteObj     = lstNote;
+        function getPostData(){
+            var rowData            = lstData;
+            var checkBoxObj        = lstCheckbox;
+            var quantityObj        = lstQuantity;
+            var usageObj           = lstUsage;
+            var noteObj            = lstNote;
 
             for (const each in checkBoxObj) {
                 for (let i = 0; i < rowData.length; i++) {
                     if (rowData[i].obj.id == each) {
-                        rowData[i].obj.bao_hiem  = checkBoxObj[each];
-                        if (rowData[i].obj.so_luong_kha_dung > quantityObj[each]){
-                            rowData[i].obj.so_luong  = quantityObj[each];
-                        }else{
-                            toastr.warning('Lỗi Số Lượng Thuốc', rowData[i].obj.ten_thuoc)
-                        }
-                        rowData[i].obj.cach_dung = usageObj[each];
-                        rowData[i].obj.ghi_chu   = noteObj[each];
-                        rowData[i].obj.benh_nhan = user_id;
+                        rowData[i].obj.bao_hiem           = checkBoxObj[each];
+                        rowData[i].obj.so_luong           = quantityObj[each];
+                        rowData[i].obj.cach_dung          = usageObj[each];
+                        rowData[i].obj.ghi_chu            = noteObj[each];
                     }
                 }
             }
@@ -627,6 +712,8 @@ var KTDatatableRecordSelectionDemo = function() {
             $('#kt_datatable_fetch_display_2').empty();
         });
     };
+
+
 
     return {
         // public functions

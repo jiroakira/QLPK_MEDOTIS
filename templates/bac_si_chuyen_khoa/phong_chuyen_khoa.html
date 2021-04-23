@@ -81,7 +81,7 @@
                                             <select class="form-control" id="kt_datatable_search_status">
                                                 <option value="">Tất cả</option>
                                                 {% for status in trang_thai %}
-                                                    <option value="{{ status.id }}">{{ status.trang_thai_chuoi_kham }}</option>
+                                                    <option value="{{ status.id }}">{{ status.trang_thai_khoa_kham }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -147,9 +147,7 @@
 <!--begin::Global Config(global config for global JS scripts)-->
 <script>var KTAppSettings = { "breakpoints": { "sm": 576, "md": 768, "lg": 992, "xl": 1200, "xxl": 1400 }, "colors": { "theme": { "base": { "white": "#ffffff", "primary": "#3699FF", "secondary": "#E5EAEE", "success": "#1BC5BD", "info": "#8950FC", "warning": "#FFA800", "danger": "#F64E60", "light": "#E4E6EF", "dark": "#181C32" }, "light": { "white": "#ffffff", "primary": "#E1F0FF", "secondary": "#EBEDF3", "success": "#C9F7F5", "info": "#EEE5FF", "warning": "#FFF4DE", "danger": "#FFE2E5", "light": "#F3F6F9", "dark": "#D6D6E0" }, "inverse": { "white": "#ffffff", "primary": "#ffffff", "secondary": "#3F4254", "success": "#ffffff", "info": "#ffffff", "warning": "#ffffff", "danger": "#ffffff", "light": "#464E5F", "dark": "#ffffff" } }, "gray": { "gray-100": "#F3F6F9", "gray-200": "#EBEDF3", "gray-300": "#E4E6EF", "gray-400": "#D1D3E0", "gray-500": "#B5B5C3", "gray-600": "#7E8299", "gray-700": "#5E6278", "gray-800": "#3F4254", "gray-900": "#181C32" } }, "font-family": "Poppins" };</script>
 
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 
 <script>
 "use strict";
@@ -160,7 +158,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 
     // basic demo
     var demo = function(id) {
-        var id = id
+        var id = id;
         var datatable = $('#kt_datatable').KTDatatable({
             // datasource definition
             data: {
@@ -256,29 +254,35 @@ var KTDatatableRemoteAjaxDemo = function() {
                 } 
             }, 
             {
-                field: 'chuoi_kham.trang_thai.id',
+                field: 'trang_thai.id',
                 title: 'Trạng Thái',
+                width: 100,
                 // callback function support for column rendering
                 template: function(row) {
                     var status = {
                         1: {
-                            'title': 'Chờ Thanh Toán',
+                            'title': 'Đang Thực Hiện',
                             'class': ' label-light-warning'
                         },
                         2: {
-                            'title': 'Đã Thanh Toán',
+                            'title': 'Hoàn Thành',
                             'class': ' label-light-primary'
                         },
-                        3: {
-                            'title': 'Đang thực hiện',
+                        4: {
+                            'title': 'Dừng Khám',
+                            'class': ' label-light-danger'
+                        },
+                        5: {
+                            'title': 'Chờ Khám',
                             'class': ' label-light-info'
                         },
-                        4: {
-                            'title': 'Hoàn Thành',
+                        6: {
+                            'title': 'Đã Tải Kết Quả',
                             'class': ' label-light-success'
                         },
+                       
                     };
-                    return '<span class="label font-weight-bold label-lg ' + status[row.chuoi_kham.trang_thai.id].class + ' label-inline">' + status[row.chuoi_kham.trang_thai.id].title + '</span>';
+                    return '<span class="label font-weight-bold label-lg ' + status[row.trang_thai.id].class + ' label-inline">' + status[row.trang_thai.id].title + '</span>';
                 },
             }, {
                 field: 'Action',
@@ -414,7 +418,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 
 
 		$('#kt_datatable_search_status').on('change', function() {
-            datatable.search($(this).val().toLowerCase(), 'chuoi_kham.trang_thai.id');
+            datatable.search($(this).val().toLowerCase(), 'trang_thai.id');
         });
 
         $('#kt_datatable_search_type').on('change', function() {

@@ -4,7 +4,7 @@
 {% block content %}
 
 <!--begin::Content-->
-<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+<div class="content d-flex flex-column flex-column-fluid">
     <!--begin::Subheader-->
     <div class="subheader py-2 py-lg-6 subheader-solid" id="kt_subheader">
         <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
@@ -39,142 +39,14 @@
             <!-- begin::Card-->
             <div class="card card-custom overflow-hidden">
                 <!-- begin: Invoice-->
-                <div class="card-body p-0" id="hoa_don_thuoc">
-                    <!-- begin: Invoice header-->
-                    <div class="row justify-content-center bgi-size-cover bgi-no-repeat py-8 px-8 py-md-27 px-md-0" style="background-image: url({% static 'assets/media/bg/bg-6.jpg' %});">
-                        <div class="col-md-9">
-                            <div class="d-flex justify-content-between pb-10 pb-md-20 flex-column flex-md-row">
-                                <h1 class="display-4 text-white font-weight-boldest mb-10">HÓA ĐƠN THUỐC</h1>
-                                <div class="d-flex flex-column align-items-md-end px-0">
-                                    <!--begin::Logo-->
-                                    <a href="javascript:;" class="mb-5">
-                                        <img src="{{phong_kham.logo.url}}" class="bgi-size-cover min-h-100px w-100px" />
-                                    </a>
-                                    <!--end::Logo-->
-                                    <span class="text-white d-flex flex-column align-items-md-end opacity-70">
-                                        <span>Phòng Khám {{phong_kham.ten_phong_kham}}</span>
-                                        <span>Địa chỉ: {{phong_kham.dia_chi}}</span>
-                                        <span>Hotline: {{phong_kham.so_dien_thoai}}</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="border-bottom w-100 opacity-20"></div>
-                            <div class="d-flex justify-content-between text-white pt-6">
-                                <div class="d-flex flex-column flex-root">
-                                    <span class="font-weight-bolde mb-2r">THỜI GIAN THANH TOÁN</span>
-                                    <span class="opacity-70"> {{don_thuoc.thoi_gian_tao}} </span>
-                                </div>
-                                <div class="d-flex flex-column flex-root">
-                                    <span class="font-weight-bolder mb-2">MÃ ĐƠN THUỐC.</span>
-                                    <span class="opacity-70">{{don_thuoc.ma_don_thuoc}}</span>
-                                </div>
-                                <div class="d-flex flex-column flex-root">
-                                    <span class="font-weight-bolder mb-2">NGƯỜI THANH TOÁN.</span>
-                                    <span class="opacity-70">
-                                        {{don_thuoc.benh_nhan.ho_ten}} - {{don_thuoc.benh_nhan.so_dien_thoai}}
-                                    <br />{{don_thuoc.benh_nhan.dia_chi}}
-                                    <br />{{don_thuoc.benh_nhan.cmnd_cccd}}
-                                    </span>
-                                </div>
-                            </div>
+                <div class="card-body p-0">
+
+                    <div class="row justify-content-center py-8 px-8 py-md-27 px-md-0">
+                        <div id='hoa_don_thuoc'>
+                            {{mau_hoa_don_thuoc.noi_dung|safe}}
                         </div>
                     </div>
-                    <!-- end: Invoice header-->
-                    <!-- begin: Invoice body-->
-                    <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
-                        <div class="col-md-9">
-                            <div class="table-responsive">
-                                <table class="table" id="invoice-table">
-                                    <thead>
-                                        <tr>
-                                            <th class="pl-0 font-weight-bold text-muted text-uppercase">Tên Thuốc</th>
-                                            
-                                            <th class="text-center font-weight-bold text-muted text-uppercase">Áp dụng bảo hiểm</th>
-                                            <th class="text-center font-weight-bold text-muted text-uppercase">Đơn giá</th>
-                                            <th class="text-center font-weight-bold text-muted text-uppercase">Số lượng</th>
-                                            <th class="text-center font-weight-bold text-muted text-uppercase">DVT</th>
-                                            <th class="text-right pr-0 font-weight-bold text-muted text-uppercase">Tổng tiền</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for thuoc in danh_sach_thuoc %}
-                                        <tr class="font-weight-boldest font-size-lg">
-                                            <td class="pl-0 pt-7">{{ thuoc.thuoc.ten_thuoc }}</td>
-                                            <td class="text-right text-center pt-7">
-                                                {% if thuoc.bao_hiem == True %}
-                                                    Đã áp dụng
-                                                {% else %}
-                                                    Chưa áp dụng
-                                                {% endif %}    
-                                                <!--{{ thuoc.bao_hiem }}-->
-                                            </td>
-                                            <td class="format-gia text-center pt-7" data-id={{thuoc.thuoc.don_gia_tt}}>
-                                                {{ thuoc.thuoc.don_gia_tt }}
-                                            </td>
-                                            <td class="text-center pt-7">{{ thuoc.so_luong }}</td>
-                                            <td class="text-center pt-7" data-id={{thuoc.thuoc.don_vi_tinh}}>
-                                                {{ thuoc.thuoc.don_vi_tinh }}
-                                            </td>
-                                            <td class="format-gia text-danger pr-0 pt-7 text-right" data-id={{thuoc.gia_ban}}>
-                                                {{ thuoc.gia_ban }}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                    {% comment %} <tfoot>
-                                        <th class="pl-0 font-weight-bold text-muted text-uppercase"></th>
-                                        <th class="text-right font-weight-bold text-muted text-uppercase"></th>
-                                        <th class="text-center font-weight-bold text-muted text-uppercase"></th>
-                                        <th class="text-center font-weight-bold text-muted text-uppercase"></th>
-                                        <th class="text-center font-weight-bold text-muted text-uppercase pb-4">
-                                        </th>
-                                        <th class="text-right pr-0">
-                                            <span id="format-money-tong-tien" class="font-size-h2 font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}">{{tong_tien}}</span>
-                                        </th>
-                                    </tfoot> {% endcomment %}
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end: Invoice body-->
-                    <!-- begin: Invoice footer-->
-                    <div class="row justify-content-center bg-gray-100 py-8 px-8 py-md-10 px-md-0">
-                        <div class="col-md-9">
-                            <div class="d-flex justify-content-between flex-column flex-md-row font-size-lg">
-                                <div class="d-flex flex-column mb-10 mb-md-0">
-                                    <div class="font-weight-bolder font-size-lg mb-3">THÔNG TIN CHUYỂN KHOẢN</div>
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <span class="mr-15 font-weight-bold">Chủ Khoản:</span>
-                                        <span class="text-right">{{phong_kham.chu_khoan}}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <span class="mr-15 font-weight-bold">Số Tài Khoản:</span>
-                                        <span class="text-right">{{phong_kham.so_tai_khoan}}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="mr-15 font-weight-bold">Ngân Hàng:</span>
-                                        <span class="text-right">{{phong_kham.thong_tin_ngan_hang}}</span>
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-column text-md-right">
-                                    <div class="d-flex justify-content-between mb-3 font-size-h4">
-                                        <span class="mr-15 font-weight-bold">Tổng tiền</span>
-                                        <span class="text-right"><span id="format-money-tong-tien" class="font-weight-boldest text-danger mb-1" data-gia="{{tong_tien}}">{{tong_tien}}</span></span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-3 font-size-h5">
-                                        <span class="mr-15 font-weight-bold">Bảo hiểm</span>
-                                        <span class="text-right"><span id="format-money-bao-hiem" class="font-weight-boldest text-danger mb-1" data-gia="{{tong_bao_hiem}}">{{tong_bao_hiem}}</span></span>
-                                    </div>
-                                    <div class="border-bottom border-bottom-warning w-100 mb-4"></div>
-                                    <span class="font-size-lg font-weight-bolder mb-1">TIỀN BỆNH NHÂN CẦN THANH TOÁN</span>
-                                    {% comment %} <span class="format-tien font-size-h2 font-weight-boldest text-danger mb-1">{{tong_tien}}</span> {% endcomment %}
-                                    <span id="format-money-thanh-tien" class="font-size-h2 font-weight-boldest text-danger mb-1">{{thanh_tien}}</span>
-                                    <span>VND</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end: Invoice footer-->
+
                 </div>
                 <!-- end: Invoice-->
                 <!-- begin: Invoice action-->
@@ -182,7 +54,7 @@
                     <div class="col-md-9">
                         <div class="d-flex justify-content-between">
                             <button type="button" class="btn btn-light-primary font-weight-bold" onclick="printDiv('hoa_don_thuoc')">In Hóa Đơn</button>
-                            <button id="button-payment" data-tong-tien="{{tong_tien}}" data-id="{{ don_thuoc.id }}" type="button" class="btn btn-primary font-weight-bold">Thanh Toán</button>
+                            
                         </div>
                     </div>
                 </div>
@@ -193,39 +65,71 @@
         <!--end::Container-->
     </div>
     <!--end::Entry-->
+
+    {% if don_thuoc.check_tphtdt %}
+    <!--begin::Entry-->
+    <div class="d-flex flex-column-fluid mt-5">
+        <!--begin::Container-->
+        <div class="container">
+            <!-- begin::Card-->
+            <div class="card card-custom overflow-hidden">
+                <!-- begin: Invoice-->
+                <div class="card-body p-0">
+                    <div class="row justify-content-center py-8 px-8 py-md-27 px-md-0">
+                        <div class="col-md-12" id='hoa_don_thuc_pham_ho_tro_dieu_tri'>
+                            {{mau_hoa_don_tphtdt.noi_dung|safe}}
+                        </div>
+                    </div>
+
+                </div>
+                <!-- end: Invoice-->
+                <!-- begin: Invoice action-->
+                <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
+                    <div class="col-md-9">
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-light-primary font-weight-bold" onclick="printDiv('hoa_don_thuc_pham_ho_tro_dieu_tri')">In Hóa Đơn</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- end: Invoice action-->
+            </div>
+            <!-- end::Card-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Entry-->
+    {% endif %}
 </div>
 <!--end::Content-->
+{% if check_da_thanh_toan == True %}
+{% else %}
+<div class="d-flex flex-column-fluid mt-5 mb-5">
+    <div class='container'>
+        <!-- begin::Card-->
+        <div class="card card-custom overflow-hidden">
+            <div class="card-body p-0">
+                <!-- begin: Invoice action-->
+                <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
+                    <div class="col-md-9">
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn font-weight-bold"></button>
+                            <button id="button-payment" data-tong-tien="{{tong_tien_thanh_toan}}" data-id="{{ id_don_thuoc }}" type="button" class="btn btn-primary font-weight-bold">Thanh Toán</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- end: Invoice action-->
+            </div>
+        </div>
+    </div>
+</div>
+{% endif%}
 
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 <script>
-
-    function formatMoney(amount, decimalCount = 0, decimal = ",", thousands = ".") {
-        try {
-            decimalCount = Math.abs(decimalCount);
-            decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-
-            const negativeSign = amount < 0 ? "-" : "";
-
-            let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-            let j = (i.length > 3) ? i.length % 3 : 0;
-
-            return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-        } catch (e) {
-            console.log(e)
-        }
-    };
-
-    $('#invoice-table tbody tr').each(function(){
-        $(this).find(".format-gia").each(function(){
-            console.log($(this).data('id'))
-            $(this).html(formatMoney($(this).data('id')))
-        })  
-    });
+    var flag = "{{ flag|safe }}"
 
     $('#button-payment').on('click', function(){
         var id_don_thuoc = $(this).attr('data-id')
@@ -252,20 +156,16 @@
                     toastr.warning(response.message, "Xảy Ra Lỗi")
                 }
             },
-            error: function () {
-                toastr.warning("Xảy Ra Lỗi Trong Quá Trình Thanh Toán", "Xảy Ra Lỗi")
+            error: function (e) {
+                toastr.warning(e, "Xảy Ra Lỗi")
                                                                                                                          
             }
         });
         
     })
 
-    document.getElementById('format-money-tong-tien').innerText = formatMoney(document.getElementById('format-money-tong-tien').innerHTML)
-    document.getElementById('format-money-bao-hiem').innerText = formatMoney(document.getElementById('format-money-bao-hiem').innerHTML)
-    document.getElementById('format-money-thanh-tien').innerText = formatMoney(document.getElementById('format-money-thanh-tien').innerHTML)
-
     function printDiv(hoa_don_thuoc){
-        var printContents = document.getElementById("hoa_don_thuoc").innerHTML;
+        var printContents = document.getElementById(hoa_don_thuoc).innerHTML;
         var originalContents = document.body.innerHTML;
 
         document.body.innerHTML = printContents;
@@ -274,6 +174,263 @@
 
         document.body.innerHTML = originalContents;
     }
+
+    $(document).ready(function() {
+        initHoaDonThuoc()
+        if (flag == 'True') {
+            initHoaDonThucPhamHoTroDieuTri()
+        }
+    })
+
+    var initHoaDonThuoc = function() {
+        var data_thoi_gian = ''
+        var data_so_dien_thoai = ''
+        var data_dia_chi = ''
+        var data_thuoc = ''
+        var data_tong_tien = ''
+        var data_bao_hiem = ''
+        var data_thanh_toan = ''
+        var data_nguoi_thuc_hien = ''
+        var thoi_gian_thanh_toan = "{{ thoi_gian_thanh_toan|safe }}"
+        var benh_nhan = "{{ benh_nhan|safe }}"
+        var so_dien_thoai = "{{ so_dien_thoai|safe }}"
+        var dia_chi = "{{ dia_chi|safe }}"
+        var danh_sach_thuoc = {{ danh_sach_thuoc|safe }}
+        var danh_sach_bao_hiem_thuoc = {{ danh_sach_bao_hiem_thuoc|safe }}
+        var danh_sach_don_gia_thuoc = {{ danh_sach_don_gia_thuoc|safe }}
+        var danh_sach_so_luong_thuoc = {{ danh_sach_so_luong_thuoc|safe }}
+        var danh_sach_don_vi_tinh_thuoc = {{ danh_sach_don_vi_tinh_thuoc|safe }}
+        var danh_sach_thanh_tien_thuoc = {{ danh_sach_thanh_tien_thuoc|safe }}
+        var tong_tien_thuoc_str = "{{ tong_tien_thuoc_str|safe }}"
+        var bao_hiem_thuoc_str = "{{ bao_hiem_thuoc_str|safe }}"
+        var thanh_toan_thuoc_str = "{{ thanh_toan_thuoc_str|safe }}"
+        var nguoi_thuc_hien = "{{ nguoi_thuc_hien|safe }}"
+
+
+        $('#hoa_don_thuoc table tbody tr').each(function(){
+            if($(this).find('td').eq(0).text() == '{thoi_gian_thanh_toan}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_thoi_gian += c.replace(/{thoi_gian_thanh_toan}/, thoi_gian_thanh_toan).replace(/{benh_nhan}/, benh_nhan)
+
+                $(this).replaceWith(data_thoi_gian)
+            }
+
+            if($(this).find('td').eq(1).text() == '{so_dien_thoai}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_so_dien_thoai += c.replace(/{so_dien_thoai}/, so_dien_thoai)
+
+                $(this).replaceWith(data_so_dien_thoai)
+            }
+
+            if($(this).find('td').eq(1).text() == '{dia_chi}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_dia_chi += c.replace(/{dia_chi}/, dia_chi)
+
+                $(this).replaceWith(data_dia_chi)
+            }
+
+            if($(this).find('td').eq(0).text() == '{ten_thuoc}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                for (var i = 0; i < danh_sach_thuoc.length; i++) {
+                    data_thuoc += c.replace(/{ten_thuoc}/, danh_sach_thuoc[i]).replace(/{bao_hiem}/, danh_sach_bao_hiem_thuoc[i]).replace(/{don_gia}/, danh_sach_don_gia_thuoc[i]).replace(/{so_luong}/, danh_sach_so_luong_thuoc[i]).replace(/{don_vi}/, danh_sach_don_vi_tinh_thuoc[i]).replace(/{thanh_tien}/, danh_sach_thanh_tien_thuoc[i])
+                }
+
+                $(this).replaceWith(data_thuoc)
+            }
+
+            if($(this).find('td').eq(3).text() == '{tong_tien}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_tong_tien += c.replace(/{tong_tien}/, tong_tien_thuoc_str)
+
+                $(this).replaceWith(data_tong_tien)
+            }
+
+            if($(this).find('td').eq(3).text() == '{tong_tien_bao_hiem}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_bao_hiem += c.replace(/{tong_tien_bao_hiem}/, bao_hiem_thuoc_str)
+
+                $(this).replaceWith(data_bao_hiem)
+            }
+
+            if($(this).find('td').eq(3).text() == '{tien_thanh_toan}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_thanh_toan += c.replace(/{tien_thanh_toan}/, thanh_toan_thuoc_str)
+
+                $(this).replaceWith(data_thanh_toan)
+            }
+
+            if($(this).find('td').eq(2).text() == '{nguoi_thanh_toan}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_nguoi_thuc_hien += c.replace(/{nguoi_thanh_toan}/, nguoi_thuc_hien)
+
+                $(this).replaceWith(data_nguoi_thuc_hien)
+            }
+        })
+    }
+
+    var initHoaDonThucPhamHoTroDieuTri = function() {
+        var data_thoi_gian = '';
+        var data_so_dien_thoai = '';
+        var data_dia_chi = '';
+        var data_thuc_pham_chuc_nang = '';
+        var data_tong_tien = ''
+        var data_bao_hiem = ''
+        var data_thanh_toan = ''
+        var data_nguoi_thuc_hien = ''
+        var thoi_gian_thanh_toan = "{{ thoi_gian_thanh_toan|safe }}";
+        var benh_nhan = "{{ benh_nhan|safe }}";
+        var so_dien_thoai = "{{ so_dien_thoai|safe }}";
+        var dia_chi = "{{ dia_chi|safe }}";
+        var danh_sach_thuc_pham_chuc_nang = {{ danh_sach_thuc_pham_chuc_nang|safe }};
+        var danh_sach_bao_hiem_thuc_pham_cn = {{ danh_sach_bao_hiem_thuc_pham_cn|safe }};
+        var danh_sach_don_gia_thuc_pham_cn = {{ danh_sach_don_gia_thuc_pham_cn|safe }}
+        var danh_sach_so_luong_thuc_pham_cn = {{ danh_sach_so_luong_thuc_pham_cn|safe }}
+        var danh_sach_don_vi_tinh_thuc_pham_cn = {{ danh_sach_don_vi_tinh_thuc_pham_cn|safe }}
+        var danh_sach_thanh_tien_thuc_pham_cn = {{ danh_sach_thanh_tien_thuc_pham_cn|safe }}
+        var tong_tien_thuc_pham_cn_str = "{{tong_tien_thuc_pham_cn_str|safe}}"
+        var bao_hiem_thuc_pham_cn_str = "{{ bao_hiem_thuc_pham_cn_str|safe }}"
+        var thanh_toan_thuc_pham_cn_str = "{{ thanh_toan_thuc_pham_cn_str|safe }}"
+        var nguoi_thuc_hien = "{{ nguoi_thuc_hien|safe }}"
+
+        $('#hoa_don_thuc_pham_ho_tro_dieu_tri table tbody tr').each(function(){
+            if($(this).find('td').eq(0).text() == '{thoi_gian_thanh_toan}'){
+    
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                data_thoi_gian += c.replace(/{thoi_gian_thanh_toan}/, thoi_gian_thanh_toan).replace(/{benh_nhan}/, benh_nhan);
+
+                $(this).replaceWith(data_thoi_gian);
+            }
+
+            if($(this).find('td').eq(1).text() == '{so_dien_thoai}'){
+
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                data_so_dien_thoai += c.replace(/{so_dien_thoai}/, so_dien_thoai);
+
+                $(this).replaceWith(data_so_dien_thoai);
+            }
+
+            if($(this).find('td').eq(1).text() == '{dia_chi}'){
+
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                data_dia_chi += c.replace(/{dia_chi}/, dia_chi);
+
+                $(this).replaceWith(data_dia_chi);
+            }
+
+            if($(this).find('td').eq(0).text() == '{ten_thuoc}'){
+                console.log($(this).html());
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                for (var i = 0; i < danh_sach_thuc_pham_chuc_nang.length; i++) {
+                    data_thuc_pham_chuc_nang += c.replace(/{ten_thuoc}/, danh_sach_thuc_pham_chuc_nang[i]).replace(/{bao_hiem}/, danh_sach_bao_hiem_thuc_pham_cn[i]).replace(/{don_gia}/, danh_sach_don_gia_thuc_pham_cn[i]).replace(/{so_luong}/, danh_sach_so_luong_thuc_pham_cn[i]).replace(/{don_vi}/, danh_sach_don_vi_tinh_thuc_pham_cn[i]).replace(/{thanh_tien}/, danh_sach_thanh_tien_thuc_pham_cn[i])
+                }
+
+                $(this).replaceWith(data_thuc_pham_chuc_nang);
+            }
+
+            if($(this).find('td').eq(3).text() == '{tong_tien}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_tong_tien += c.replace(/{tong_tien}/, tong_tien_thuc_pham_cn_str)
+
+                $(this).replaceWith(data_tong_tien)
+            }
+
+            if($(this).find('td').eq(3).text() == '{tong_tien_bao_hiem}'){
+
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                data_bao_hiem += c.replace(/{tong_tien_bao_hiem}/, bao_hiem_thuc_pham_cn_str);
+
+                $(this).replaceWith(data_bao_hiem);
+            }
+
+            if($(this).find('td').eq(3).text() == '{tien_thanh_toan}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_thanh_toan += c.replace(/{tien_thanh_toan}/, thanh_toan_thuc_pham_cn_str)
+
+                $(this).replaceWith(data_thanh_toan)
+            }
+
+            if($(this).find('td').eq(2).text() == '{nguoi_thanh_toan}'){
+                console.log($(this).html())
+                var innerHtml = $(this).html()
+                var start_tr = '<tr>'
+                var end_tr = '</tr>'
+                var c = start_tr + innerHtml + end_tr
+
+                data_nguoi_thuc_hien += c.replace(/{nguoi_thanh_toan}/, nguoi_thuc_hien)
+
+                $(this).replaceWith(data_nguoi_thuc_hien)
+            }
+        })
+    }
 </script>
 {% endblock scripts %}
-

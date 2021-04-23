@@ -14,6 +14,7 @@ class NhomThauSerializer(serializers.ModelSerializer):
     class Meta:
         model = NhomThau
         fields = "__all__"
+        
 class ThuocSerializer(serializers.ModelSerializer):
     don_gia = serializers.CharField(source='get_don_gia')
     don_gia_tt = serializers.CharField(source='get_don_gia_tt')

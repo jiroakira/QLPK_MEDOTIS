@@ -70,6 +70,16 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label class="col-lg-2 col-form-label text-lg-right">Chụp ảnh:</label>
+                                        <div class="col-lg-10">
+                                            <div class="dropzone dropzone-multi" id="kt_dropzone_4">
+                                                <div class="dropzone-panel mb-lg-0 mb-2">
+                                                    <a href="javascript:;" class="btn btn-light-primary font-weight-bold btn-sm" id="openCamera" data-name="{{ ho_ten_benh_nhan }}">Mở máy ảnh</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <label class="col-lg-2 col-form-label text-lg-right">Kết quả:</label>
                                         <div class="col-lg-10">
                                             {% comment %} <textarea class="form-control" id="ket_qua" rows="3" placeholder="Nhập kết quả của bệnh nhân" name='ket_qua'></textarea>  {% endcomment %}
@@ -104,24 +114,53 @@
 </div>
 <!-- end::Content -->
 
+<!-- Open Camera Modal-->
+<div class="modal fade" id="CameraModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chụp ảnh siêu âm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <video id="webcam" autoplay playsinline width="640" height="480" class="ml-8"></video>
+                            <canvas id="canvas" class="d-none ml-8"></canvas>
+                            <div class="flash"></div>
+                            <audio id="snapSound" src="{% static 'assets/plugins/custom/webcam-easy/demo/audio/snap.wav' %}" preload="auto"></audio>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer row justify-content-center py-8 px-8 py-md-10 px-md-0">
+                <div id="cameraControls">
+                    <a href="javascript:;" id="take-photo" class="btn btn-primary font-weight-bold">Chụp Ảnh</a>
+                    <a href="javascript:;" id="download-photo" download="{{ ho_ten_benh_nhan }}.png" target="_blank" title="Save Photo" class="d-none"><i class="fas fa-download"></i>Tải Về</a>  
+                    <a href="javascript:;" id="resume-camera" title="Resume Camera" class="d-none"><i class="fas fa-camera-retro"></i>Chụp Thêm</a>
+                </div>
+                <button type="button" class="btn btn-light-primary font-weight-bold float-right" data-dismiss="modal">Đóng</button>
+            </div>     
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 
 {% block scripts %}
 
 <!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
 
-{% comment %} <script src="{% static 'assets/plugins/custom/ckeditor/ckeditor.js' %}"></script> {% endcomment %}
-<script src="https://cdn.ckeditor.com/ckeditor5/25.0.0/classic/ckeditor.js"></script>
 
-{% comment %} <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
-<script src="{% static 'assets/js/summernote_ext_resized_data_image.js' %}"></script> {% endcomment %}
 <script src="{% static 'assets/js/summernote-image-attributes.js' %}"></script>
 <script src="{% static 'assets/js/lang_summernote/vi_VN.js' %}"></script>
 <script src="{% static 'assets/js/summernote-ext-print.js' %}"></script>
+
+<script src="{% static 'assets/plugins/custom/webcam-easy/dist/webcam-easy.min.js' %}"></script>
 <!--end::Global Theme Bundle-->
 
 <script>
@@ -148,15 +187,22 @@
         var dia_chi = {{ dia_chi|safe }};
         var tuoi = {{ tuoi|safe }};
         var gioi_tinh = {{ gioi_tinh|safe }};
-
+        var bac_si_chuyen_khoa = {{ bac_si_chuyen_khoa|safe }}
+        var bac_si_lam_sang = {{ bac_si_lam_sang|safe }}
+        var ngay_kham = {{ ngay_kham|safe }}
+        
         var fillPatientInfo = function() {
             var dataInfo = ""
             var dataAddr = ""
             var dataRes = ""
             var dataDr = ""
+            var dataDateTime = ""
+            var dataDr2 = ""
+
             $('table tr').each(function(){
                 if ($(this).find('td').eq(1).text() == '{benh_nhan}'){
                     var innerHtml = $(this).html()
+            
                     var start_tr = '<tr>'
                     var end_tr = '</tr>'
                     var c = start_tr + innerHtml + end_tr
@@ -173,6 +219,39 @@
                     dataAddr += c.replace(/{dia_chi}/, dia_chi[0])
                     $(this).replaceWith(dataAddr)
                 }
+
+                if ($(this).find('td').eq(1).text() == '{bac_si_lam_sang}'){
+                    var innerHtml = $(this).html()
+            
+                    var start_tr = '<tr>'
+                    var end_tr = '</tr>'
+                    var c = start_tr + innerHtml + end_tr
+
+                    dataDr2 += c.replace(/{bac_si_lam_sang}/, bac_si_lam_sang[0])
+                    $(this).replaceWith(dataDr2)
+                }
+
+                if ($(this).find('td').eq(1).text() == '{bac_si_chuyen_khoa}'){
+                    var innerHtml = $(this).html()
+                    console.log(innerHtml)                    
+                    var start_tr = '<tr>'
+                    var end_tr = '</tr>'
+                    var c = start_tr + innerHtml + end_tr
+
+                    dataDr += c.replace(/{bac_si_chuyen_khoa}/, bac_si_chuyen_khoa[0])
+                    $(this).replaceWith(dataDr)
+                }
+
+                if ($(this).find('td').eq(1).text() == '{ngay_kham}'){
+                    var innerHtml = $(this).html()
+                    console.log(innerHtml)                    
+                    var start_tr = '<tr>'
+                    var end_tr = '</tr>'
+                    var c = start_tr + innerHtml + end_tr
+
+                    dataDateTime += c.replace(/{ngay_kham}/, ngay_kham[0])
+                    $(this).replaceWith(dataDateTime)
+                }
                 
             })
         }
@@ -180,10 +259,6 @@
         var _initValidate = function () {
             fillPatientInfo()
             var html = $("#divMauPhieu").html()
-            {% comment %} CKEDITOR.replace( 'noi_dung',{
-                extraPlugins: 'imageresizerowandcolumn'
-            } ); {% endcomment %}
-            {% comment %} CKEDITOR.instances['noi_dung'].setData(html) {% endcomment %}
 
             $('.summernote').summernote({
                 toolbar: [
@@ -279,11 +354,110 @@
             })
         }
 
+        var initCamera = function() {
+            $('#openCamera').click(function(){
+                $('#CameraModal').modal('show');
+                webcam.start()
+                    .then(result =>{
+                        cameraStarted();
+                        console.log("webcam started");
+                    })
+                    .catch(err => {
+                        displayError();
+                    });
+            });
+
+            var benh_nhan = $('#openCamera').attr('data-name');
+
+            const webcamElement = document.getElementById('webcam');
+
+            const canvasElement = document.getElementById('canvas');
+
+            const snapSoundElement = document.getElementById('snapSound');
+
+            const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+
+            function cameraStarted(){
+                $("#errorMsg").addClass("d-none");
+                $('.flash').hide();
+                $("#webcam-caption").html("on");
+                $(".webcam-container").removeClass("d-none");
+                if( webcam.webcamList.length > 1){
+                    $("#cameraFlip").removeClass('d-none');
+                }
+                $('body').css('overflow-y','hidden');
+            }
+
+            function cameraStopped(){
+                $("#errorMsg").addClass("d-none");
+                $("#cameraFlip").addClass('d-none');
+                $(".webcam-container").addClass("d-none");
+                $("#webcam-caption").html("Click to Start Camera");
+                $('.md-modal').removeClass('md-show');
+            }
+
+            $('#take-photo').click(function(){
+                beforeTakePhoto();
+                var picture = webcam.snap();
+                document.querySelector('#download-photo').href = picture;
+                afterTakePhoto();
+            })
+
+            function beforeTakePhoto(){
+                $('.flash')
+                    .show() 
+                    .animate({opacity: 0.3}, 500) 
+                    .fadeOut(500)
+                    .css({'opacity': 0.7});
+                $('#cameraControls').addClass('d-none');
+            }
+
+            function afterTakePhoto(){
+                webcam.stop();
+                $('#canvas').removeClass('d-none');
+                $('#take-photo').addClass('d-none');
+                $('#exit-app').removeClass('d-none');
+                $('#download-photo').removeClass('d-none');
+                $('#download-photo').addClass('btn btn-success font-weight-bold');
+                $('#resume-camera').removeClass('d-none');
+                $('#resume-camera').addClass('btn btn-primary font-weight-bold');
+                $('#cameraControls').removeClass('d-none');
+                $('#webcam').addClass('d-none');
+            }
+
+            function removeCapture(){
+                $('#webcam').removeClass('d-none');
+                $('#canvas').addClass('d-none');
+                $('#cameraControls').removeClass('d-none');
+                $('#take-photo').removeClass('d-none');
+                $('#exit-app').addClass('d-none');
+                $('#download-photo').addClass('d-none');
+                $('#resume-camera').addClass('d-none');
+            }
+
+            $("#resume-camera").click(function () {
+                webcam.stream()
+                    .then(facingMode =>{
+                        removeCapture();
+                    });
+            });
+
+            $("#CameraModal").on('hide.bs.modal',function () {
+                {% comment %} removeCapture();
+                cameraStopped(); {% endcomment %}
+                webcam.stop();
+                {% comment %} const $body = $('body');
+                $body[0].style.setProperty('overflow-y', 'auto', '!important'); {% endcomment %}
+            });
+
+        }
+
         return {
             // public functions
             init: function() {
                 _initValidate();
                 send_content();
+                initCamera();
             }
         };
     }();

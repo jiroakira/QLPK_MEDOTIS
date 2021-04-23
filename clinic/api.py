@@ -1,15 +1,18 @@
+from django.db.models.expressions import Func, OuterRef, Subquery
+from clinic.pagination import CustomPagination, PaginationHandlerMixin
 from finance.models import (
     HoaDonChuoiKham, 
     HoaDonThuoc, 
-    HoaDonLamSang
+    HoaDonLamSang,
+    NhapHang
 )
 from finance.serializers import HoaDonChuoiKhamSerializer
 from json import dump
 from rest_framework.parsers import FileUploadParser
 from rest_framework.parsers import MultiPartParser
 import json
-from medicine.models import DonThuoc, KeDonThuoc, Thuoc, TrangThaiDonThuoc, VatTu
-from django.http.response import Http404, HttpResponse
+from medicine.models import CongTy, DonThuoc, KeDonThuoc, Thuoc, TrangThaiDonThuoc, VatTu
+from django.http.response import Http404, HttpResponse, JsonResponse
 from rest_framework import views
 from rest_framework.views import APIView
 from clinic.models import (
@@ -44,6 +47,7 @@ from django.db.models.functions import TruncDay
 from django.db.models import Count, F, Sum, Q
 from django.db import models
 from medicine.serializers import (
+    CongTySerializer,
     DanhSachThuocSerializer, 
     KeDonThuocSerializer,
     ThuocSerializer
@@ -53,6 +57,10 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from rest_framework import generics
 from django.contrib.auth.models import Group
+from rest_framework import generics
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
+
 
 User = get_user_model()
 
@@ -214,7 +222,6 @@ class DangKiAPI(generics.GenericAPIView):
 class DichVuKhamViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        phong_chuc_nang = PhongChucNangSerializerSimple()
         dich_vu_kham = DichVuKham.objects.all()
         serializer = DichVuKhamSerializerFormatted(dich_vu_kham, many=True, context={"request": request})
         response = {
@@ -286,6 +293,17 @@ class DichVuKhamViewSet(viewsets.ViewSet):
             "status": status.HTTP_204_NO_CONTENT,
             "message": f"Xoa Dich Vu {dich_vu_kham.ten_dich_vu} Thanh Cong"
         })
+
+class DichVuKhamListCreateAPIView(generics.ListCreateAPIView):
+    queryset = DichVuKham.objects.all()
+    serializer_class = DichVuKhamSerializerFormatted
+    pagination_class = CustomPagination
+
+class ThuocListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Thuoc.objects.all()
+    serializer_class = ThuocSerializer
+    pagination_class = CustomPagination
+
 
 class PhongChucNangViewSet(viewsets.ModelViewSet):
     def list(self, request):
@@ -909,9 +927,10 @@ class DanhSachHoaDonDichVu(APIView):
     def get(self, request, format=None):
         now = timezone.localtime(timezone.now())
         tomorrow = now + timedelta(1)
+        today_start = now.replace(hour=0, minute=0, second=0)
         today_end = tomorrow.replace(hour=0, minute=0, second=0)
-        trang_thai = TrangThaiChuoiKham.objects.get_or_create(trang_thai_chuoi_kham="Chờ Thanh Toán")[0]
-        danh_sach_chuoi_kham = ChuoiKham.objects.select_related('benh_nhan').filter(trang_thai=trang_thai, thoi_gian_tao__lt=today_end)
+
+        danh_sach_chuoi_kham = ChuoiKham.objects.select_related('benh_nhan').filter(thoi_gian_tao__lt=today_end, thoi_gian_tao__gte=today_start)
         serializer = HoaDonChuoiKhamSerializerSimple(danh_sach_chuoi_kham, many=True, context={'request': request})
         data = serializer.data
         response_data = {
@@ -924,9 +943,10 @@ class DanhSachHoaDonThuoc(APIView):
     def get(self, request, format=None):
         now = timezone.localtime(timezone.now())
         tomorrow = now + timedelta(1)
+        today_start = now.replace(hour=0, minute=0, second=0)
         today_end = tomorrow.replace(hour=0, minute=0, second=0)
-        trang_thai = TrangThaiDonThuoc.objects.get_or_create(trang_thai = "Chờ Thanh Toán")[0]
-        danh_sach_don_thuoc = DonThuoc.objects.select_related('benh_nhan').filter(trang_thai=trang_thai, thoi_gian_tao__lt=today_end)
+
+        danh_sach_don_thuoc = DonThuoc.objects.select_related('benh_nhan').filter(thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end)
         serializer = HoaDonThuocSerializerSimple(danh_sach_don_thuoc, many=True, context={'request': request})
         data = serializer.data
         response_data = {
@@ -939,10 +959,13 @@ class DanhSachDonThuocPhongThuoc(APIView):
     def get(self, request, format=None):
         now = timezone.localtime(timezone.now())
         tomorrow = now + timedelta(1)
+        today_start = now.replace(hour=0, minute=0, second=0)
         today_end = tomorrow.replace(hour=0, minute=0, second=0)
         # trang_thai = TrangThaiDonThuoc.objects.filter(Q(trang_thai = "Chờ Thanh Toán") | Q(trang_thai = "Đã Thanh Toán"))
         trang_thai = TrangThaiDonThuoc.objects.get_or_create(trang_thai = "Đã Thanh Toán")[0]
-        danh_sach_don_thuoc = DonThuoc.objects.filter(trang_thai=trang_thai, thoi_gian_tao__lt=today_end)
+        trang_thai_cho = TrangThaiDonThuoc.objects.get_or_create(trang_thai = "Chờ Thanh Toán")[0]
+        trang_thai_hoan_thanh = TrangThaiDonThuoc.objects.get_or_create(trang_thai = "Hoàn Thành")[0]
+        danh_sach_don_thuoc = DonThuoc.objects.filter(Q(trang_thai=trang_thai) | Q(trang_thai=trang_thai_cho) | Q(trang_thai=trang_thai_hoan_thanh)).filter(thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end)
         serializer = HoaDonThuocSerializerSimple(danh_sach_don_thuoc, many=True, context={'request': request})
         data = serializer.data
         response_data = {
@@ -965,12 +988,14 @@ class DanhSachDonThuocDaKe(APIView):
 
 class DanhSachThanhToanLamSang(APIView):
     def get(self, request, format=None):
+
         now = timezone.localtime(timezone.now())
         tomorrow = now + timedelta(1)
+        today_start = now.replace(hour=0, minute=0, second=0)
         today_end = tomorrow.replace(hour=0, minute=0, second=0)
-        trang_thai = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Chờ Thanh Toán Lâm Sàng")[0]
-        danh_sach_lam_sang = LichHenKham.objects.select_related('benh_nhan').filter(trang_thai = trang_thai, thoi_gian_tao__lt=today_end)
-        serializer = LichHenKhamSerializer(danh_sach_lam_sang, many=True, context={'request': request})
+        danh_sach_lich_hen = LichHenKham.objects.select_related('benh_nhan').filter(thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end)
+        
+        serializer = LichHenKhamSerializer(danh_sach_lich_hen, many=True, context={'request': request})
         data = serializer.data
         response_data = {
             'error': False, 
@@ -1113,7 +1138,19 @@ class DanhSachDoanhThuDichVu(APIView):
                 'data' : list_dich_vu,
             }
             return Response(response)
-    
+
+class DanhSachNguonCung(APIView):
+    def get(self, request, format=None):
+        nguon_cung = CongTy.objects.all()
+
+        serializer = CongTySerializer(nguon_cung, many=True, context = {'request' : request})
+        data = serializer.data
+        
+        response = {
+            'data': data
+        }
+        return Response(response)
+
 class DanhSachDoanhThuLamSang(APIView):
     def get(self, request, format=None):
         range_start = self.request.query_params.get('range_start', None)
@@ -1174,6 +1211,11 @@ class DanhSachBenhNhan(APIView):
         data = serializer.data
         
         return Response(data)
+    
+class DanhSachBenhNhanListCreateAPIView(generics.ListCreateAPIView):
+    queryset = User.objects.filter(chuc_nang=1)
+    serializer_class = UserSerializer
+    pagination_class = CustomPagination
 
 from datetime import datetime, timedelta
 
@@ -1615,8 +1657,8 @@ class DanhSachBenhNhanTheoPhongChucNang(APIView):
         danh_sach_phan_khoa = set()
         for dich_vu in danh_sach_dich_vu:
             for phan_khoa in dich_vu.phan_khoa_dich_vu.all():
-                if phan_khoa:
-                    if phan_khoa.chuoi_kham.trang_thai.trang_thai_chuoi_kham == 'Đang Thực Hiện' or phan_khoa.chuoi_kham.trang_thai.trang_thai_chuoi_kham == 'Đã Thanh Toán':
+                if phan_khoa is not None:
+                    if phan_khoa.trang_thai is not None and (phan_khoa.trang_thai.trang_thai_khoa_kham == 'Chờ Khám' or phan_khoa.trang_thai.trang_thai_khoa_kham == 'Đang Thực Hiện' or phan_khoa.trang_thai.trang_thai_khoa_kham == 'Hoàn Thành' or phan_khoa.trang_thai.trang_thai_khoa_kham == 'Đã Tải Lên Kết Quả' or phan_khoa.trang_thai.trang_thai_khoa_kham == 'Dừng Khám'):
                         danh_sach_phan_khoa.add(phan_khoa)
         
         serializer = PhanKhoaKhamSerializer(danh_sach_phan_khoa, many=True, context={'request': request})
@@ -1840,9 +1882,6 @@ class DanhSachVatTu(APIView):
             'data' : serializer.data
         }
         return Response(response)
-        
-        
-#------ MINH Update--------
 
 class UserUpdateInfo(APIView):
     def get(self, request, format=None):
@@ -2129,7 +2168,7 @@ class DonThuocCuaChuoiKham(APIView):
         id_chuoi_kham = self.request.query_params.get('id_chuoi_kham')
         try:
             chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
-            don_thuoc = chuoi_kham.don_thuoc_chuoi_kham.all()[0]
+            don_thuoc = chuoi_kham.don_thuoc_chuoi_kham.all().last()
             danh_sach_thuoc = don_thuoc.ke_don.all()
     
             serializer = KeDonThuocSerializer(danh_sach_thuoc, many=True, context={'request': request})
@@ -2228,7 +2267,7 @@ class HoaDonThuocCuaChuoiKham(APIView):
         id_chuoi_kham = self.request.query_params.get('id_chuoi_kham')
         try:
             chuoi_kham = ChuoiKham.objects.get(id=id_chuoi_kham)
-            don_thuoc = chuoi_kham.don_thuoc_chuoi_kham.all()[0]
+            don_thuoc = chuoi_kham.don_thuoc_chuoi_kham.all().last()
 
             danh_sach_thuoc = don_thuoc.ke_don.all()
             bao_hiem = []
@@ -2364,12 +2403,14 @@ class DanhSachHoaDonThuocBaoHiem(APIView):
         return Response(response)
 class DanhSachBenhNhanChoLamSang(APIView):
     def get(self, request, format=None):
-        trang_thai = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Đã Thanh Toán Lâm Sàng")[0] 
+        trang_thai_lam_sang = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Đã Thanh Toán Lâm Sàng")[0] 
+        trang_thai_dich_vu = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Đã Thanh Toán Dịch Vụ")[0] 
+        trang_thai_phan_khoa = TrangThaiLichHen.objects.get_or_create(ten_trang_thai = "Đã Phân Khoa")[0] 
         now = timezone.localtime(timezone.now())
         tomorrow = now + timedelta(1)
         today_end = tomorrow.replace(hour=0, minute=0, second=0)
 
-        lich_hen = LichHenKham.objects.filter(trang_thai=trang_thai, thoi_gian_bat_dau__lte=today_end)
+        lich_hen = LichHenKham.objects.filter(Q(trang_thai=trang_thai_lam_sang)| Q(trang_thai=trang_thai_dich_vu) | Q(trang_thai=trang_thai_phan_khoa)).filter(thoi_gian_bat_dau__lte=today_end)
         serializer = LichHenKhamSerializer(lich_hen, many=True, context={'request':request})
         response = {
             "error": False,
@@ -2743,3 +2784,447 @@ class ApiListAllGroupOfUser(APIView):
             'data': serializer.data
         }
         return Response(response)
+
+class DanhSachBaoCaoTheoThoiGian(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+        tomorrow_start = start + timedelta(1)
+
+        # print(start)
+        if range_end == '':
+            response = [
+                {   
+                    'type': 'bao_cao_nhap',
+                    'loai_bao_cao': 'Báo Cáo Nhập BH',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_doanh_thu_formatted
+                },
+                {   
+                    'type': 'bao_cao_xuat',
+                    'loai_bao_cao': 'Báo Cáo Xuất BH',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_dich_vu_formatted
+                },
+                {
+                    'type': 'bao_cao_ton',
+                    'loai_bao_cao': 'Báo Cáo Tồn BH',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_don_thuoc_formatted
+                },
+                {   
+                    'type': 'bao_cao_nhap_dv',
+                    'loai_bao_cao': 'Báo Cáo Nhập DV',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_doanh_thu_formatted
+                },
+                {   
+                    'type': 'bao_cao_xuat_dv',
+                    'loai_bao_cao': 'Báo Cáo Xuất DV',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_dich_vu_formatted
+                },
+                {
+                    'type': 'bao_cao_ton_dv',
+                    'loai_bao_cao': 'Báo Cáo Tồn DV',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_don_thuoc_formatted
+                },
+            ]
+            return Response(response)
+
+        else:
+
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+            print(end)
+            # tomorrow_end = end + timedelta(1)
+            if range_start == range_end:
+                end = end + timedelta(1)
+
+            response = [
+                {   
+                    'type': 'bao_cao_nhap',
+                    'loai_bao_cao': 'Báo Cáo Nhập BH',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': end,
+                    # 'tong_tien': tong_doanh_thu_formatted
+                },
+                {   
+                    'type': 'bao_cao_xuat',
+                    'loai_bao_cao': 'Báo Cáo Xuất BH',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': end,
+                    # 'tong_tien': tong_tien_dich_vu_formatted
+                },
+                {
+                    'type': 'bao_cao_ton',
+                    'loai_bao_cao': 'Báo Cáo Tồn BH',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': end,
+                    # 'tong_tien': tong_tien_don_thuoc_formatted
+                },
+                {   
+                    'type': 'bao_cao_nhap_dv',
+                    'loai_bao_cao': 'Báo Cáo Nhập DV',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_doanh_thu_formatted
+                },
+                {   
+                    'type': 'bao_cao_xuat_dv',
+                    'loai_bao_cao': 'Báo Cáo Xuất DV',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_dich_vu_formatted
+                },
+                {
+                    'type': 'bao_cao_ton_dv',
+                    'loai_bao_cao': 'Báo Cáo Tồn DV',
+                    'thoi_gian_bat_dau': start,
+                    'thoi_gian_ket_thuc': tomorrow_start,
+                    # 'tong_tien': tong_tien_don_thuoc_formatted
+                },
+                
+            ]
+            return Response(response)
+
+class DanhSachNhungThuocDuocNhap(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+
+        tomorrow_start = start + timedelta(1)
+
+        if range_end == '':
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem=F('bao_hiem'))
+
+            list_nhap_hang = []
+
+            for i in danh_sach_nhap_hang:
+                list_nhap_hang.append(i)
+            response = {
+                'data' : list_nhap_hang,
+            }
+
+            return Response(response)
+        else: 
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong=Sum('so_luong')).annotate(count=Count('thuoc__id')).annotate(bao_hiem=F('bao_hiem'))
+
+            list_nhap_hang = []
+
+            for i in danh_sach_nhap_hang:
+                list_nhap_hang.append(i)
+
+            response = {
+                'data' : list_nhap_hang,
+            }
+
+            return Response(response)
+
+class DanhSachNhungThuocDuocXuat(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+
+        tomorrow_start = start + timedelta(1)
+
+        if range_end == '':
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=tomorrow_start, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem = F('bao_hiem'))
+            list_xuat_hang = []
+
+            for i in danh_sach_xuat_hang:
+                list_xuat_hang.append(i)
+
+            response = {
+                'data' : list_xuat_hang,
+            }
+
+            return Response(response)
+        else:
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lt=end, thoi_gian_tao__gt=start).exclude(bao_hiem=False).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem = F('bao_hiem'))
+            list_xuat_hang = []
+
+            for i in danh_sach_xuat_hang:
+                list_xuat_hang.append(i)
+            response = {
+                'data' : list_xuat_hang,
+            }
+
+            return Response(response)
+    
+class DanhSachThuocNhapDichVu(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+
+        list_xuat_hang = []
+        if range_end == '': 
+            end = start + timedelta(1)
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lte=end, thoi_gian_tao__gte=start).exclude(bao_hiem=True).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem=F('bao_hiem'))
+
+        else:
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+
+            if range_start == range_end:
+                end = end + timedelta(1)
+
+            danh_sach_nhap_hang = NhapHang.objects.filter(thoi_gian_tao__lte=end, thoi_gian_tao__gte=start).exclude(bao_hiem=True).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem=F('bao_hiem'))
+            
+
+        for i in danh_sach_nhap_hang:
+            list_xuat_hang.append(i)
+            
+        response = {
+            'data' : list_xuat_hang,
+        }
+
+        return Response(response)
+
+class DanhSachThuocXuatDichVu(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+
+        if range_end == '':
+            end = start + timedelta(1)
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lte=end, thoi_gian_tao__gte=start).exclude(bao_hiem=True).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem = F('bao_hiem'))
+            list_xuat_hang = []
+        else:
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+            if range_start == range_end:
+                end = end + timedelta(1)
+            danh_sach_xuat_hang = KeDonThuoc.objects.filter(thoi_gian_tao__lte=end, thoi_gian_tao__gte=start).exclude(bao_hiem=True).values('thuoc__ten_thuoc').annotate(so_luong = Sum('so_luong')).order_by('thuoc__id').annotate(c = Count('thuoc__id')).annotate(id=F('thuoc__id')).annotate(bao_hiem = F('bao_hiem'))
+            list_xuat_hang = []
+
+        for i in danh_sach_xuat_hang:
+            list_xuat_hang.append(i)
+        response = {
+            'data' : list_xuat_hang,
+        }
+
+        return Response(response)
+
+class GetDanhSachPhanKhoaCuaChuoiKham(APIView):
+    def get(self, request, format=None):
+        id_chuoi_kham = self.request.query_params.get('id_chuoi_kham')
+
+        chuoi_kham = get_object_or_404(ChuoiKham, id=id_chuoi_kham)
+        danh_sach_phan_khoa = chuoi_kham.phan_khoa_kham.all()
+        
+        
+        list_data = []
+        for phan_khoa in danh_sach_phan_khoa:
+            dict_ = {}
+            nested_dict = {}
+            pcn_dict = {}
+            pcn_dict['id'] = phan_khoa.dich_vu_kham.phong_chuc_nang.id
+            pcn_dict['bac_si_phu_trach'] = phan_khoa.dich_vu_kham.phong_chuc_nang.bac_si_phu_trach
+            pcn_dict['thoi_gian_tao'] = phan_khoa.dich_vu_kham.phong_chuc_nang.thoi_gian_tao.strftime("%d/%m/%y %H:%M:%S") 
+            pcn_dict['thoi_gian_cap_nhat'] = phan_khoa.dich_vu_kham.phong_chuc_nang.thoi_gian_cap_nhat.strftime("%d/%m/%y %H:%M:%S")
+            pcn_dict['ten_phong_chuc_nang'] = phan_khoa.dich_vu_kham.phong_chuc_nang.ten_phong_chuc_nang
+            pcn_dict['slug'] = phan_khoa.dich_vu_kham.phong_chuc_nang.slug
+
+            nested_dict['id'] = phan_khoa.dich_vu_kham.id
+            nested_dict['don_gia'] = "{:,}".format(int(phan_khoa.dich_vu_kham.don_gia))
+            nested_dict['don_gia_bhyt'] = "{:,}".format(int(phan_khoa.dich_vu_kham.don_gia_bhyt))
+            nested_dict['phong_chuc_nang'] = pcn_dict
+            nested_dict['bao_hiem_dich_vu'] = str(phan_khoa.dich_vu_kham.bao_hiem)
+            
+            nested_dict['ma_dvkt'] = phan_khoa.dich_vu_kham.ma_dvkt
+            nested_dict['stt'] = phan_khoa.dich_vu_kham.stt
+            nested_dict['ten_dvkt'] = phan_khoa.dich_vu_kham.ten_dvkt
+            nested_dict['ma_gia'] = phan_khoa.dich_vu_kham.ma_gia
+            nested_dict['quyet_dinh'] = phan_khoa.dich_vu_kham.quyet_dinh
+            nested_dict['cong_bo'] = phan_khoa.dich_vu_kham.cong_bo
+            nested_dict['ma_cosokcb'] = phan_khoa.dich_vu_kham.ma_cosokcb
+            nested_dict['ten_dich_vu'] = phan_khoa.dich_vu_kham.ten_dich_vu
+            nested_dict['tyle_tt'] = phan_khoa.dich_vu_kham.tyle_tt
+            nested_dict['chi_so'] = phan_khoa.dich_vu_kham.chi_so
+            nested_dict['html'] = phan_khoa.dich_vu_kham.html
+            nested_dict['khoa'] = phan_khoa.dich_vu_kham.khoa
+            nested_dict['nhom_chi_phi'] = phan_khoa.dich_vu_kham.nhom_chi_phi
+            nested_dict['bao_hiem'] = phan_khoa.bao_hiem
+
+            dict_['obj'] = nested_dict
+            list_data.append(dict_)
+            
+
+        response = {
+            'data': list_data
+        }
+        return Response(response)
+
+class XemLaiBenhNhanDaKhamChuyenKhoaAPIView(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+        list_filtered = []
+        
+        if range_end == '':
+            end = start + timedelta(1)
+        else:
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+            if range_start == range_end:
+                end = end + timedelta(1)
+            
+        danh_sach_benh_nhan = request.user.ket_qua_bac_si_chuyen_khoa.all().filter(thoi_gian_tao__gte=start, thoi_gian_tao__lte=end).values("bac_si_chuyen_khoa__ho_ten", "phan_khoa_kham__benh_nhan__id", "phan_khoa_kham__benh_nhan__ho_ten", "phan_khoa_kham__benh_nhan__so_dien_thoai").annotate(count=Count('phan_khoa_kham__benh_nhan__id'))
+        
+        for i in danh_sach_benh_nhan:
+            if i['count'] != 0:
+                list_filtered.append(i)
+
+        response = {
+            'data': list_filtered
+        }
+
+        return Response(response)
+
+class XemLaiBenhNhanLamSangAPIView(APIView):
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+        list_filtered = []
+
+        if range_end == '':
+            end = start + timedelta(1)
+        else:
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+            if range_start == range_end:
+                end = end + timedelta(1)
+
+        trang_thai_hoan_thanh = TrangThaiChuoiKham.objects.filter(trang_thai_chuoi_kham="Hoàn Thành").first()
+        trang_thai_dang_thuc_hien = TrangThaiChuoiKham.objects.filter(trang_thai_chuoi_kham="Đang Thực Hiện").first()
+        trang_thai_dung_kham = TrangThaiChuoiKham.objects.filter(trang_thai_chuoi_kham="Dừng Khám").first()
+        danh_sach_benh_nhan = request.user.bac_si_chuoi_kham.all().filter(Q(trang_thai=trang_thai_dang_thuc_hien) | Q(trang_thai=trang_thai_hoan_thanh) | Q(trang_thai=trang_thai_dung_kham)).filter(thoi_gian_tao__gte=start, thoi_gian_tao__lte=end).values('bac_si_dam_nhan__ho_ten', 'benh_nhan__id', 'benh_nhan__ho_ten', 'benh_nhan__so_dien_thoai').annotate(count=Count('benh_nhan__id'))
+        
+        for i in danh_sach_benh_nhan:
+            if i['count'] != 0:
+                list_filtered.append(i)
+
+        response = {
+            'data': list_filtered
+        }
+        return Response(response)
+
+class XuatNhapTongThuocAPIView(APIView, PaginationHandlerMixin):
+    pagination_class = CustomPagination
+
+    def get(self, request, format=None):
+        range_start = self.request.query_params.get('range_start', None)
+        range_end   = self.request.query_params.get('range_end', None)
+        start = datetime.strptime(range_start, "%d-%m-%Y")
+
+        if range_end == '':
+            end = start + timedelta(1)
+        else:
+            end = datetime.strptime(range_end, "%d-%m-%Y")
+            if range_start == range_end:
+                end = end + timedelta(1)
+
+        danh_sach_thuoc = Thuoc.objects.all()
+
+        medicines = danh_sach_thuoc.annotate(
+            so_luong_nhap = Subquery(
+                NhapHang.objects.filter(
+                    thuoc = OuterRef('pk'),
+                ).filter(thoi_gian_tao__gte=start, thoi_gian_tao__lt=end).values_list(
+                    Func(
+                        'so_luong',
+                        function='SUM',
+                    )
+                )
+            )
+        ).annotate(
+            so_luong_xuat = Subquery(
+                KeDonThuoc.objects.filter(
+                    thuoc = OuterRef('pk'),
+                ).filter(thoi_gian_tao__gte=start, thoi_gian_tao__lt=end).values_list(
+                    Func(
+                        'so_luong',
+                        function='SUM',
+                    )
+                )
+            )
+        ).annotate(
+            ton_dau_ky=models.Case(
+                models.When(Q(so_luong_nhap__isnull=True) & Q(so_luong_xuat__isnull=True), then=F('so_luong_kha_dung')),
+                models.When(so_luong_nhap__isnull=True, then=F('so_luong_kha_dung') + F('so_luong_xuat')),
+                models.When(so_luong_xuat__isnull=True, then=F('so_luong_kha_dung') - F('so_luong_nhap')),
+                default = F('so_luong_kha_dung') - F('so_luong_nhap') + F('so_luong_xuat'),
+                output_field=models.IntegerField(),
+            )
+        ).annotate(
+            ton_cuoi_ky=models.Case(
+                models.When(Q(so_luong_nhap__isnull=True) & Q(so_luong_xuat__isnull=True), then=F('ton_dau_ky')),
+                models.When(so_luong_nhap__isnull=True, then=F('ton_dau_ky') - F('so_luong_xuat')),
+                models.When(so_luong_xuat__isnull=True, then=F('ton_dau_ky') + F('so_luong_nhap')),
+                default = F('ton_dau_ky') + F('so_luong_nhap') - F('so_luong_xuat'),
+            )
+        ).annotate(
+            thanh_tien_nhap=F('so_luong_nhap') * F('don_gia')
+        ).annotate(
+            thanh_tien_xuat=F('so_luong_xuat') * F('don_gia_tt')
+        ).values(
+            'ma_thuoc',
+            'ten_thuoc',
+            'ten_hoat_chat',
+            'don_vi_tinh',
+            'ham_luong',
+            'cong_ty__ten_cong_ty',
+            'nuoc_sx',
+            'so_lo',
+            'han_su_dung',
+            'don_gia',
+            'don_gia_tt',
+            'gia_bhyt',      
+            'so_luong_nhap',
+            'so_luong_xuat',
+            'ton_dau_ky',
+            'thanh_tien_nhap',
+            'thanh_tien_xuat',
+            'ton_cuoi_ky',
+        )
+        
+        page = self.paginate_queryset(medicines)
+
+        if page is not None:
+            serializer = self.get_paginated_response(page)
+            return Response(serializer.data)
+        else:
+            serializer = medicines
+        return Response(serializer)
+
+class DanhSachThuocSapHetHan(APIView, PaginationHandlerMixin):
+    pagination_class = CustomPagination
+    serializer_class = ThuocSerializer
+
+    def get(self, request, format=None):
+        num_of_months = self.request.query_params.get('num_of_months')
+        num_of_months_later = date.today() + relativedelta(months=+int(num_of_months))
+
+        medicines = Thuoc.objects.filter(han_su_dung__lte=num_of_months_later)
+
+        page = self.paginate_queryset(medicines)
+
+        if page is not None:
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        else:
+            serializer = self.serializer_class(medicines, many=True)    
+        return Response(serializer.data)

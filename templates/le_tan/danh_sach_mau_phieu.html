@@ -41,6 +41,13 @@
                             Thêm Mẫu Phiếu
                         </a>
                         {% endif %}
+
+                        {% if perms.clinic.can_add_analysis_note %}
+                        <a href="{% url 'them_mau_hoa_don' %}" class="btn btn-light-primary font-weight-bolder mr-3">
+                            <i class="la la-plus icon-md"></i>
+                            Thêm Mẫu Hóa Đơn
+                        </a>
+                        {% endif %}
                         <!--end::Button-->
                         
                         <!--begin::Button-->
@@ -92,9 +99,7 @@
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 
 <script>
 

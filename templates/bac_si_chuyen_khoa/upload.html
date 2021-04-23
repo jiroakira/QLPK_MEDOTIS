@@ -118,7 +118,7 @@
                                 <div class="row">
                                     <div class="col-lg-3"></div>
                                     <div class="col-lg-9">
-                                        <button type="button" id="upload" data-id-chuoi-kham="{{id_chuoi_kham}}" data-id-phong-chuc-nang="{{id_phong_chuc_nang}}" class="dropzone-upload btn btn-primary mr-2">Tải lên</button>
+                                        <button type="button" id="upload" data-id-phan-khoa="{{id_phan_khoa}}" data-id-chuoi-kham="{{id_chuoi_kham}}" data-id-phong-chuc-nang="{{id_phong_chuc_nang}}" class="dropzone-upload btn btn-primary mr-2">Tải lên</button>
                                         <button type="button" class="btn btn-light-primary" id='cancelButton'>Hủy</button>
                                     </div>
                                 </div>
@@ -142,9 +142,7 @@
 {% block scripts %}
  
 <!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 <!--end::Global Theme Bundle-->
  
 <script>
@@ -267,6 +265,9 @@ var KTDropzoneDemo = function () {
             if($('.dropzone-item:visible').length == 0){
                 var formData = new FormData
                 var id_chuoi_kham = $("#upload-form").find("#upload").data('id-chuoi-kham')
+                var id_phan_khoa = $("#upload-form").find("#upload").data('id-phan-khoa')  
+
+                console.log(id_phan_khoa)              
                 $("#upload-form").find("input, textarea").each(function(){
                     console.log($(this).attr("name"))
                     console.log($(this).val())
@@ -274,7 +275,8 @@ var KTDropzoneDemo = function () {
                     formData.append($(this).attr("name"), $(this).val())
                     
                 });
-                formData.append('id_chuoi_kham', id_chuoi_kham) 
+                formData.append('id_chuoi_kham', id_chuoi_kham)
+                formData.append('id_phan_khoa', id_phan_khoa)
                 formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
                 $.ajax({

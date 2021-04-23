@@ -1,4 +1,4 @@
-from finance.models import HoaDonChuoiKham, HoaDonThuoc, HoaDonLamSang
+from finance.models import HoaDonChuoiKham, HoaDonNhapHang, HoaDonThuoc, HoaDonLamSang, NhapHang
 from medicine.serializers import CongTySerializer, ThuocSerializer, ThuocSerializerSimple
 # from finance.serializers import HoaDonChuoiKhamSerializer, HoaDonThuocSerializer
 from os import set_inheritable
@@ -25,7 +25,7 @@ from .models import (
     BacSi,
     TinhTrangPhongKham, Ward, send_func_room_info,
 )
-from medicine.models import DonThuoc, KeDonThuoc, NhomVatTu, VatTu
+from medicine.models import DonThuoc, KeDonThuoc, NhomVatTu, TrangThaiDonThuoc, VatTu
 from django.contrib.auth.models import Group, Permission
 
 User = get_user_model()
@@ -38,6 +38,7 @@ class ChildUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     gioi_tinh = serializers.CharField(source='get_gioi_tinh')
+    dia_chi = serializers.CharField(source='get_dia_chi')
     class Meta:
         model = User
         # fields = '__all__'
@@ -122,9 +123,25 @@ class LichHenKhamSerializer(serializers.ModelSerializer):
     benh_nhan = UserSerializer()
     nguoi_phu_trach = UserSerializer()
     trang_thai = TrangThaiLichHenSerializer()
+    trang_thai_thanh_toan = serializers.CharField(source='check_thanh_toan')
     class Meta:
         model = LichHenKham
-        fields = '__all__'
+        fields = (
+            'id',
+            'benh_nhan',
+            'nguoi_phu_trach',
+            'trang_thai',
+            'ma_lich_hen',
+            'thoi_gian_bat_dau',
+            'thoi_gian_ket_thuc',
+            'ly_do',
+            'dia_diem',
+            'loai_dich_vu',
+            'ly_do_vvien',
+            'thoi_gian_tao',
+            'thoi_gian_chinh_sua',
+            'trang_thai_thanh_toan',
+        )
 
     def create(self, validated_data):
         benh_nhan = validated_data.get('benh_nhan')
@@ -137,10 +154,6 @@ class LichHenKhamSerializer(serializers.ModelSerializer):
         )
         return lich_hen
     
-    def to_representation(self, instance):
-        response = super().to_representation(instance)
-        response['actions'] = ''
-        return response
 
 class TrangThaiLichHenSerializer(serializers.ModelSerializer):
     class Meta:
@@ -217,22 +230,32 @@ class HoaDonThuocSerializer(serializers.ModelSerializer):
     class Meta:
         model = HoaDonThuoc
         fields = '__all__'
-        
+
+class TrangThaiDonThuocSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrangThaiDonThuoc
+        fields = ('id', 'trang_thai')
 
 class HoaDonThuocSerializerSimple(serializers.ModelSerializer):
     benh_nhan = UserSerializer()
     bac_si_ke_don = UserSerializer()
-    # don_thuoc = DonThuocSerializer()
+    trang_thai = TrangThaiDonThuocSerializer()
+    trang_thai_thanh_toan = serializers.CharField(source='check_thanh_toan')
     class Meta:
         model = DonThuoc
-        # fields = (
-        #     'id',
-        #     'benh_nhan', 
-        #     'bac_si_ke_don',
-        #     'don_thuoc',
-        #     'thoi_gian_tao',
-        # )
-        fields = '__all__'
+        fields = (
+            'id',
+            'ma_don_thuoc',
+            'chuoi_kham',
+            'benh_nhan',
+            'benh_nhan_vang_lai',
+            'bac_si_ke_don',
+            'trang_thai',
+            'ly_do_chinh_sua',
+            'thoi_gian_tao',
+            'thoi_gian_cap_nhat',
+            'trang_thai_thanh_toan',
+        )
 
 
 class PhanKhoaKhamDichVuSerializer(serializers.ModelSerializer):
@@ -250,6 +273,8 @@ class PhanKhoaKhamDichVuSerializer(serializers.ModelSerializer):
 
 class PhongChucNangSerializerSimple(serializers.ModelSerializer):
     bac_si_phu_trach = UserSerializer()
+    thoi_gian_tao = serializers.CharField(source='get_thoi_gian_tao')
+    thoi_gian_cap_nhat = serializers.CharField(source='get_thoi_gian_cap_nhat')
     class Meta:
         model = PhongChucNang
         fields = "__all__"
@@ -501,10 +526,12 @@ class DanhSachBacSiSerializer(serializers.ModelSerializer):
 # END
 class DichVuKhamSerializerFormatted(serializers.ModelSerializer):
     don_gia = serializers.CharField(source='get_don_gia')
+    don_gia_bhyt = serializers.CharField(source='get_don_gia_bhyt')
     phong_chuc_nang = PhongChucNangSerializerSimple()
+    bao_hiem_dich_vu = serializers.CharField(source='bao_hiem')
     class Meta:
         model = DichVuKham
-        fields = '__all__'
+        exclude = ('bao_hiem',)
 
 class DichVuKhamSerializer(serializers.ModelSerializer):
     phong_chuc_nang = PhongChucNangSerializerSimple()
@@ -517,9 +544,18 @@ class PhanKhoaKhamSerializer(serializers.ModelSerializer):
     benh_nhan = UserSerializer()
     bac_si_lam_sang = UserSerializer()
     dich_vu_kham = DichVuKhamSerializer()
+    trang_thai = TrangThaiKhoaKhamSerializer()
     class Meta:
         model = PhanKhoaKham
-        fields = ('id','chuoi_kham', 'benh_nhan', 'bac_si_lam_sang', 'thoi_gian_bat_dau', 'thoi_gian_ket_thuc', 'dich_vu_kham')
+        fields = (
+            'id','chuoi_kham', 
+            'benh_nhan', 
+            'bac_si_lam_sang', 
+            'thoi_gian_bat_dau', 
+            'thoi_gian_ket_thuc', 
+            'dich_vu_kham',
+            'trang_thai'
+        )
 
 class ChuoiKhamSerializer(serializers.ModelSerializer):
     phan_khoa_kham = PhanKhoaKhamSerializer(many=True)
@@ -543,17 +579,16 @@ class HoaDonChuoiKhamSerializer(serializers.ModelSerializer):
 class HoaDonChuoiKhamSerializerSimple(serializers.ModelSerializer):
     benh_nhan = UserSerializer()
     bac_si_dam_nhan = UserSerializer()  
-    hoa_don = HoaDonChuoiKhamSerializer(read_only=True, source = 'hoa_don_dich_vu')
+    trang_thai_thanh_toan = serializers.CharField(source='check_thanh_toan')
     class Meta:
         model = ChuoiKham
-        depth = 1
         fields = (
             'id', 
             'benh_nhan', 
             'bac_si_dam_nhan',
             'trang_thai',
-            'hoa_don',
             'thoi_gian_tao',
+            'trang_thai_thanh_toan',
         )
 
 class DanhSachTinhTrangSerializer(serializers.ModelSerializer):
@@ -893,4 +928,42 @@ class StaffUserSerializer(serializers.ModelSerializer):
             'cmnd_cccd',
             'chuc_nang',
             'ngay_sinh',
+        )
+
+class HoaDonNhapHangSerializer(serializers.ModelSerializer):
+    nguoi_phu_trach = UserSerializerSimple()
+    class Meta:
+        model = HoaDonNhapHang
+        fields=(
+            'nguoi_phu_trach',
+            'ma_hoa_don',
+            'thoi_gian_tao',
+        )
+class NhapHangSerializer(serializers.ModelSerializer):
+    thuoc = ThuocSerializerSimple()
+    hoa_don = HoaDonNhapHangSerializer()
+    class Meta:
+        model = NhapHang
+        fields= '__all__' 
+
+class DichVuKhamPhanKhoaSerializer(serializers.ModelSerializer):
+    phong_chuc_nang = serializers.CharField(source='get_ten_phong_chuc_nang')
+   
+    class Meta:
+        model = DichVuKham
+        fields = (
+            'id', 
+            'ten_dvkt', 
+            'ma_dvkt',
+            'phong_chuc_nang',
+        )
+
+class DanhSachPhanKhoaSerializer(serializers.ModelSerializer):
+    dich_vu_kham = DichVuKhamPhanKhoaSerializer()
+    class Meta:
+        model = PhanKhoaKham
+        fields = (
+            'id',
+            'dich_vu_kham',
+            'bao_hiem',
         )

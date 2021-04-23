@@ -108,6 +108,11 @@ $('#phong_kham_form').on('click', '#submitData', function(){
     $("#phong_kham_form").find("input").each(function(){
         formData.append($(this).attr("name"), $(this).val())
     });
+
+    $('#phong_kham_form').find('textarea').each(function(){
+        formData.append($(this).attr("name"), $(this).val())
+    })
+    
     formData.append('id', id)
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 

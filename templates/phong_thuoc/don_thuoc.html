@@ -42,9 +42,25 @@
                     </div>
                     <div class="card-toolbar">
                         <!--begin::Button-->
+                        <a href="#" id='btn_print' class="btn btn-primary font-weight-bolder btn-print mr-2">
+                        <i class="la la-print"></i>In Đơn Thuốc</a>
+
+                        {% if don_thuoc.check_tphtdt %}
+                            <a href="#" id='btn_print_htdt' class="btn btn-primary font-weight-bolder btn-print mr-2">
+                            <i class="la la-print"></i>In Đơn Thuốc Hỗ Trợ ĐT</a>
+                        {% endif %}
+                        <!--end::Button-->
+
+                        {% if don_thuoc.check_hoan_thanh %}
+
+                        {% elif don_thuoc.check_cho_thanh_toan %}
+
+                        {% else %}
+                        <!--begin::Button-->
                         <a href="#" class="btn btn-primary font-weight-bolder btn-submit" data-id={{id_don_thuoc}}>
                         <i class="la la-plus"></i>Xác Nhận Đơn Thuốc</a>
                         <!--end::Button-->
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card-body">
@@ -79,6 +95,9 @@
                     </table>
                     <!--end: Datatable-->
                 </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-light-info btn-return float-right font-weight-bold"><i class="la la-arrow-left"></i>Quay lại</button>
+                </div>
             </div>
             <!--end::Card-->
         </div>
@@ -87,20 +106,44 @@
     <!-- end::Entry -->
 </div>
 <!-- end::Content -->
+
+<div id='printDonThuoc' style="display: none;">
+    {{ mau_hoa_don.noi_dung|safe }}
+</div>
+
+<div id='printDonThuocHoTroDieuTri' style="display: none;">
+    {{ mau_hoa_don_thuc_pham_cn.noi_dung|safe }}
+</div>
+
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bunsdle9cd7.js' %} "></script>
+
 
 <script>
-    $(document).on('click', '.btn-submit', function(){
-        var id = $('.btn-submit').data('id')
-        var formData = new FormData()
 
-        formData.append('id',id)
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+    function printDiv(donThuoc){
+
+        var divToPrint=document.getElementById(donThuoc);
+
+        var newWin=window.open('','Print-Window');
+
+        newWin.document.open();
+
+        newWin.document.write('<html><body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
+
+        newWin.document.close();
+
+        setTimeout(function(){newWin.close();},10);
+
+    };
+
+    $(document).on('click', '.btn-submit', function(){
+        var id = $('.btn-submit').data('id');
+        var formData = new FormData();
+
+        formData.append('id',id);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
         $.ajax({
             url: '{% url 'nhan_don_thuoc' %}',
@@ -120,7 +163,115 @@
                 console.log("Could not write to server file ") 
             }
         });
-    })
+    });
+
+
+    $(document).on('click', '#btn_print', function() {
+        var data_thuoc = '';
+        var data_thoi_gian = '';
+        var data_nguoi_thuc_hien = '';
+        var ten_thuoc = {{ ten_thuoc|safe }};
+        var so_luong = {{ so_luong|safe }};
+        var duong_dung = {{ duong_dung|safe }};
+        var ghi_chu = {{ ghi_chu|safe }};
+        var thoi_gian_thanh_toan = "{{ thoi_gian_thanh_toan|safe }}";
+        var nguoi_thanh_toan = "{{nguoi_thanh_toan|safe}}";
+
+        $('#printDonThuoc table tbody tr').each(function(){
+            if ($(this).find('td').eq(0).text() == '{thoi_gian_thanh_toan}'){
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+    
+                data_thoi_gian += c.replace(/{thoi_gian_thanh_toan}/, thoi_gian_thanh_toan);
+
+                $(this).replaceWith(data_thoi_gian);
+            };
+
+            if ($(this).find('td').eq(1).text() == '{nguoi_thanh_toan}'){
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                data_nguoi_thuc_hien += c.replace(/{nguoi_thanh_toan}/, nguoi_thanh_toan);
+
+                $(this).replaceWith(data_nguoi_thuc_hien);
+            };
+
+            if ($(this).find('td').eq(0).text() == '{ten_thuoc}'){
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                for (var i=0; i < ten_thuoc.length; i++) {
+                    data_thuoc += c.replace(/{ten_thuoc}/, ten_thuoc[i]).replace(/{so_luong}/, so_luong[i]).replace(/{duong_dung}/, duong_dung[i]).replace(/{cach_su_dung}/, ghi_chu[i]);
+                };
+                $(this).replaceWith(data_thuoc);
+            }
+
+            printDiv('printDonThuoc');
+        });
+    });
+
+    $(document).on('click', '#btn_print_htdt', function() {
+        console.log('hlllll')
+        var data_thuoc = '';
+        var data_thoi_gian = '';
+        var data_nguoi_thuc_hien = '';
+        var ten_thuoc = {{ ten_thuoc_cn|safe }};
+        var so_luong = {{ so_luong_thuoc_cn|safe }};
+        var duong_dung = {{ duong_dung_thuoc_cn|safe }};
+        var ghi_chu = {{ ghi_chu_thuoc_cn|safe }};
+        var thoi_gian_thanh_toan = "{{ thoi_gian_thanh_toan|safe }}";
+        var nguoi_thanh_toan = "{{nguoi_thanh_toan|safe}}";
+
+        $('#printDonThuocHoTroDieuTri table tbody tr').each(function(){
+            if ($(this).find('td').eq(0).text() == '{thoi_gian_thanh_toan}'){
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+    
+                data_thoi_gian += c.replace(/{thoi_gian_thanh_toan}/, thoi_gian_thanh_toan);
+
+                $(this).replaceWith(data_thoi_gian);
+            };
+
+            if ($(this).find('td').eq(1).text() == '{nguoi_thanh_toan}'){
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                data_nguoi_thuc_hien += c.replace(/{nguoi_thanh_toan}/, nguoi_thanh_toan);
+
+                $(this).replaceWith(data_nguoi_thuc_hien);
+            };
+
+            if ($(this).find('td').eq(0).text() == '{ten_thuoc}'){
+                var innerHtml = $(this).html();
+                var start_tr = '<tr>';
+                var end_tr = '</tr>';
+                var c = start_tr + innerHtml + end_tr;
+
+                for (var i=0; i < ten_thuoc.length; i++) {
+                    data_thuoc += c.replace(/{ten_thuoc}/, ten_thuoc[i]).replace(/{so_luong}/, so_luong[i]).replace(/{duong_dung}/, duong_dung[i]).replace(/{cach_su_dung}/, ghi_chu[i]);
+                };
+                $(this).replaceWith(data_thuoc);
+            }
+
+            printDiv('printDonThuocHoTroDieuTri');
+        }); 
+        
+    });
+
+    $('.btn-return').click(function(){
+        window.history.back();
+    });
+
 </script>
 
 {% endblock scripts %}

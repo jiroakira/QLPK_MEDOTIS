@@ -162,13 +162,13 @@
                             <div class="col-lg-6">
                                 <label>Ngày Sản Xuất</label>
                                 {{ form.ngay_san_xuat|attr:"class:form-control"|attr:"name:ngay_san_xuat"|attr:"id:inputNgaySanXuat"|attr:"type:text"}}
-                                <span class="form-text text-muted">Ngày sinh dạng: 
+                                <span class="form-text text-muted">Ngày sản xuất dạng: 
                                 <code>ngày/tháng/năm</code></span>
                             </div>
                             <div class="col-lg-6">
                                 <label>Hạn Sử Dụng</label>
                                 {{ form.han_su_dung|attr:"class:form-control col-lg-12"|attr:"name:han_su_dung"|attr:"id:inputHanSuDung"}}
-                                <span class="form-text text-muted">Ngày sinh dạng: 
+                                <span class="form-text text-muted">Hạn sử dụng dạng: 
                                 <code>ngày/tháng/năm</code></span>
                             </div>
                         </div>
@@ -182,11 +182,6 @@
                         </div>
                     </div>
                 </form>
-
-                <div class="form-group row">
-                    <table class="table" id="overview">
-                    </table>
-                </div>
                 <!--end::Form-->
             </div>
         </div>
@@ -198,11 +193,8 @@
 
 {% block scripts %}
 
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bunsdle9cd7.js' %} "></script>
-{% comment %} <script src="{% static 'assets/js/pages/crud/forms/widgets/bootstrap-datetimepicker9cd7.js' %} "></script> {% endcomment %}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
 
 <script>
     // Class definition
@@ -213,80 +205,88 @@
             window.history.back()
         })
 
-        var _initDemo1 = function () {
-            FormValidation.formValidation(
-                document.getElementById('kt_form_1'),
-                {
-                    fields: {
-                        text: {
-                            validators: {
-                                notEmpty: {
-                                    message: 'Không được để trống'
-                                },
-                            }
-                        },
-                        memo: {
-                            validators: {
-                                notEmpty: {
-                                    message: 'Không được để trống'
-                                },
-                                stringLength: {
-                                    min:10,
-                                    max:10000,
-                                }
-                            }
-                        },
-                    },
-
-                    plugins: { //Learn more: https://formvalidation.io/guide/plugins
-                        trigger: new FormValidation.plugins.Trigger(),
-                        // Bootstrap Framework Integration
-                        bootstrap: new FormValidation.plugins.Bootstrap(),
-                        // Validate fields when clicking the Submit button
-                        submitButton: new FormValidation.plugins.SubmitButton(),
-                        // Submit the form when all fields are valid
-                        defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
-                    }
-                }
-            );
-
-        }
-
         var dateMasks = function(){
             //fill ngay san xuat
             var ngay_san_xuat = $("input[name=ngay_san_xuat]").val();
-            ngay_san_xuat = new Date(ngay_san_xuat)
-            ngay_san_xuat = ngay_san_xuat.toLocaleDateString('vi-VN')
+            ngay_san_xuat = moment(new Date(ngay_san_xuat)).format('DD/MM/yyyy');
             if($('#inputNgaySanXuat').length){
                 $("#inputNgaySanXuat").inputmask("99/99/9999", {
-                    "placeholder": "ng/th/nam ",
+                    "placeholder": "dd/mm/yyyy",
                     autoUnmask: false
                 });
+            }else{
+                ngay_san_xuat;
             }
-            else{
-                ngay_san_xuat
-            }
-            $('#inputNgaySanXuat').val(ngay_san_xuat)
+            $('#inputNgaySanXuat').val(ngay_san_xuat);
 
             //fill han su dung
             var han_su_dung = $("input[name=han_su_dung]").val();
-            han_su_dung = new Date(han_su_dung)
-            han_su_dung = han_su_dung.toLocaleDateString('vi-VN')
+            han_su_dung = moment(new Date(ngay_san_xuat)).format('DD/MM/yyyy');
             if($('#inputHanSuDung').length){
                 $("#inputHanSuDung").inputmask("99/99/9999", {
-                    "placeholder": "ng/th/nam ",
+                    "placeholder": "dd/mm/yyyy",
                     autoUnmask: false
                 });
             }
             else{
-                han_su_dung
+                han_su_dung;
             }
-            $('#inputHanSuDung').val(han_su_dung)
+            $('#inputHanSuDung').val(han_su_dung);
         }
 
         var _formAddThuocSubmit = function () {
             var formData = new FormData();
             $(document).on("click", "#submitData", function(){
+                FormValidation.formValidation(
+                    document.getElementById('kt_form_1'),
+                    {
+                        fields: {
+                            text: {
+                                validators: {
+                                    notEmpty: {
+                                        message: 'Không được để trống'
+                                    },
+                                }
+                            },
+                            memo: {
+                                validators: {
+                                    notEmpty: {
+                                        message: 'Không được để trống'
+                                    },
+                                    stringLength: {
+                                        min:10,
+                                        max:10000,
+                                    }
+                                }
+                            },
+                            ngay_san_xuat: {
+                                validators: {
+                                    notEmpty: {
+                                        message: 'Không được để trống'
+                                    },
+                                }
+                            },
+                            han_su_dung: {
+                                validators: {
+                                    notEmpty: {
+                                        message: 'Không được để trống'
+                                    },
+                                }
+                            },
+                        },
+
+                        plugins: { //Learn more: https://formvalidation.io/guide/plugins
+                            trigger: new FormValidation.plugins.Trigger(),
+                            // Bootstrap Framework Integration
+                            bootstrap: new FormValidation.plugins.Bootstrap(),
+                            // Validate fields when clicking the Submit button
+                            submitButton: new FormValidation.plugins.SubmitButton(),
+                            // Submit the form when all fields are valid
+                            defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
+                        }
+                    }
+                );
+
                 var loai_thuoc = $('#loai_thuoc').val()
                 console.log(loai_thuoc)
 
@@ -327,7 +327,7 @@
         return {
             // public functions
             init: function() {
-                _initDemo1();
+                {% comment %} _initDemo1(); {% endcomment %}
                 dateMasks();
                 _formAddThuocSubmit();
             }

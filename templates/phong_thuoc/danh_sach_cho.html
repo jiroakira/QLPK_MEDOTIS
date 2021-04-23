@@ -40,16 +40,7 @@
                         <h3 class="card-label">Danh Sách Chờ Lấy Thuốc
                         </h3>
                     </div>
-                    <div class="card-toolbar">
-                        <!--begin::Button-->
-                        {% if perms.medicine.can_add_prescription %}
-                        <a href="{% url 'create_don_thuoc_rieng' %}" class="btn btn-light-info font-weight-bolder mr-2" id="btn-add-don-thuoc">
-                            <i class="la la-folder-plus icon-md"></i>
-                            Thêm Đơn Thuốc Mới
-                        </a>
-                        {% endif %}
-                        <!--end::Button-->
-                        
+                    <div class="card-toolbar">                        
                         <!--begin::Button-->
                         <a href="#" class="btn btn-primary font-weight-bolder" id="btn-reload">
                             <span class="svg-icon svg-icon-md">
@@ -86,8 +77,8 @@
                                             <label class="mr-3 mb-0 d-none d-md-block">Trạng Thái:</label>
                                             <select class="form-control" id="kt_datatable_search_status">
                                                 <option value="">Tất Cả</option>
-                                                {% for trang_thai in trang_thai %}
-                                                    <option value="{{ trang_thai.id }}">{{ trang_thai.trang_thai_don_thuoc }}</option>
+                                                {% for t in trang_thai %}
+                                                    <option value="{{ t.id }}">{{ t.trang_thai }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -115,9 +106,7 @@
 {% block scripts %}
 {% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
 <!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 <!--end::Global Theme Bundle-->
 
 <script>
@@ -186,7 +175,13 @@ var KTDatatableRemoteAjaxDemo = function() {
             }, {
                 field: 'benh_nhan.ho_ten',
                 title: 'Bệnh Nhân',
-                
+                template: function(row) {
+                    if (row.benh_nhan === null) {
+                        return row.benh_nhan_vang_lai
+                    } else {
+                        return row.benh_nhan.ho_ten
+                    }
+                }
             }, {
                 field: 'bac_si_ke_don.ho_ten',
                 title: 'Bác Sĩ',
@@ -205,22 +200,22 @@ var KTDatatableRemoteAjaxDemo = function() {
                     }
                 }
             }, {
-                field: 'trang_thai',
+                field: 'trang_thai.id',
                 title: 'Trạng Thái',
                 // callback function support for column rendering
                 template: function(row) {
                     var status = {
                         1: {
-                            'title': 'Đã Thanh Toán',
+                            'title': 'Chờ Thanh Toán',
                             'class': ' label-light-primary'
                         },
                         2: {
-                            'title': 'Chờ Thanh Toán',
+                            'title': 'Đã Thanh Toán',
                             'class': ' label-light-warning'
                         },
                         3: {
                             'title': 'Hoàn Thành',
-                            'class': ' label-light-primary'
+                            'class': ' label-light-success'
                         },
                         4: {
                             'title': 'Chờ Thanh Toán',
@@ -228,7 +223,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                         },
                         
                     };
-                    return '<span class="label font-weight-bold label-lg ' + status[row.trang_thai].class + ' label-inline">' + status[row.trang_thai].title + '</span>';
+                    return '<span class="label font-weight-bold label-lg ' + status[row.trang_thai.id].class + ' label-inline">' + status[row.trang_thai.id].title + '</span>';
                 },
             }, {
                 field: 'Actions',
@@ -256,7 +251,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 		});
 
 		$('#kt_datatable_search_status').on('change', function() {
-            datatable.search($(this).val().toLowerCase(), 'Status');
+            datatable.search($(this).val().toLowerCase(), 'trang_thai.id');
         });
 
         $('#kt_datatable_search_type').on('change', function() {

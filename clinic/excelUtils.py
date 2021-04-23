@@ -312,3 +312,221 @@ def writeToExcelThuoc(excel_data):
 
     xlsx_data = output.getvalue()
     return xlsx_data
+
+def ExportExcelBaoCaoXNTThuoc(excel_data=None):
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    workbook.encoding='utf-8'
+    worksheet_s = workbook.add_worksheet("Tổng Hợp")
+
+    title = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter'
+    })
+
+    title_2 = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter'
+    })
+
+    header = workbook.add_format({
+        'bg_color': '#F7F7F7',
+        'color': 'black',
+        'align': 'center',
+        'valign': 'top',
+        'border': 1
+    })
+    cell = workbook.add_format({
+        'align': 'left',
+        'valign': 'top',
+        'text_wrap': True,
+        'border': 1
+    })
+    cell_center = workbook.add_format({
+        'align': 'center',
+        'valign': 'top',
+        'border': 1,
+        'text_wrap': True,
+    })
+
+    worksheet_s.merge_range('B1:S1', "THỐNG KÊ XUẤT NHẬP TỒN THUỐC", cell_center)
+    worksheet_s.merge_range('B2:S2', "", cell_center)
+    worksheet_s.merge_range('B4:B5', "STT", cell_center)
+    worksheet_s.merge_range('C4:C5', "Mã thuốc", cell_center)
+    worksheet_s.merge_range('D4:D5', "Tên thuốc", cell_center)
+    worksheet_s.merge_range('E4:E5', "Hoạt chất", cell_center)
+    worksheet_s.merge_range('F4:F5', "Hàm lượng", cell_center)
+    worksheet_s.merge_range('G4:G5', "Đơn vị tính", cell_center)
+    worksheet_s.merge_range('H4:H5', "Hãng sản xuất", cell_center)
+    worksheet_s.merge_range('I4:I5', "Nước sản xuất", cell_center)
+    worksheet_s.merge_range('J4:J5', "Số lô", cell_center)
+    worksheet_s.merge_range('K4:K5', "Hạn sử dụng", cell_center)
+    worksheet_s.merge_range('L4:L5', "Tồn đầu kỳ", cell_center)
+    worksheet_s.merge_range('M4:O4', "Nhập", cell_center)
+    worksheet_s.merge_range('P4:R4', "Xuất", cell_center)
+    worksheet_s.merge_range('S4:S5', "Tồn cuối kỳ", cell_center)
+
+    worksheet_s.write(4, 12, 'Số lượng', cell_center)
+    worksheet_s.write(4, 13, 'Giá nhập', cell_center)
+    worksheet_s.write(4, 14, 'Thành tiền', cell_center)
+    worksheet_s.write(4, 15, 'Số lượng', cell_center)
+    worksheet_s.write(4, 16, 'Giá xuất', cell_center)
+    worksheet_s.write(4, 17, 'Thành tiền', cell_center)
+
+    for idx, data in enumerate(excel_data):
+        row = 5 + idx
+        worksheet_s.write(row, 1, idx, cell_center)
+        if data['ma_thuoc'] is not None or data['ma_thuoc'] != '':
+            worksheet_s.write(row, 2, data['ma_thuoc'], cell_center)
+        else:
+            worksheet_s.write(row, 2, '-', cell_center)
+
+        worksheet_s.write(row, 3, data['ten_thuoc'], cell_center)
+        worksheet_s.write(row, 4, data['ten_hoat_chat'], cell_center)
+        worksheet_s.write(row, 5, data['ham_luong'], cell_center)
+        worksheet_s.write(row, 6, data['don_vi_tinh'], cell_center)
+        worksheet_s.write(row, 7, data['cong_ty__ten_cong_ty'], cell_center)
+        worksheet_s.write(row, 8, data['nuoc_sx'], cell_center)
+
+        if data['so_lo'] is not None or data['so_lo'] != '':
+            worksheet_s.write(row, 9, data['so_lo'], cell_center)
+        else:
+            worksheet_s.write(row, 9, '-', cell_center)
+
+        if data['han_su_dung'] is not None:
+            worksheet_s.write(row, 10, data['han_su_dung'], cell_center)
+        else:
+            worksheet_s.write(row, 10, '-', cell_center)
+
+        if data['ton_dau_ky'] is not None:
+            worksheet_s.write_number(row, 11, data['ton_dau_ky'], cell_center)
+        else:
+            worksheet_s.write(row, 11, '-', cell_center)
+
+        if data['so_luong_nhap'] is not None:
+            worksheet_s.write_number(row, 12, data['so_luong_nhap'], cell_center)
+        else:
+            worksheet_s.write(row, 12, '-', cell_center)
+
+        if data['don_gia'] is not None or data['don_gia'] != '':
+            worksheet_s.write_number(row, 13, data['don_gia'], cell_center)
+        else:
+            worksheet_s.write(row, 13, '-', cell_center)
+
+        if data['thanh_tien_nhap'] is not None:
+            worksheet_s.write_number(row, 14, data['thanh_tien_nhap'], cell_center)
+        else:
+            worksheet_s.write(row, 14, '-', cell_center)
+
+        if data['so_luong_xuat'] is not None:
+            worksheet_s.write_number(row, 15, data['so_luong_xuat'], cell_center)
+        else:
+            worksheet_s.write(row, 15, '-', cell_center)
+
+        if data['don_gia_tt'] is not None or data['don_gia_tt'] != '':
+            worksheet_s.write_number(row, 16, data['don_gia_tt'], cell_center)
+        else:
+            worksheet_s.write(row, 16, '-', cell_center)
+
+        if data['thanh_tien_xuat'] is not None:
+            worksheet_s.write_number(row, 17, data['thanh_tien_xuat'], cell_center)
+        else:
+            worksheet_s.write(row, 17, '-', cell_center)
+
+        if data['ton_cuoi_ky'] is not None:
+            worksheet_s.write_number(row, 18, data['ton_cuoi_ky'], cell_center)
+        else:
+            worksheet_s.write(row, 18, '-', cell_center)
+
+    workbook.close()
+
+    xlsx_data = output.getvalue()
+    return xlsx_data
+
+
+def ExportExcelDSThuocSapHetDate(excel_data=None):
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    workbook.encoding='utf-8'
+    worksheet_s = workbook.add_worksheet("Tổng Hợp")
+
+    title = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter'
+    })
+
+    title_2 = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter'
+    })
+
+    header = workbook.add_format({
+        'bg_color': '#F7F7F7',
+        'color': 'black',
+        'align': 'center',
+        'valign': 'top',
+        'border': 1
+    })
+    cell = workbook.add_format({
+        'align': 'left',
+        'valign': 'top',
+        'text_wrap': True,
+        'border': 1
+    })
+    cell_center = workbook.add_format({
+        'align': 'center',
+        'valign': 'top',
+        'border': 1,
+        'text_wrap': True,
+    })
+
+    worksheet_s.merge_range('B1:S1', "THỐNG KÊ DANH SÁCH THUỐC SẮP HẾT DATE", cell_center)
+    worksheet_s.merge_range('B2:S2', "", cell_center)
+    worksheet_s.merge_range('B4:B5', "STT", cell_center)
+    worksheet_s.merge_range('C4:C5', "Mã thuốc", cell_center)
+    worksheet_s.merge_range('D4:D5', "Tên thuốc", cell_center)
+    worksheet_s.merge_range('E4:E5', "Hoạt chất", cell_center)
+    worksheet_s.merge_range('F4:F5', "Hàm lượng", cell_center)
+    worksheet_s.merge_range('G4:G5', "Đơn vị tính", cell_center)
+    worksheet_s.merge_range('H4:H5', "Hãng sản xuất", cell_center)
+    worksheet_s.merge_range('I4:I5', "Nước sản xuất", cell_center)
+    worksheet_s.merge_range('J4:J5', "Số lô", cell_center)
+    worksheet_s.merge_range('K4:K5', "Hạn sử dụng", cell_center)
+    
+    for idx, data in enumerate(excel_data):
+        row = 5 + idx
+        worksheet_s.write(row, 1, idx, cell_center)
+        if data['ma_thuoc'] is not None or data['ma_thuoc'] != '':
+            worksheet_s.write(row, 2, data['ma_thuoc'], cell_center)
+        else:
+            worksheet_s.write(row, 2, '-', cell_center)
+
+        worksheet_s.write(row, 3, data['ten_thuoc'], cell_center)
+        worksheet_s.write(row, 4, data['ten_hoat_chat'], cell_center)
+        worksheet_s.write(row, 5, data['ham_luong'], cell_center)
+        worksheet_s.write(row, 6, data['don_vi_tinh'], cell_center)
+        worksheet_s.write(row, 7, data['cong_ty']['ten_cong_ty'], cell_center)
+        worksheet_s.write(row, 8, data['nuoc_sx'], cell_center)
+
+        if data['so_lo'] is not None or data['so_lo'] != '':
+            worksheet_s.write(row, 9, data['so_lo'], cell_center)
+        else:
+            worksheet_s.write(row, 9, '-', cell_center)
+
+        if data['han_su_dung'] is not None:
+            worksheet_s.write(row, 10, data['han_su_dung'], cell_center)
+        else:
+            worksheet_s.write(row, 10, '-', cell_center)
+
+    workbook.close()
+
+    xlsx_data = output.getvalue()
+    return xlsx_data

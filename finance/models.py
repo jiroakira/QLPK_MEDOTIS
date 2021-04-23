@@ -39,7 +39,13 @@ class HoaDonThuoc(models.Model):
         return super(HoaDonThuoc, self).save(*args, **kwargs)
 
     def get_don_gia(self):
-        don_gia = "{:,}".format(int(self.tong_tien))
+        try:
+            if self.tong_tien is not None:
+                don_gia = "{:,}".format(int(self.tong_tien))
+            else:
+                don_gia = '-'
+        except ValueError:
+            don_gia = "{:,}".format(float(self.tong_tien))
         return don_gia
 
 class HoaDonChuoiKham(models.Model):
@@ -56,6 +62,8 @@ class HoaDonChuoiKham(models.Model):
     chuoi_kham = models.OneToOneField("clinic.ChuoiKham", on_delete=models.CASCADE, null=True, related_name='hoa_don_dich_vu')
     ma_hoa_don = models.CharField(max_length=255, null=True, blank=True, unique=True)
     tong_tien = models.DecimalField(decimal_places=3, max_digits=10, null=True, blank=True)
+    discount = models.IntegerField(null=True, blank=True)
+
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
     thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
 
@@ -225,4 +233,83 @@ class HoaDonVatTu(models.Model):
             self.thoi_gian_tao = timezone.now()
         self.thoi_gian_cap_nhat = timezone.now()
         return super(HoaDonVatTu, self).save(*args, **kwargs)
+
+class HoaDonNhapHang(models.Model):
+    nguoi_phu_trach = models.ForeignKey("clinic.User", on_delete=models.CASCADE, null=True, blank=True)
+    ma_hoa_don = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
+    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Hóa Đơn Nhập Hàng"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.thoi_gian_tao = timezone.now()
+        self.thoi_gian_cap_nhat = timezone.now()
+        return super(HoaDonNhapHang, self).save(*args, **kwargs)
+
+class NhapHang(models.Model):
+    hoa_don = models.ForeignKey(HoaDonNhapHang, on_delete=models.CASCADE, null=True, blank=True, related_name='hoa_don_nhap_hang')
+    thuoc = models.ForeignKey("medicine.Thuoc", on_delete=models.CASCADE, null=True, blank=True, related_name='nhap_hang_thuoc')
+    so_luong = models.PositiveIntegerField(null=True, blank=True)
+    bao_hiem = models.BooleanField(default=False)
+
+    thoi_gian_tao = models.DateTimeField(null=True, blank=True, auto_now_add = True)
+    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True, auto_now = True)
+
+    class Meta:
+        verbose_name = "Nhập Hàng"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.thoi_gian_tao = timezone.now()
+        self.thoi_gian_cap_nhat = timezone.now()
+        return super(NhapHang, self).save(*args, **kwargs)
+        
+class HoaDonXuatHang(models.Model):
+    nguoi_phu_trach = models.ForeignKey("clinic.User", on_delete=models.CASCADE, null=True, blank=True)
+    ma_hoa_don = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
+    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Hóa Đơn Xuất Hàng"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.thoi_gian_tao = timezone.now()
+        self.thoi_gian_cap_nhat = timezone.now()
+        return super(HoaDonXuatHang, self).save(*args, **kwargs)
+
+class HoaDonTonHang(models.Model):
+    nguoi_phu_trach = models.ForeignKey('clinic.User', on_delete=models.CASCADE, null=True, blank=True)
+    ma_hoa_don = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
+    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Hóa Đơn Tồn Hàng"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.thoi_gian_tao = timezone.now()
+        self.thoi_gian_cap_nhat = timezone.now()
+        return super(HoaDonTonHang, self).save(*args, **kwargs)
+
+class TonHang(models.Model):
+    hoa_don = models.ForeignKey(HoaDonTonHang, on_delete=models.CASCADE, null=True, blank=True)
+    thuoc = models.ForeignKey('medicine.Thuoc', on_delete=models.CASCADE, null=True, blank=True)
+    so_luong = models.PositiveIntegerField()
+
+    thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True)
+    thoi_gian_cap_nhat = models.DateTimeField(null=True, blank=True)
+    class Meta:
+        verbose_name = "Tồn Hàng"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.thoi_gian_tao = timezone.now()
+        self.thoi_gian_cap_nhat = timezone.now()
+        return super(TonHang, self).save(*args, **kwargs)
 # END

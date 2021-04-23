@@ -1,12 +1,15 @@
 {% load static %}
 
+{% load custom_tags %}
+
 <!--begin::Aside-->
+
 <div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside">
 	<!--begin::Brand-->	
 	<div class="brand flex-column-auto" id="kt_brand">
 		<!--begin::Logo-->
-		<a href="{% url 'index' %}" class="brand-logo">
-			<img alt="Logo" src="{% static 'assets/media/logos/medotis-1.png' %} " />
+		<a href="{% url 'index' %}" class="brand-logo pt-2">
+			<img alt="Logo" src="{% static 'assets/media/logos/logo1.png' %} " class="max-w-custom"/>
 		</a>
 		<!--end::Logo-->
 		<!--begin::Toggle-->
@@ -238,7 +241,7 @@
 				{% endif %}
 				
 				<!-- Danh sách chờ -->
-				{% if perms.clinic.view_checkout_list %}
+				{% if perms.clinic.can_view_checkout_list %}
 				<li class="menu-item" aria-haspopup="true">
 					<a href="{% url 'phong_tai_chinh' %}" class="menu-link">
 						<span class="svg-icon menu-icon">
@@ -436,10 +439,58 @@
 								</a>
 							</li>
 							{% endif %}
+
 						</ul>
 					</div>
 				</li>
 				{% endif %}
+
+				<li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+					<a href="javascript:;" class="menu-link menu-toggle">
+						<span class="svg-icon menu-icon">
+							<!--begin::Svg Icon | path:/metronic/theme/html/demo1/dist/assets/media/svg/icons/Design/Bucket.svg-->
+							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+								<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+									<rect x="0" y="0" width="24" height="24" />
+									<path d="M5,5 L5,15 C5,15.5948613 5.25970314,16.1290656 5.6719139,16.4954176 C5.71978107,16.5379595 5.76682388,16.5788906 5.81365532,16.6178662 C5.82524933,16.6294602 15,7.45470952 15,7.45470952 C15,6.9962515 15,6.17801499 15,5 L5,5 Z M5,3 L15,3 C16.1045695,3 17,3.8954305 17,5 L17,15 C17,17.209139 15.209139,19 13,19 L7,19 C4.790861,19 3,17.209139 3,15 L3,5 C3,3.8954305 3.8954305,3 5,3 Z" fill="#000000" fill-rule="nonzero" transform="translate(10.000000, 11.000000) rotate(-315.000000) translate(-10.000000, -11.000000)" />
+									<path d="M20,22 C21.6568542,22 23,20.6568542 23,19 C23,17.8954305 22,16.2287638 20,14 C18,16.2287638 17,17.8954305 17,19 C17,20.6568542 18.3431458,22 20,22 Z" fill="#000000" opacity="0.3" />
+								</g>
+							</svg>
+							<!--end::Svg Icon-->
+						</span>
+						<span class="menu-text">Báo Cáo</span>
+						<i class="menu-arrow"></i>
+					</a>
+					<div class="menu-submenu">
+						<i class="menu-arrow"></i>
+						<ul class="menu-subnav">
+							<li class="menu-item menu-item-parent" aria-haspopup="true">
+								<span class="menu-link">
+									<span class="menu-text">Báo Cáo</span>
+								</span>
+							</li>
+
+							<li class="menu-item" aria-haspopup="true">
+								<a href="{% url 'bao_cao_xnt_tong_hop_thuoc' %}" class="menu-link">
+									<i class="menu-bullet menu-bullet-dot">
+										<span></span>
+									</i>
+									<span class="menu-text">Xuất Nhập Tồn Tổng Hợp Thuốc</span>
+								</a>
+							</li>
+
+							<li class="menu-item" aria-haspopup="true">
+								<a href="{% url 'bao_cao_thuoc_sap_het_date' %}" class="menu-link">
+									<i class="menu-bullet menu-bullet-dot">
+										<span></span>
+									</i>
+									<span class="menu-text">Thuốc Sắp Hết Date</span>
+								</a>
+							</li>
+
+						</ul>
+					</div>
+				</li>
 			
 				{% if perms.clinic.preclinical_department_module_view %}
 				<li class="menu-section">
@@ -559,6 +610,43 @@
 							</svg>
 						</span>
 						<span class="menu-text">Thống kê thuốc trong kho</span>
+					</a>
+				</li>
+				{% endif %}
+
+				{% if perms.medicine.can_add_prescription %}
+				<!-- Thêm Đơn Thuốc Mới -->
+				<li class="menu-item" aria-haspopup="true">
+					<a href="{% url 'create_don_thuoc_rieng' %}" class="menu-link">
+						<span class="svg-icon menu-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+								<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+									<polygon points="0 0 24 0 24 24 0 24"/>
+									<path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+									<path d="M11,14 L9,14 C8.44771525,14 8,13.5522847 8,13 C8,12.4477153 8.44771525,12 9,12 L11,12 L11,10 C11,9.44771525 11.4477153,9 12,9 C12.5522847,9 13,9.44771525 13,10 L13,12 L15,12 C15.5522847,12 16,12.4477153 16,13 C16,13.5522847 15.5522847,14 15,14 L13,14 L13,16 C13,16.5522847 12.5522847,17 12,17 C11.4477153,17 11,16.5522847 11,16 L11,14 Z" fill="#000000"/>
+								</g>
+							</svg>
+						</span>
+						<span class="menu-text">Thêm Đơn Thuốc Mới</span>
+					</a>
+				</li>
+				{% endif %}
+
+				{% if perms.clinic.can_bao_cao_thuoc %}
+				<li class="menu-item" aria-haspopup="true">
+					<a href="{% url 'bao_cao_thuoc' %}" class="menu-link">
+						<span class="svg-icon menu-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+								<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+									<rect x="0" y="0" width="24" height="24"/>
+									<path d="M8,3 L8,3.5 C8,4.32842712 8.67157288,5 9.5,5 L14.5,5 C15.3284271,5 16,4.32842712 16,3.5 L16,3 L18,3 C19.1045695,3 20,3.8954305 20,5 L20,21 C20,22.1045695 19.1045695,23 18,23 L6,23 C4.8954305,23 4,22.1045695 4,21 L4,5 C4,3.8954305 4.8954305,3 6,3 L8,3 Z" fill="#000000" opacity="0.3"/>
+									<path d="M11,2 C11,1.44771525 11.4477153,1 12,1 C12.5522847,1 13,1.44771525 13,2 L14.5,2 C14.7761424,2 15,2.22385763 15,2.5 L15,3.5 C15,3.77614237 14.7761424,4 14.5,4 L9.5,4 C9.22385763,4 9,3.77614237 9,3.5 L9,2.5 C9,2.22385763 9.22385763,2 9.5,2 L11,2 Z" fill="#000000"/>
+									<rect fill="#000000" opacity="0.3" x="7" y="10" width="5" height="2" rx="1"/>
+									<rect fill="#000000" opacity="0.3" x="7" y="14" width="9" height="2" rx="1"/>
+								</g>
+							</svg>
+						</span>
+						<span class="menu-text">Báo Cáo Thuốc</span>
 					</a>
 				</li>
 				{% endif %}
