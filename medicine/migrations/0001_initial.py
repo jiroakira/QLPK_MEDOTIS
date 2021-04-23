@@ -205,7 +205,7 @@ class Migration(migrations.Migration):
                 ('thoi_gian_tao', models.DateTimeField(blank=True, editable=False, null=True)),
                 ('thoi_gian_cap_nhat', models.DateTimeField(blank=True, null=True)),
                 ('don_thuoc', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='ke_don', to='medicine.donthuoc')),
-                ('thuoc', models.ForeignKey(on_delete=models.SET(medicine.models.get_sentinel_thuoc), to='medicine.thuoc')),
+                ('thuoc', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='medicine.thuoc')),
             ],
             options={
                 'verbose_name': 'Kê Đơn Thuốc',

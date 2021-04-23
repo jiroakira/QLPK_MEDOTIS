@@ -304,7 +304,6 @@ class ThuocListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ThuocSerializer
     pagination_class = CustomPagination
 
-
 class PhongChucNangViewSet(viewsets.ModelViewSet):
     def list(self, request):
         phong_chuc_nang = PhongChucNang.objects.all()
