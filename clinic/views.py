@@ -5369,6 +5369,16 @@ def store_dich_vu_kham_excel(request):
             ma_cosokcb = res['MA_COSOKCB']
             bao_hiem = True
 
+            if don_gia is not None:
+                don_gia = int(don_gia)
+            else:
+                don_gia = 0
+
+            if don_gia_bhyt is not None:
+                don_gia_bhyt = int(don_gia_bhyt)
+            else:
+                don_gia_bhyt = 0
+
             content_type = ContentType.objects.get_for_model(PhongChucNang)
 
             group_phong_chuc_nang = PhongChucNang.objects.get_or_create(ten_phong_chuc_nang = phong_chuc_nang)[0]

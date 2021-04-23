@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'widget_tweaks',
     'bulk_update_or_create',
+    'actstream',
 ]
 
 MIDDLEWARE = [
@@ -181,6 +182,10 @@ REST_FRAMEWORK = {
     # )
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),

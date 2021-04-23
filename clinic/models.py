@@ -486,7 +486,7 @@ class DichVuKham(models.Model):
     objects = BulkUpdateOrCreateQuerySet.as_manager()
 
     def __str__(self):
-        return str(self.ten_dvkt)
+        return f'({self.id}){str(self.ten_dvkt)}'
 
     class Meta:
         verbose_name = "Dịch Vụ Khám"
@@ -671,6 +671,9 @@ class LichSuTrangThaiLichHen(models.Model):
     chi_tiet_trang_thai = models.CharField(max_length=500, null=True, blank=True)
 
     thoi_gian_tao = models.DateTimeField(auto_now_add=True)
+
+def get_sentinel_dich_vu():
+    return DichVuKham.objects.get_or_create(ten_dich_vu='deleted')[0]
 
 class TrangThaiKhoaKham(models.Model):
     """ Tất cả các trạng thái có thể xảy ra trong phòng khám """
