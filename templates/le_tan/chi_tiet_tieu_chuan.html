@@ -14,15 +14,15 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">Thêm Mới Mẫu Phiếu</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">Chỉnh Sửa Chi Tiết Tiêu Chuẩn Dịch Vụ</h5>
                     <!--end::Page Title-->
                     <!--begin::Breadcrumb-->
                     <ul class="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2 font-size-sm">
                         <li class="breadcrumb-item">
-                            <a href="{% url 'danh_sach_mau_phieu' %}" class="text-muted">Danh sách mẫu phiếu</a>
+                            <a href="{% url 'danh_sach_mau_phieu' %}" class="text-muted">Danh sách tiêu chuẩn</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="javascript:;" class="text-muted">Thêm mẫu phiếu</a>
+                            <a href="javascript:;" class="text-muted">Cập Nhật Tiêu Chuẩn Dịch Vụ</a>
                         </li>
                     </ul>
                     <!--end::Breadcrumb-->
@@ -113,7 +113,7 @@
                         <div class="row">
                             <div class="col-lg-12 ml-lg-auto text-center">
                                 <button type="button" class="btn btn-primary font-weight-bold mr-2" id="submitData" name="submitButton">Xác nhận</button>
-                                <button type="button" class="btn btn-light-primary font-weight-bold">Hủy</button>
+                                <button type="button" class="btn btn-light-primary font-weight-bold" id="cancelButton">Hủy</button>
                             </div>
                         </div>
                     </div>
@@ -425,6 +425,10 @@
             }
         });
  
+        $(document).on('click', '#cancelButton', function(){
+            window.history.back()
+        })
+
         return {
             // public functions
             init: function() {
