@@ -43,24 +43,28 @@
                     <form id="benh_nhan_form">
                         <div class="form-group row">
                             <div class="col-lg-12">
-                                <label>Họ Tên <span class="text-danger">*</span></label>
-                                {{ form.ho_ten|attr:"class:form-control"|attr:"name:ho_ten"|attr:"placeholder:Nhập Họ Tên Của Bệnh Nhân" }}
+                                <label>Họ Tên </label>
+                                {{ form.ho_ten|attr:"class:form-control"|attr:"name:ho_ten"|attr:"placeholder:Nhập Họ Tên Của Nhân Viên" }}
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>Số Điện Thoại <span class="text-danger">*</span></label>
-                                {{ form.so_dien_thoai|attr:"class:form-control"|attr:"name:so_dien_thoai"|attr:"placeholder:Nhập Số Điện Thoại Của Bệnh Nhân" }}
+                                <label>Số Điện Thoại </label>
+                                {{ form.so_dien_thoai|attr:"class:form-control"|attr:"name:so_dien_thoai"|attr:"placeholder:Nhập Số Điện Thoại Của Nhân Viên"|attr:"id:inputPhone" }}
+                                <span class="text-success" id="success_phone"></span>
+                                <span class="text-warning" id="error_phone"></span>    
                             </div>
                             <div class="col-lg-6">
-                                <label>Username <span class="text-danger">*</span></label>
-                                {{ form.username|attr:"class:form-control"|attr:"name:username"|attr:"placeholder:Nhập Email Của Bệnh Nhân" }}
+                                <label>Username </label>
+                                {{ form.username|attr:"class:form-control"|attr:"name:username"|attr:"placeholder:Nhập Username Của Nhân Viên"|attr:"id:inputUsername" }}
+                                <span class="text-success" id="success_username"></span>
+                                <span class="text-warning" id="error_username"></span> 
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>CMND/CCCD <span class="text-danger">*</span></label>
-                                {{ form.cmnd_cccd|attr:"class:form-control"|attr:"name:cmnd_cccd"|attr:"placeholder:Nhập CCMD/CCCD Của Bệnh Nhân" }}
+                                <label>CMND/CCCD </label>
+                                {{ form.cmnd_cccd|attr:"class:form-control"|attr:"name:cmnd_cccd"|attr:"placeholder:Nhập CCMD/CCCD Của Nhân Viên" }}
                             </div>
                             <div class="col-lg-6">
                                 <label>Ngày sinh</label>
@@ -70,7 +74,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-4">
-                                <label>Tỉnh/Thành Phố<span class="text-danger">*</span></label>
+                                <label>Tỉnh/Thành Phố</label>
                                 {% comment %} <input type="text" class="form-control" id="inputCmtModal" placeholder="Nhập CMND/CCCD"/> {% endcomment %}
                                 <select class="form-control selectpicker" id="kt_select2_1" data-live-search="true" name="param">
                                     <option value="" selected disabled>Chọn Tỉnh/Thành phố</option>
@@ -98,7 +102,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Địa chỉ cụ thể (Đường/Số nhà) <span class="text-danger">*</span></label>
+                            <label>Địa chỉ cụ thể (Đường/Số nhà) </label>
                             {{ form.dia_chi|attr:"class:form-control"|attr:"name:dia_chi"|attr:"rows:3"|attr:"placeholder:Nhập Mã Số Bảo Hiểm Y Tế Của Bệnh Nhân"}}
                         </div>
 
@@ -122,9 +126,7 @@
 
 {% block scripts %}
 <!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 <!--end::Global Theme Bundle-->
 
 <script>
@@ -335,6 +337,85 @@
             })
         }  
     })
+
+    $(document).ready(function() {
+        $('#inputPhone').on('keyup', function() {
+            var so_dien_thoai = $('#inputPhone').val().trim()
+            var formData = new FormData()
+            
+            if (so_dien_thoai != '') {
+                $("#success_phone").html("<img src='{% static 'assets/media/loader/loader.gif' %}' /> Đang kiểm tra...")
+                $("#error_phone").html("")
+                setTimeout(function () {
+                    formData.append('so_dien_thoai', so_dien_thoai)     
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'check_exists_so_dien_thoai' %}",
+                        data: formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function(response){
+                            if (response.status == 200) {
+                                $("#success_phone").html("") 
+                                $("#error_phone").html(response.message)
+                            } else if (response.status == 404) {
+                                $("#success_phone").html(response.message)
+                                $("#error_phone").html("")
+                            } else if (response.status == 406) {
+                                $("#success_phone").html("") 
+                                $("#error_phone").html(response.message)
+                            }
+                        }
+                    })
+                }, 1500);
+            } else {
+                $("#success_phone").html("")
+                $("#error_phone").html("")
+            }
+        })
+        
+    })
+
+    $(document).ready(function() {
+        $('#inputUsername').on('keyup', function() {
+            var username = $('#inputUsername').val().trim()
+            var formData = new FormData()
+            
+            if (username != '') {
+                $("#success_username").html("<img src='{% static 'assets/media/loader/loader.gif' %}' /> Đang kiểm tra...")
+                $("#error_username").html("")
+                setTimeout(function () {
+                    formData.append('username', username)     
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'check_exists_username' %}",
+                        data: formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function(response){
+                            if (response.status == 200) {
+                                $("#success_username").html("") 
+                                $("#error_username").html(response.message)
+                            } else if (response.status == 404) {
+                                $("#success_username").html(response.message)
+                                $("#error_username").html("")
+                            } else if (response.status == 406) {
+                                $("#success_username").html("") 
+                                $("#error_username").html(response.message)
+                            }
+                        }
+                    })
+                }, 1500);
+            } else {
+                $("#success_username").html("")
+                $("#error_username").html("")
+            }
+        })
+        
+    })
+
 </script>
 
 {% endblock scripts %}

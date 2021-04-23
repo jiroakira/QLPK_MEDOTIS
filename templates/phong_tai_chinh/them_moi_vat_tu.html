@@ -47,7 +47,7 @@
                     <div class="card-body">
                         <div class="form-group row">
                             <div class="col-lg-12">
-                                <label>Nguồn cung cấp thuốc <span class="text-danger">*</span></label>
+                                <label>Nguồn cung cấp thuốc </label>
                                 <select id="selectCongty" class="form-control selectpicker">
                                     <option checked disabled>Chọn công ty cung cấp thuốc</option>
                                     {% for co in cong_ty %}
@@ -58,56 +58,56 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>Mã Hiệu <span class="text-danger">*</span></label>
+                                <label>Mã Hiệu </label>
                                 <input type="text" class="form-control" id="maHieu" name="text" placeholder="Nhập mã hiệu của vật tư" />
                             </div>
                             
                             <div class="col-lg-6">
-                                <label>Mã Vật Tư <span class="text-danger">*</span></label>
+                                <label>Mã Vật Tư </label>
                                 <input type="text" class="form-control" id="maVtytBv" name="text" placeholder="Nhập mã vật tư" />
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>Tên Vật Tư <span class="text-danger">*</span></label>
+                                <label>Tên Vật Tư </label>
                                 <input class="form-control" id="tenVtyt" type="text" placeholder="Nhập tên vật tư y tế" name="text"/>
                             </div>
                        
                             <div class="col-lg-6">
-                                <label>Quy Cách <span class="text-danger">*</span></label>
+                                <label>Quy Cách </label>
                                 <input class="form-control" id="quyCach" type="text" placeholder="Nhập cách đóng gói của vật tư" name="text"/>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-4">
-                                <label>Hãng Sản Xuất <span class="text-danger">*</span></label>
+                                <label>Hãng Sản Xuất </label>
                                 <input type="text" class="form-control" id="hangSanXuat" name="text" placeholder="Nhập hãng sản xuất" />
                             </div>
                             
                             <div class="col-lg-4">
-                                <label>Nước Sản Xuất <span class="text-danger">*</span></label>
+                                <label>Nước Sản Xuất </label>
                                 <input type="text" class="form-control" id="nuocSanXuat" name="text" placeholder="Nhập nước sản xuất" />
                             </div>
 
                             <div class="col-lg-4">
-                                <label>Đơn Vị Tính <span class="text-danger">*</span></label>
+                                <label>Đơn Vị Tính </label>
                                 <input type="text" class="form-control" id="donViTinh" name="text" placeholder="Đơn vị tính nhỏ nhất" />
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>Giá Nhập <span class="text-danger">*</span></label>
+                                <label>Giá Nhập </label>
                                 <input type="text" class="form-control" id="donGia" name="text" placeholder="Giá nhập của vật tư" />
                             </div>
                             
                             <div class="col-lg-6">
-                                <label>Giá Bán <span class="text-danger">*</span></label>
+                                <label>Giá Bán </label>
                                 <input type="text" class="form-control" id="donGiaTT" name="text" placeholder="Giá bán của vật tư" />
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label>Nhóm Vật Tư <span class="text-danger">*</span></label>
+                                <label>Nhóm Vật Tư </label>
                                 <select id="selectNhomVatTu" class="form-control selectpicker">
                                     <option checked disabled>Chọn nhóm vật tư</option>
                                     {% for nhom_vat_tu in nhom_vat_tu %}
@@ -117,7 +117,7 @@
                             </div>
                             
                             <div class="col-lg-6">
-                                <label>Số Lượng Nhập Lần Đầu <span class="text-danger">*</span></label>
+                                <label>Số Lượng Nhập Lần Đầu </label>
                                 <input type="text" class="form-control" id="soLuongKhaDung" name="text" placeholder="Số lượng nhập về lần đầu" />
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                                 <input type="text" class="form-control" id="quyetDinh" placeholder="Số quyết định" />
                             </div>
                             <div class="col-lg-6">
-                                <label>Công Bố <span class="text-danger">*</span></label>
+                                <label>Công Bố </label>
                                 <input type="text" class="form-control" id="congBo" name="text" placeholder="Ngày áp dụng công bố" />
                             </div>
                         </div>
@@ -152,9 +152,7 @@
 
 {% block scripts %}
 
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 
 {% comment %} <script src="{% static 'assets/js/pages/crud/forms/validation/form-controls9cd7.js' %}"></script> {% endcomment %}
 {% comment %} <script src="{% static 'assets/js/pages/crud/forms/widgets/input-mask9cd7.js' %}"></script> {% endcomment %}

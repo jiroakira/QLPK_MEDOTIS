@@ -27,9 +27,9 @@
 		<link href="{% static 'assets/css/themes/layout/brand/dark9cd7.css' %} " rel="stylesheet" type="text/css" />
 		<link href="{% static 'assets/css/themes/layout/aside/dark9cd7.css' %} " rel="stylesheet" type="text/css" />
 		<!--end::Layout Themes-->
-		<link rel="shortcut icon" href="{% static 'assets/media/logos/logo.ico' %} " />
+		<link rel="shortcut icon" href="{% static 'assets/media/logos/logo1.ico' %} " />
 		<!-- Hotjar Tracking Code for keenthemes.com -->
-		<script>(function(h,o,t,j,a,r){ h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)}; h._hjSettings={hjid:1070954,hjsv:6}; a=o.getElementsByTagName('head')[0]; r=o.createElement('script');r.async=1; r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv; a.appendChild(r); })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');</script>
+		
 	</head>
 	<!--end::Head-->
 	<!--begin::Body-->
@@ -46,13 +46,13 @@
 							<!--begin:Aside Content-->
 							<div class="text-dark-75">
 								<a href="#">
-									<img src="{% static 'assets/media/logos/logo.png' %} " class="max-h-125px" alt="" />
+									<img src="{% static 'assets/media/logos/logo1.png' %} " class="max-h-125px" alt="" />
 								</a>
-								<h3 class="mb-8 mt-22 font-weight-bold">MEDOTIS PHARMACEUTICAL TECHNOLOGY JSC</h3>
-								<p class="mb-15 text-muted font-weight-bold">Phần mềm quản lý phòng khám</p>
+								<h3 class="mb-8 mt-22 font-weight-bold">PHÒNG KHÁM ĐA KHOA AN NHIÊN</h3>
 								{% comment %} <button type="button" id="kt_login_signup" class="btn btn-outline-primary btn-pill py-4 px-9 font-weight-bold">Get An Account</button> {% endcomment %}
 							</div>
 							<!--end:Aside Content-->
+							<p class="mb-15 text-muted font-weight-bold">MEDOTIS PHARMACEUTICAL TECHNOLOGY JSC</p>
 						</div>
 					</div>
 					<!--end:Aside-->
@@ -213,10 +213,10 @@
 								});
 							} else {
 								swal.fire({
-									text: "Sorry, looks like there are some errors detected, please try again.",
+									text: "Xin lỗi, vui lòng đăng nhập đầy đủ số điện thoại và mật khẩu.",
 									icon: "error",
 									buttonsStyling: false,
-									confirmButtonText: "Ok, got it!",
+									confirmButtonText: "Xác Nhận!",
 									customClass: {
 										confirmButton: "btn font-weight-bold btn-light-primary"
 									}
@@ -237,107 +237,6 @@
 					$('#kt_login_signup').on('click', function (e) {
 						e.preventDefault();
 						_showForm('signup');
-					});
-				}
-
-				var _handleSignUpForm = function(e) {
-					var validation;
-					var form = KTUtil.getById('kt_login_signup_form');
-
-					// Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
-					validation = FormValidation.formValidation(
-						form,
-						{
-							fields: {
-								fullname: {
-									validators: {
-										notEmpty: {
-											message: 'Username is required'
-										}
-									}
-								},
-								email: {
-									validators: {
-										notEmpty: {
-											message: 'Email address is required'
-										},
-										emailAddress: {
-											message: 'The value is not a valid email address'
-										}
-									}
-								},
-								password: {
-									validators: {
-										notEmpty: {
-											message: 'The password is required'
-										}
-									}
-								},
-								cpassword: {
-									validators: {
-										notEmpty: {
-											message: 'The password confirmation is required'
-										},
-										identical: {
-											compare: function() {
-												return form.querySelector('[name="password"]').value;
-											},
-											message: 'The password and its confirm are not the same'
-										}
-									}
-								},
-								agree: {
-									validators: {
-										notEmpty: {
-											message: 'You must accept the terms and conditions'
-										}
-									}
-								},
-							},
-							plugins: {
-								trigger: new FormValidation.plugins.Trigger(),
-								bootstrap: new FormValidation.plugins.Bootstrap()
-							}
-						}
-					);
-
-					$('#kt_login_signup_submit').on('click', function (e) {
-						e.preventDefault();
-
-						validation.validate().then(function(status) {
-							if (status == 'Valid') {
-								swal.fire({
-									text: "All is cool! Now you submit this form",
-									icon: "success",
-									buttonsStyling: false,
-									confirmButtonText: "Ok, got it!",
-									customClass: {
-										confirmButton: "btn font-weight-bold btn-light-primary"
-									}
-								}).then(function() {
-									KTUtil.scrollTop();
-								});
-							} else {
-								swal.fire({
-									text: "Sorry, looks like there are some errors detected, please try again.",
-									icon: "error",
-									buttonsStyling: false,
-									confirmButtonText: "Ok, got it!",
-									customClass: {
-										confirmButton: "btn font-weight-bold btn-light-primary"
-									}
-								}).then(function() {
-									KTUtil.scrollTop();
-								});
-							}
-						});
-					});
-
-					// Handle cancel button
-					$('#kt_login_signup_cancel').on('click', function (e) {
-						e.preventDefault();
-
-						_showForm('signin');
 					});
 				}
 
@@ -405,7 +304,6 @@
 						_login = $('#kt_login');
 
 						_handleSignInForm();
-						_handleSignUpForm();
 						_handleForgotForm();
 					}
 				};

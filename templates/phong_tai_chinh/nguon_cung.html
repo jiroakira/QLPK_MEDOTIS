@@ -168,24 +168,24 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Tên Nguồn Cung <span class="text-danger">*</span></label>
+                            <label>Tên Nguồn Cung </label>
                             <input type="text" class="form-control" id="inputNguonCung"  placeholder="Nhập Tên Nhà Thầu" name="text"/>
                             {% comment %} <span class="form-text text-muted">We'll never share your email with anyone else.</span> {% endcomment %}
                         </div>
                         <div class="form-group">
-                            <label>Giấy Phép Kinh Doanh <span class="text-danger">*</span></label>
+                            <label>Giấy Phép Kinh Doanh </label>
                             <input type="text" class="form-control" id="inputGiayPhepKinhDoanh"  placeholder="Nhập Thông Tin Giấy Phép" name="text"/>
                         </div>
                         <div class="form-group">
-                            <label>Số liên lạc <span class="text-danger">*</span></label>
+                            <label>Số liên lạc </label>
                             <input type="text" class="form-control" id="inputSoLienLac"  placeholder="Nhập Số Điện Thoại" name="text"/>
                         </div>
                         <div class="form-group">
-                            <label>Email <span class="text-danger">*</span></label>
+                            <label>Email </label>
                             <input type="email" class="form-control" id="inputEmail" placeholder="Nhập Email Công Ty" name="text"/>
                         </div>
                         <div class="form-group">
-                            <label>Địa chỉ <span class="text-danger">*</span></label>
+                            <label>Địa chỉ </label>
                             <textarea class="form-control" id="inputDiaChi" placeholder="Địa chỉ người dùng" rows="2"></textarea>
                         </div>
                     </div>
@@ -204,9 +204,7 @@
 
 {% block scripts %}
 <!--begin::Global Theme Bundle(used by all pages)-->
-<script src="{% static 'assets/plugins/global/plugins.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle9cd7.js' %} "></script>
-<script src="{% static 'assets/js/scripts.bundle9cd7.js' %} "></script>
+
 <script src="{% static 'assets/js/excelexportjs.js' %} "></script>
 
 <!--end::Global Theme Bundle-->
@@ -512,7 +510,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                     $('#nguonCungModal').modal('hide')
                 },
                 error: function(response){
-                    toastr.warning("Thằng Minh bảo set")
+                  
                 }
             })
         })

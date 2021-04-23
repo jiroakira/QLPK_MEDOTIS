@@ -113,6 +113,11 @@ class MauPhieuForm(forms.ModelForm):
         model = MauPhieu
         fields = ('dich_vu', 'ten_mau', 'noi_dung')
 
+class MauHoaDonForm(forms.ModelForm):
+    class Meta:
+        model = MauPhieu
+        fields = ('ten_mau', 'codename', 'noi_dung')
+
 class BaiDangForm(forms.ModelForm):
     class Meta:
         model = BaiDang

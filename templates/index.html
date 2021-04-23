@@ -58,16 +58,16 @@
                     <div class="card card-custom bg-gray-100 card-stretch gutter-b">
                         <!--begin::Header-->
                         <div class="card-header border-0 bg-primary py-5">
-                            <h3 class="card-title font-weight-bolder text-white">Thao Tác</h3>
+                            <h1 class="card-title font-weight-bolder font-size-h2 text-white">Thao Tác</h1>
                         </div>
                         <!--end::Header-->
                         <!--begin::Body-->
                         <div class="card-body p-0 position-relative overflow-hidden">
                             <!--begin::Chart-->
-                            <div id="kt_mixed_widget_1_chart" class="card-rounded-bottom bg-primary" style="height: 200px"></div>
+                            <div id="kt_mixed_widget_1_chart" class="card-rounded-bottom bg-primary" style="height: 150px"></div>
                             <!--end::Chart-->
                             <!--begin::Stats-->
-                            <div class="card-spacer mt-n25">
+                            <div class="card-spacer mt-n17">
                                 <!--begin::Row-->
                                 <div class="row m-0">
                                     <div class="col bg-light-warning px-6 py-8 rounded-xl mr-7 mb-7">
@@ -485,27 +485,27 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Họ Tên<span class="text-danger">*</span></label>
+                            <label>Họ Tên</label>
                             <input type="text" class="form-control" id="inputNameModal"  placeholder="Nhập Đầy Đủ Họ Tên Của Bạn"/>
                             {% comment %} <span class="form-text text-muted">We'll never share your email with anyone else.</span> {% endcomment %}
                         </div>
                         <div class="form-group">
-                            <label>Số Điện Thoại <span class="text-danger">*</span></label>
+                            <label>Số Điện Thoại </label>
                             <input type="text" class="form-control" id="inputPhoneModal"  placeholder="Nhập Số Điện Thoại"/>
                             <span class="form-text text-muted" >Chúng tôi sẽ không chia sẻ dữ liệu này với bất kì ai</span>
                             <span class="text-danger" id="error_phone"></span>
                         </div>
                         <div class="form-group">
-                            <label for="inputPasswordModal">Mật khẩu <span class="text-danger">*</span></label>
+                            <label for="inputPasswordModal">Mật khẩu </label>
                             <input type="password" class="form-control" id="inputPasswordModal" placeholder="Password"/>
                         </div>
                         <div class="form-group">
-                            <label>CMND/CCCD <span class="text-danger">*</span></label>
+                            <label>CMND/CCCD </label>
                             <input type="text" class="form-control" id="inputCmtModal" placeholder="Nhập CMND/CCCD"/>
                             {% comment %} <span class="text-danger" id="error_cccd"></span> {% endcomment %}
                         </div>
                         <div class="form-group">
-                            <label>Địa chỉ <span class="text-danger">*</span></label>
+                            <label>Địa chỉ </label>
                             <textarea class="form-control" id="inputDiaChiModal" placeholder="Địa chỉ người dùng" rows="2"></textarea>
                         </div>
                     </div>
@@ -541,14 +541,14 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Chọn Dịch Vụ Khám <span class="text-danger">*</span></label>
+                            <label>Chọn Dịch Vụ Khám </label>
                             <select id="selectDichVuKham" class="form-control selectpicker">
                                 <option value="kham_chua_benh" selected>Khám Chữa Bệnh</option>
                                 <option value="kham_sua_khoe">Khám Sức Khỏe</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Chọn Bệnh Nhân<span class="text-danger">*</span></label>
+                            <label>Chọn Bệnh Nhân</label>
                             <select id="selectBenhNhan" class="form-control selectpicker" data-size="7" data-live-search="true">
                                 <option value="" disabled selected>Chọn bệnh nhân</option>
                                 {% for p in nguoi_dung %}
