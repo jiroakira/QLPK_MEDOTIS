@@ -3176,6 +3176,7 @@ class XuatNhapTongThuocAPIView(APIView, PaginationHandlerMixin):
                 models.When(so_luong_nhap__isnull=True, then=F('ton_dau_ky') - F('so_luong_xuat')),
                 models.When(so_luong_xuat__isnull=True, then=F('ton_dau_ky') + F('so_luong_nhap')),
                 default = F('ton_dau_ky') + F('so_luong_nhap') - F('so_luong_xuat'),
+                output_field=models.IntegerField(),
             )
         ).annotate(
             thanh_tien_nhap=F('so_luong_nhap') * F('don_gia')
