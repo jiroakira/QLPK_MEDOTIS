@@ -300,9 +300,30 @@ class DichVuKhamListCreateAPIView(generics.ListCreateAPIView):
     pagination_class = CustomPagination
 
 class ThuocListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Thuoc.objects.all()
     serializer_class = ThuocSerializer
     pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = Thuoc.objects.all()
+
+        term = self.request.query_params.get('query[search]')
+        id_nhom_thuoc = self.request.query_params.get('query[id_nhom_thuoc]')
+        bao_hiem = self.request.query_params.get('query[bao_hiem]')
+
+        if term is not None:
+            queryset = queryset.filter(Q(ten_thuoc__icontains=term) | Q(ten_hoat_chat__icontains=term) | Q(duong_dung__icontains=term) | Q(don_vi_tinh__icontains=term))
+
+        if id_nhom_thuoc is not None:
+            queryset = queryset.filter(nhom_thuoc__id=id_nhom_thuoc)
+
+        if bao_hiem is not None:
+            if bao_hiem == 'True':
+                bh = True
+            else:
+                bh = False
+            queryset = queryset.filter(bao_hiem = bh)
+
+        return queryset
 
 class PhongChucNangViewSet(viewsets.ModelViewSet):
     def list(self, request):
@@ -3228,20 +3249,4 @@ class DanhSachThuocSapHetHan(APIView, PaginationHandlerMixin):
             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
         else:
             serializer = self.serializer_class(medicines, many=True)    
-        return Response(serializer.data)
-
-class DanhSachThuocTheoNhomThuoc(APIView, PaginationHandlerMixin):
-    pagination_class = CustomPagination
-    serializer_class = ThuocSerializer
-
-    def get(self, request, format=None):
-        id_nhom_thuoc = self.request.query_params.get('id_nhom_thuoc')
-        nhom_thuoc = NhomThuoc.objects.filter(id=id_nhom_thuoc).first()
-        danh_sach_thuoc = nhom_thuoc.nhom_thuoc.all()
-        page = self.paginate_queryset(danh_sach_thuoc)
-
-        if page is not None:
-            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
-        else:
-            serializer = self.serializer_class(danh_sach_thuoc, many=True)    
         return Response(serializer.data)

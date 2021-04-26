@@ -948,15 +948,9 @@ def store_ke_don(request):
             if thuoc.kha_dung and int(so_luong) > 0:
                 ke_don_thuoc = KeDonThuoc(don_thuoc=don_thuoc, thuoc=thuoc, so_luong=i['obj']['so_luong'], cach_dung=i['obj']['duong_dung'], ghi_chu=i['obj']['ghi_chu'], bao_hiem=i['obj']['bao_hiem'])
                 bulk_create_data.append(ke_don_thuoc)
-
-            elif thuoc.kha_dung and int(so_luong) < 0:
-                don_thuoc.delete()
-                repsonse = {
-                    "status": 404,
-                    "message": f"Vui lòng kiểm tra lại số lượng thuốc kê đơn",
-                }
-                return HttpResponse(json.dumps(repsonse), content_type='application/json; charset=utf-8')
             else:
+                don_thuoc.delete()
+
                 repsonse = {
                     "status": 404,
                     "message": f"Vui lòng kiểm tra lại số lượng tồn kho của thuốc: {thuoc.ten_thuoc}",
