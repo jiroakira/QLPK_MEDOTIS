@@ -1645,9 +1645,11 @@ def bat_dau_chuoi_kham(request, **kwargs):
 @login_required(login_url='/dang_nhap/')
 def danh_sach_thuoc(request):
     phong_chuc_nang = PhongChucNang.objects.all()
+    nhom_thuoc = NhomThuoc.objects.all()
 
     data = {
         'phong_chuc_nang' : phong_chuc_nang,
+        'nhom_thuoc': nhom_thuoc,
     }
     return render(request, 'phong_thuoc/danh_sach_thuoc.html', context=data)
 
@@ -1655,10 +1657,12 @@ def danh_sach_thuoc(request):
 def danh_sach_thuoc_phong_tai_chinh(request):
     nhom_thau = NhomThau.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
+    nhom_thuoc = NhomThuoc.objects.all()
 
     data={
         'nhom_thau': nhom_thau,
         'phong_chuc_nang': phong_chuc_nang,
+        'nhom_thuoc': nhom_thuoc,
     }
     return render(request, 'phong_tai_chinh/danh_sach_thuoc.html', context = data)
 
@@ -5636,6 +5640,7 @@ def store_thuoc_dich_vu_excel(request):
                 don_gia_tt = Decimal(data['DON_GIA_TT']),
                 don_vi_tinh = data['DON_VI_TINH'],
                 so_lo = data['SO_LO'],
+                duong_dung = data['DUONG_DUNG'],
                 ngay_san_xuat = ngay_san_xuat,
                 han_su_dung = han_su_dung,
                 cong_ty = group_cong_ty,
@@ -5656,6 +5661,7 @@ def store_thuoc_dich_vu_excel(request):
             'don_gia_tt', 
             'don_vi_tinh',
             'so_lo',
+            'duong_dung',
             'ngay_san_xuat',
             'han_su_dung',
             'cong_ty',

@@ -179,6 +179,12 @@ class Thuoc(models.Model):
             so_luong_kha_dung = 0
         return so_luong_kha_dung
 
+    def get_bao_hiem(self):
+        if self.bao_hiem:
+            return "True"
+        else:
+            return "False"
+
 
 class NhomThuoc(models.Model):
     ma_nhom = models.CharField(max_length=255, null=True, blank=True)

@@ -11,7 +11,7 @@ from json import dump
 from rest_framework.parsers import FileUploadParser
 from rest_framework.parsers import MultiPartParser
 import json
-from medicine.models import CongTy, DonThuoc, KeDonThuoc, Thuoc, TrangThaiDonThuoc, VatTu
+from medicine.models import CongTy, DonThuoc, KeDonThuoc, NhomThuoc, Thuoc, TrangThaiDonThuoc, VatTu
 from django.http.response import Http404, HttpResponse, JsonResponse
 from rest_framework import views
 from rest_framework.views import APIView
@@ -3228,4 +3228,20 @@ class DanhSachThuocSapHetHan(APIView, PaginationHandlerMixin):
             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
         else:
             serializer = self.serializer_class(medicines, many=True)    
+        return Response(serializer.data)
+
+class DanhSachThuocTheoNhomThuoc(APIView, PaginationHandlerMixin):
+    pagination_class = CustomPagination
+    serializer_class = ThuocSerializer
+
+    def get(self, request, format=None):
+        id_nhom_thuoc = self.request.query_params.get('id_nhom_thuoc')
+        nhom_thuoc = NhomThuoc.objects.filter(id=id_nhom_thuoc).first()
+        danh_sach_thuoc = nhom_thuoc.nhom_thuoc.all()
+        page = self.paginate_queryset(danh_sach_thuoc)
+
+        if page is not None:
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        else:
+            serializer = self.serializer_class(danh_sach_thuoc, many=True)    
         return Response(serializer.data)
