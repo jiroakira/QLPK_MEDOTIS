@@ -295,9 +295,17 @@ class DichVuKhamViewSet(viewsets.ViewSet):
         })
 
 class DichVuKhamListCreateAPIView(generics.ListCreateAPIView):
-    queryset = DichVuKham.objects.all()
     serializer_class = DichVuKhamSerializerFormatted
     pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = DichVuKham.objects.all()
+        term = self.request.query_params.get('query[search]')
+        
+        if term is not None:
+            queryset = queryset.filter(Q(ten_dvkt__icontains=term) | Q(ma_dvkt__icontains=term))
+            
+        return queryset
 
 class ThuocListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ThuocSerializer
