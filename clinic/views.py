@@ -206,7 +206,11 @@ def index(request):
         }
         return render(request, 'index.html', context=data)
     else:
-        return render(request, 'no_permission_view.html')
+        phong_chuc_nang = PhongChucNang.objects.all()
+        context = {
+            'phong_chuc_nang': phong_chuc_nang
+        }
+        return render(request, 'no_permission_view.html', context)
     
 @login_required(login_url='/dang_nhap/')
 def danh_sach_benh_nhan(request):
