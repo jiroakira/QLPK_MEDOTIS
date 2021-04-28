@@ -8106,6 +8106,10 @@ button.bg-white:focus {
   margin-right: 19.75rem !important;
 }
 
+.mr-custom-sm {
+  margin-right:  5px !important;
+}
+
 .p-0 {
   padding: 0 !important; }
 
@@ -62774,3 +62778,16 @@ body {
     left: 265px; }
   .aside-enabled.aside-minimize.footer-fixed .footer {
     left: 70px; } }
+
+.flipped-x {
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+ 
+.flipped-y {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+}

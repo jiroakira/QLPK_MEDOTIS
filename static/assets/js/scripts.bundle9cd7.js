@@ -5409,7 +5409,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 
 					// setup extra system column properties
 					Plugin.setupSystemColumn.call();
-					Plugin.redraw();
+					Plugin.redraw();            
 				}
 
 				var width;
