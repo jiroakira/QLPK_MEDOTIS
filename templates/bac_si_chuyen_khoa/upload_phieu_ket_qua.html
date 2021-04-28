@@ -359,6 +359,7 @@
                 $('#CameraModal').modal('show');
                 webcam.start()
                     .then(result =>{
+                        webcam.flip();
                         cameraStarted();
                         console.log("webcam started");
                     })
@@ -376,12 +377,14 @@
             const snapSoundElement = document.getElementById('snapSound');
 
             const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+            
 
             function cameraStarted(){
                 $("#errorMsg").addClass("d-none");
                 $('.flash').hide();
                 $("#webcam-caption").html("on");
                 $(".webcam-container").removeClass("d-none");
+                
                 if( webcam.webcamList.length > 1){
                     $("#cameraFlip").removeClass('d-none');
                 }

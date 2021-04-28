@@ -223,11 +223,16 @@ var KTDropzoneDemo = function () {
             },
             success: function(response){
                 var id_phong_chuc_nang = $("#upload-form").find("#upload").data('id-phong-chuc-nang')
-                toastr.success('Upload file thành công', "Thành Công!")
+                if (response.status == 200) {
 
-                setTimeout(function () {
-                    window.location.href = '/phong_chuyen_khoa/' + id_phong_chuc_nang; //redirect về danh sách chờ lâm sàng
-                }, 1500); //sau 2 giây (1000 = 1s)
+                    toastr.success(response.message, "Thành Công!")
+
+                    setTimeout(function () {
+                        window.location.href = '/phong_chuyen_khoa/' + id_phong_chuc_nang; //redirect về danh sách chờ lâm sàng
+                    }, 1500); //sau 2 giây (1000 = 1s)
+                } else if (response.status == 404) {
+                    toastr.warning(response.message, 'Xảy ra lỗi')
+                }
             }
         });
 
@@ -288,11 +293,16 @@ var KTDropzoneDemo = function () {
                     contentType: false,
                     success: function(response){
                         var id_phong_chuc_nang = $("#upload-form").find("#upload").data('id-phong-chuc-nang')
-                        toastr.success(response.message, "Thành Công")
+                        if(response.status == 200) {
 
-                        setTimeout(function () {
-                            window.location.href = '/phong_chuyen_khoa/' + id_phong_chuc_nang; //redirect về danh sách chờ lâm sàng
-                        }, 1500);
+                            toastr.success(response.message, "Thành Công")
+
+                            setTimeout(function () {
+                                window.location.href = '/phong_chuyen_khoa/' + id_phong_chuc_nang; //redirect về danh sách chờ lâm sàng
+                            }, 1500);
+                        } else if (response.status == 404) {
+                            toastr.warning(response.message, 'Xảy ra lỗi')
+                        }
                         
                     },
                     error: function(response){
