@@ -3,14 +3,14 @@
   "model": "clinic.trangthailichhen",
   "pk": 1,
   "fields": {
-    "ten_trang_thai": "Đã Thanh Toán Lâm Sàng"
+    "ten_trang_thai": "Chờ Thanh Toán Lâm Sàng"
   }
 },
 {
   "model": "clinic.trangthailichhen",
   "pk": 2,
   "fields": {
-    "ten_trang_thai": "Xác Nhận"
+    "ten_trang_thai": "Đã Thanh Toán Lâm Sàng"
   }
 },
 {
@@ -24,7 +24,7 @@
   "model": "clinic.trangthailichhen",
   "pk": 4,
   "fields": {
-    "ten_trang_thai": "Chờ Thanh Toán Lâm Sàng"
+    "ten_trang_thai": "Xác Nhận"
   }
 },
 {
@@ -60,6 +60,20 @@
   "pk": 9,
   "fields": {
     "ten_trang_thai": "Chờ Xác Nhận"
+  }
+},
+{
+  "model": "clinic.trangthailichhen",
+  "pk": 10,
+  "fields": {
+    "ten_trang_thai": "Chờ Phân Khoa"
+  }
+},
+{
+  "model": "clinic.trangthailichhen",
+  "pk": 11,
+  "fields": {
+    "ten_trang_thai": "Hoàn Thành"
   }
 }
 ]

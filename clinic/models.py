@@ -46,7 +46,7 @@ def text_to_id(text):
     return text
 
 class UserManager(BaseUserManager):
-    def create_user(self, ho_ten, so_dien_thoai, cmnd_cccd, dia_chi, password=None):
+    def create_user(self, ho_ten, so_dien_thoai, dia_chi, password=None):
         """
         Creates and saves a User with the given email and password.
         """
@@ -59,7 +59,6 @@ class UserManager(BaseUserManager):
         user = self.model(
             so_dien_thoai=so_dien_thoai,
             ho_ten = ho_ten,
-            cmnd_cccd = cmnd_cccd,
             dia_chi = dia_chi,
         )
 
@@ -67,7 +66,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
         
-    def create_nguoi_dung(self, ho_ten, so_dien_thoai, cmnd_cccd, gioi_tinh, dan_toc, ngay_sinh, ma_so_bao_hiem, dia_chi, password=None):
+    def create_nguoi_dung(self, ho_ten, so_dien_thoai, gioi_tinh, dan_toc, ngay_sinh, ma_so_bao_hiem, dia_chi, password=None):
         """
         Creates and saves a User with the given email and password.
         """
@@ -80,7 +79,6 @@ class UserManager(BaseUserManager):
         user = self.model(
             so_dien_thoai  = so_dien_thoai,
             ho_ten         = ho_ten,
-            cmnd_cccd      = cmnd_cccd,
             dia_chi        = dia_chi,
             gioi_tinh      = gioi_tinh,
             dan_toc        = dan_toc,
@@ -108,7 +106,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, ho_ten, so_dien_thoai, cmnd_cccd, dia_chi, password):
+    def create_superuser(self, ho_ten, so_dien_thoai, dia_chi, password):
         """
         Creates and saves a superuser with the given email and password.
         """
@@ -116,12 +114,12 @@ class UserManager(BaseUserManager):
             so_dien_thoai=so_dien_thoai,
             password=password,
             ho_ten=ho_ten,
-            cmnd_cccd = cmnd_cccd,
             dia_chi = dia_chi,
         )
         
         user.staff = True
         user.admin = True
+        user.superuser = True
         user.chuc_nang = 7
         user.save(using=self._db)
         return user
@@ -253,7 +251,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'so_dien_thoai'
-    REQUIRED_FIELDS = ['ho_ten', 'cmnd_cccd', 'dia_chi',] # Email & Password are required by default.
+    REQUIRED_FIELDS = ['ho_ten', 'dia_chi',] # Email & Password are required by default.
 
     def __str__(self):       
         return f"({self.id}) {self.ho_ten}"
@@ -617,7 +615,8 @@ class LichHenKham(models.Model):
 
     LOAI_DICH_VU = (
         ('kham_chua_benh', 'Khám Chữa Bệnh'),
-        ('kham_suc_khoe', 'Khám Sức Khỏe')
+        ('kham_suc_khoe', 'Khám Sức Khỏe'),
+        ('kham_theo_yeu_cau', 'Khám Theo Yêu Cầu'),
     )
 
     ma_lich_hen = models.CharField(max_length=15, null=True, blank=True)
@@ -632,6 +631,7 @@ class LichHenKham(models.Model):
     trang_thai = models.ForeignKey(TrangThaiLichHen, on_delete=models.CASCADE, null=True, blank=True)
 
     ly_do_vvien = models.CharField(max_length=5, choices=LYDO_VVIEN, null=True, blank=True)
+    thanh_toan_sau = models.BooleanField(default = False)
 
     thoi_gian_tao = models.DateTimeField(editable=False, null=True, blank=True, auto_now_add=True)
     thoi_gian_chinh_sua = models.DateTimeField(null=True, blank=True, auto_now=True)
@@ -666,6 +666,24 @@ class LichHenKham(models.Model):
                 return False
         else:
             return False
+
+    def check_thanh_toan_sau(self):
+        if self.thanh_toan_sau:
+            return True
+        else:
+            return False
+
+    def check_hoan_thanh_kham(self):
+        hoan_thanh_kham = False
+        if self.loai_dich_vu == 'kham_theo_yeu_cau':
+            chuoi_kham = self.danh_sach_chuoi_kham.all().last()
+            if chuoi_kham is not None:
+                trang_thai_chuoi_kham = TrangThaiChuoiKham.objects.get(trang_thai_chuoi_kham='Hoàn Thành')
+                if chuoi_kham.trang_thai == trang_thai_chuoi_kham:
+                    hoan_thanh_kham = True
+
+        return hoan_thanh_kham
+
 
 class LichSuTrangThaiLichHen(models.Model):
     lich_hen_kham = models.ForeignKey(LichHenKham, on_delete=models.CASCADE, related_name="lich_hen")
@@ -711,7 +729,7 @@ class ChuoiKham(models.Model):
     ma_lk = models.CharField(max_length=100, null=True, blank=True)
     benh_nhan = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chuoi_kham")
     bac_si_dam_nhan = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="bac_si_chuoi_kham", null=True, blank=True)
-    lich_hen = models.ForeignKey(LichHenKham, on_delete=models.SET_NULL, null=True, blank=True, related_name='danh_sach_chuoi_kham')
+    lich_hen = models.ForeignKey(LichHenKham, on_delete=models.CASCADE, null=True, blank=True, related_name='danh_sach_chuoi_kham')
     thoi_gian_bat_dau = models.DateTimeField(null=True, blank=True)
     thoi_gian_ket_thuc = models.DateTimeField(null=True, blank=True)
     thoi_gian_tai_kham = models.DateTimeField(null=True, blank=True)
@@ -1165,9 +1183,20 @@ class BaiDang(models.Model):
 
 # * ------ Update 19/01 -------
 
+class NhomChiSoXetNghiem(models.Model):
+    ten_nhom = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Nhóm Chỉ Số Xét Nghiệm"
+        verbose_name_plural = "Nhóm Chỉ Số Xét Nghiệm"
+
+    def __str__(self):
+        return f"({self.id}){self.ten_nhom}"
+
 class ChiSoXetNghiem(models.Model):
     dich_vu_kham = models.ForeignKey(DichVuKham, on_delete=models.CASCADE, null=True, blank=True, related_name="chi_so_xet_nghiem")
     doi_tuong_xet_nghiem = models.ForeignKey("DoiTuongXetNghiem", on_delete=models.SET_NULL, null=True, blank=True)
+    nhom_chi_so = models.ForeignKey("NhomChiSoXetNghiem", on_delete=models.CASCADE, null=True, blank=True)
     ma_chi_so = models.CharField(max_length=10, null=True, blank=True)
     ten_chi_so = models.CharField(max_length=255, null=True, blank=True)
     chi_tiet = models.ForeignKey("ChiTietChiSoXetNghiem", on_delete=models.CASCADE, null=True, blank=True)
@@ -1181,7 +1210,6 @@ class ChiSoXetNghiem(models.Model):
             ('can_view_test_values', 'Xem chỉ số xét nghiệm'),
             ('can_delete_test_values', 'Xóa chỉ số xét nghiệm'),
         )
-
 
     def __str__(self):
         return f"({self.ma_chi_so}){self.ten_chi_so}/{self.doi_tuong_xet_nghiem}"

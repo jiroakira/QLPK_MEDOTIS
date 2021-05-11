@@ -15,9 +15,23 @@
 },
 {
   "model": "clinic.trangthaikhoakham",
-  "pk": 3,
+  "pk": 4,
   "fields": {
-    "trang_thai_khoa_kham": "Dừng khám"
+    "trang_thai_khoa_kham": "Dừng Khám"
+  }
+},
+{
+  "model": "clinic.trangthaikhoakham",
+  "pk": 5,
+  "fields": {
+    "trang_thai_khoa_kham": "Chờ Khám"
+  }
+},
+{
+  "model": "clinic.trangthaikhoakham",
+  "pk": 6,
+  "fields": {
+    "trang_thai_khoa_kham": "Đã Tải Lên Kết Quả"
   }
 }
 ]
