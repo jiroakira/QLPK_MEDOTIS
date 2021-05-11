@@ -80,6 +80,17 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label class="col-lg-2 col-form-label text-lg-right">Chọn mẫu phiếu:</label>
+                                        <div class="col-lg-10">
+                                            <select class="form-control selectpicker" id="selectMauPhieu" data-live-search="true" name="param">
+                                                <option value="" selected disabled>Chọn mẫu phiếu</option>
+                                                {% for mp in danh_sach_mau_phieu %}
+                                                    <option value="{{mp.codename}}">{{mp.ten_mau}}</option>
+                                                {% endfor %}      
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <label class="col-lg-2 col-form-label text-lg-right">Kết quả:</label>
                                         <div class="col-lg-10">
                                             {% comment %} <textarea class="form-control" id="ket_qua" rows="3" placeholder="Nhập kết quả của bệnh nhân" name='ket_qua'></textarea>  {% endcomment %}
@@ -88,15 +99,16 @@
                                             <div class="summernote" id="kt_summernote_1"></div>
                                         </div>
                                     </div>
-                                    <div id="divMauPhieu" style="display: none;">{{ mau_phieu.noi_dung|safe }}</div>
+                                    <div id="divMauPhieu" style="display: none;"></div>
                                 </div>
                             </div>
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-lg-3"></div>
                                     <div class="col-lg-9">
+                                        <button type="button" id='change_assignment' data-id-phan-khoa="{{id_phan_khoa}}" data-id-chuoi-kham="{{id_chuoi_kham}}" data-id-phong-chuc-nang="{{id_phong_chuc_nang}}" class="btn btn-info mr-2">Thay đổi chỉ định</button>
+                                        <button type="reset" id='cancel_button' class="btn btn-light-primary">Hủy</button>
                                         <button type="button" id="upload" data-id-phan-khoa="{{id_phan_khoa}}" data-id-chuoi-kham="{{id_chuoi_kham}}" data-id-phong-chuc-nang="{{id_phong_chuc_nang}}" class="dropzone-upload btn btn-primary mr-2">Lưu</button>
-                                        <button type="reset" class="btn btn-light-primary">Hủy</button>
                                     </div>
                                 </div>
                             </div>
@@ -148,6 +160,92 @@
     </div>
 </div>
 
+<!--begin::Thay Doi Phan Khoa Modal-->
+<div id="phan_khoa_modal" class="modal fade" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header py-5">
+                <h5 class="modal-title"> 
+                    <span class="d-block font-size-nm">Thay đổi chỉ định</span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+                    <div class="card-body">
+                        <!--begin::Search Form-->
+                        <div class="mb-7">
+                            <div class="row align-items-center">
+                                <div class="col-lg-12 col-xl-9">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 my-2 my-md-0">
+                                            <div class="input-icon">
+                                                <input type="text" class="form-control" placeholder="Tìm kiếm..." id="kt_datatable_search_query_2" />
+                                                <span>
+                                                    <i class="flaticon2-search-1 text-muted"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Search Form-->
+                        <!--begin: Selected Rows Group Action Form-->
+                        <div class="mt-10 mb-5 collapse" id="kt_datatable_group_action_form_2">
+                            <div class="d-flex align-items-center">
+                                <div class="font-weight-bold text-success mr-3">Đã chọn 
+                                <span id="kt_datatable_selected_records_2"></span> khoa khám!</div>
+                            </div>
+                        </div>
+                        <!--end: Selected Rows Group Action Form-->
+                        <!--begin: Datatable-->
+                        <div class="datatable datatable-bordered datatable-head-custom" id="kt_datatable"></div>
+                        <!--end: Datatable-->
+                    </div>
+                </div>
+
+                <!--begin::Card-->
+                <div class="card card-custom mt-7">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3 class="card-label">Bảng phân khoa</h3>
+                        </div>
+                    </div>
+                    <div class="card-body" id='tablePhanKhoa'>
+                        <!--begin: Datatable-->
+                        <table class="table table-bordered table-hover table-checkable" id="kt_datatable_3" style="margin-top: 13px !important;">
+                            <thead>
+                                <tr>
+                                    <td>ID</td>
+                                    <td>Tên Dịch Vụ</td>
+                                    <td>Phòng Chức Năng</td>
+                                    <td>Bảo Hiểm</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                        <!--end: Datatable-->
+                    </div>
+                </div>
+                <!--end::Card-->
+            </div>
+            <div class="modal-footer">
+                {% comment %} <button type="button" id="printDiv" class="btn btn-light-success font-weight-bold text-uppercase float-left">In</button> {% endcomment %}
+                <button type="button" class="btn btn-light-primary font-weight-bold text-uppercase" data-dismiss="modal">Hủy</button>
+                <button type="button" id="btn_submit" data-id-chuoi-kham="{{ id_chuoi_kham }}" class="btn btn-primary font-weight-bold text-uppercase">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end::Modal-->
+
+<div id='newTableHtml' style="display: none;"></div>
+
 {% endblock content %}
 
 
@@ -180,84 +278,38 @@
 
 <script>
 // Class definition
+    var lstData = [];
+    var lstCheckbox = {};
+    var list_data_2 = [];
+
+    {% comment %}   
+    var benh_nhan = {{ benh_nhan|safe }};
+    var dia_chi = {{ dia_chi|safe }};
+    var tuoi = {{ tuoi|safe }};
+    var gioi_tinh = {{ gioi_tinh|safe }};
+    var bac_si_chuyen_khoa = {{ bac_si_chuyen_khoa|safe }}
+    var bac_si_lam_sang = {{ bac_si_lam_sang|safe }}
+    var ngay_kham = {{ ngay_kham|safe }} {% endcomment %}
+
+    const data_mau_phieu = {{ data|safe }};
+
     var KTFormControls = function () {
         // Private functions
+        var fillPatientInfo = function(id_div) {
+            var id_div = id_div
 
-        var benh_nhan = {{ benh_nhan|safe }};
-        var dia_chi = {{ dia_chi|safe }};
-        var tuoi = {{ tuoi|safe }};
-        var gioi_tinh = {{ gioi_tinh|safe }};
-        var bac_si_chuyen_khoa = {{ bac_si_chuyen_khoa|safe }}
-        var bac_si_lam_sang = {{ bac_si_lam_sang|safe }}
-        var ngay_kham = {{ ngay_kham|safe }}
-        
-        var fillPatientInfo = function() {
-            var dataInfo = ""
-            var dataAddr = ""
-            var dataRes = ""
-            var dataDr = ""
-            var dataDateTime = ""
-            var dataDr2 = ""
-
-            $('table tr').each(function(){
-                if ($(this).find('td').eq(1).text() == '{benh_nhan}'){
-                    var innerHtml = $(this).html()
-            
-                    var start_tr = '<tr>'
-                    var end_tr = '</tr>'
-                    var c = start_tr + innerHtml + end_tr
-
-                    dataInfo += c.replace(/{benh_nhan}/, benh_nhan[0]).replace(/{tuoi}/, tuoi[0]).replace(/{gioi_tinh}/, gioi_tinh[0])
-                    $(this).replaceWith(dataInfo)
-                }
-                if ($(this).find('td').eq(1).text() == '{dia_chi}'){
-                    var innerHtml = $(this).html()
-                    var start_tr = '<tr>'
-                    var end_tr = '</tr>'
-                    var c = start_tr + innerHtml + end_tr
-
-                    dataAddr += c.replace(/{dia_chi}/, dia_chi[0])
-                    $(this).replaceWith(dataAddr)
-                }
-
-                if ($(this).find('td').eq(1).text() == '{bac_si_lam_sang}'){
-                    var innerHtml = $(this).html()
-            
-                    var start_tr = '<tr>'
-                    var end_tr = '</tr>'
-                    var c = start_tr + innerHtml + end_tr
-
-                    dataDr2 += c.replace(/{bac_si_lam_sang}/, bac_si_lam_sang[0])
-                    $(this).replaceWith(dataDr2)
-                }
-
-                if ($(this).find('td').eq(1).text() == '{bac_si_chuyen_khoa}'){
-                    var innerHtml = $(this).html()
-                    console.log(innerHtml)                    
-                    var start_tr = '<tr>'
-                    var end_tr = '</tr>'
-                    var c = start_tr + innerHtml + end_tr
-
-                    dataDr += c.replace(/{bac_si_chuyen_khoa}/, bac_si_chuyen_khoa[0])
-                    $(this).replaceWith(dataDr)
-                }
-
-                if ($(this).find('td').eq(1).text() == '{ngay_kham}'){
-                    var innerHtml = $(this).html()
-                    console.log(innerHtml)                    
-                    var start_tr = '<tr>'
-                    var end_tr = '</tr>'
-                    var c = start_tr + innerHtml + end_tr
-
-                    dataDateTime += c.replace(/{ngay_kham}/, ngay_kham[0])
-                    $(this).replaceWith(dataDateTime)
-                }
-                
-            })
+            for (const [key, value] of Object.entries(data_mau_phieu)) {
+                $(`${id_div} table tbody td:contains(${key})`).each(function() {
+                    var thisContent = $(this).html();
+                    var formattedContent = thisContent.replace(key, value)
+                    var td = `<td>${formattedContent}</td>`
+                    $(this).replaceWith(td);
+                });
+            }
         }
 
         var _initValidate = function () {
-            fillPatientInfo()
+            fillPatientInfo('#divMauPhieu')
             var html = $("#divMauPhieu").html()
 
             $('.summernote').summernote({
@@ -305,7 +357,31 @@
                         ['insert', ['link', 'picture']]
                     ]
                 },
+
+                callbacks: {
+                    onImageUpload: function (files) {
+                        if (!files.length) return;
+                        var file = files[0];
+                        // create FileReader
+                        var reader = new FileReader();
+                        reader.onloadend = function () {
+                            // when loaded file, img's src set datauri
+              
+                            var img = $("<img>").attr({src: reader.result, width: "250px"}); // << Add here img attributes !
+                         
+                            $('.summernote').summernote("insertNode", img[0]);
+                        }
+                        if (file) {
+                            // convert fileObject to datauri
+                            reader.readAsDataURL(file);
+                        }
+
+                    }
+                }
+
             });
+
+
 
             $('.summernote').summernote("code", html);
 
@@ -377,18 +453,20 @@
             const snapSoundElement = document.getElementById('snapSound');
 
             const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
-            
 
             function cameraStarted(){
                 $("#errorMsg").addClass("d-none");
                 $('.flash').hide();
                 $("#webcam-caption").html("on");
                 $(".webcam-container").removeClass("d-none");
-                
                 if( webcam.webcamList.length > 1){
                     $("#cameraFlip").removeClass('d-none');
                 }
                 $('body').css('overflow-y','hidden');
+            }
+
+            function displayError(){
+                console.log("error");
             }
 
             function cameraStopped(){
@@ -402,8 +480,14 @@
             $('#take-photo').click(function(){
                 beforeTakePhoto();
                 var picture = webcam.snap();
-                document.querySelector('#download-photo').href = picture;
+                // set fixed size for image after being taken
+                var img = $("<img>").attr({src: picture, width: "250px"});
+                // insert image into editor
+                $('.summernote').summernote("insertNode", img[0]);
+
+                {% comment %} document.querySelector('#download-photo').href = picture; {% endcomment %}
                 afterTakePhoto();
+                $('#CameraModal').modal('hide');
             })
 
             function beforeTakePhoto(){
@@ -420,8 +504,8 @@
                 $('#canvas').removeClass('d-none');
                 $('#take-photo').addClass('d-none');
                 $('#exit-app').removeClass('d-none');
-                $('#download-photo').removeClass('d-none');
-                $('#download-photo').addClass('btn btn-success font-weight-bold');
+                {% comment %} $('#download-photo').removeClass('d-none');
+                $('#download-photo').addClass('btn btn-success font-weight-bold'); {% endcomment %}
                 $('#resume-camera').removeClass('d-none');
                 $('#resume-camera').addClass('btn btn-primary font-weight-bold');
                 $('#cameraControls').removeClass('d-none');
@@ -454,6 +538,361 @@
             });
 
         }
+
+        $("#cancel_button").on('click', function() {
+            window.history.back()
+        })
+
+        $(document).on('click', '#change_assignment', function(){
+            $('#phan_khoa_modal').modal('show');
+        })
+
+        $('#phan_khoa_modal').on('shown.bs.modal', function() {
+            var ajax_data;
+            var id_chuoi_kham = $("#change_assignment").data('id-chuoi-kham');
+
+            var options = {
+                // datasource definition
+                data: {
+                    type: 'remote',
+                    source: { 
+                        read: {
+                            url: HOST_URL + '/api/dich_vu_kham/',
+                            method: 'GET',
+                        },
+                    },
+                    pageSize: 10,
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: false,
+                    saveState: false,
+                },
+
+                // layout definition
+                layout: {
+                    scroll: false, // enable/disable datatable scroll both horizontal and
+                    footer: false // display/hide footer
+                },
+
+                // column sorting
+                sortable: true,
+
+                pagination: true,
+
+                // columns definition
+                columns: [{
+                    field: 'id',
+                    title: '#',
+                    sortable: false,
+                    width: 20,
+                    selector: {
+                        class: 'dvkt_checkbox',
+                    },
+                    textAlign: 'center',
+                }, {
+                    field: 'ten_dvkt',
+                    title: 'Tên Dịch Vụ',
+                    template: function(row) {
+                        return row.ten_dvkt
+                    }
+                }, {
+                    field: 'quyet_dinh',
+                    title: 'Quyết Định',
+                }, {
+                    field: 'cong_bo',
+                    title: 'Công Bố',
+                }, {
+                    field: 'bac_si_phu_trach.ho_ten',
+                    title: 'Bác Sĩ Phụ Trách',
+                    
+                }, {
+                    field: 'phong_chuc_nang.ten_phong_chuc_nang',
+                    title: 'Phòng Chức Năng',
+                    textAlign: 'center',
+                    autoHide: false
+                }, {
+                    field: 'bao hiem',
+                    title: 'Dùng Bảo Hiểm',
+                    textAlign: 'center',
+                    autoHide: false,
+                    template: function(row){
+                        if(row.bao_hiem_dich_vu == "True"){
+                            return '<span class="label font-weight-bold label-lg label-light-primary label-inline">Có áp dụng</span>'
+                        }else{
+                            return '<span class="label font-weight-bold label-lg label-light-warning label-inline">Không áp dụng</span>'
+                        }
+                    }
+                }]
+            };
+            // enable extension
+            options.extensions = {
+                // boolean or object (extension options)
+                checkbox: true,
+            };
+
+            options.search = {
+                input: $('#kt_datatable_search_query'),
+                key: 'search'
+            };
+            
+            var datatable = $('#kt_datatable').KTDatatable(options);
+            
+            $.ajax({
+                type: "GET",
+                url: "{% url 'danh_sach_phan_khoa_chuoi_kham' %}",
+                data: {
+                    id_chuoi_kham : $("#change_assignment").data('id-chuoi-kham'),
+                },
+                dataType: 'json',
+                success: function (response) {
+                    var response_data = response.data
+                    console.log(response_data)
+                    var tr = ''
+                    console.log(lstData)
+
+                    for (var i = 0; i < response_data.length; i++) {
+                        var checkbox
+
+                        if (response_data[i].obj.bao_hiem == true) {
+                            checkbox = `<input type="checkbox" id="checkbox_${response_data[i].obj.id}" class="big-checkbox" checked data-checked="True" data-unchecked="False">`
+                        } else {
+                            checkbox = `<input type="checkbox" id="checkbox_${response_data[i].obj.id}" class="big-checkbox" data-checked="True" data-unchecked="False">`
+                        }
+
+                        var initTr = `
+                            <tr id="tr_${response_data[i].obj.id}" class="${response_data[i].obj.id}" data-id = "${response_data[i].obj.id}" name="true" data-checked="True" data-unchecked="False">
+                                <td>
+                                    ${response_data[i].obj.ma_dvkt}
+                                </td>
+                                <td>
+                                    ${response_data[i].obj.ten_dvkt}
+                                </td>
+                                <td>
+                                    ${response_data[i].obj.phong_chuc_nang.ten_phong_chuc_nang}
+                                </td>
+                                
+                                <td>
+                                    ${checkbox}
+                                </td>
+
+                            </tr>
+                        `
+                        tr += initTr
+                        lstData.push(response_data[i])
+                        datatable.setActive(cell=String(response_data[i].obj.id))
+                    }
+                    $('#kt_datatable_3 tbody').html(tr)
+                    console.log(lstData)
+                },
+                error: function (response) {                       
+                }
+            })
+
+            datatable.on('click', 'tbody input[type="checkbox"]', function () {
+                $(this).toggleClass('selected');
+                // console.log($(this).val())
+                var objList = [];
+                
+                if($(this).is(":checked")){
+                    var trVals = $(this).closest('tr').data();
+                
+                    delete trVals['row']
+                
+                    lstData.push(trVals)
+                    console.log(trVals)
+                    console.log(lstData)
+                    $(trVals).each(function () {
+                        $('#kt_datatable_3 tbody').append(`
+                            <tr class="${trVals.obj.id}" data-id = "${trVals.obj.id}" name="true" data-checked="True" data-unchecked="False">
+                                <td>
+                                ${trVals.obj.ma_dvkt}
+                                </td>
+                                <td>
+                                ${trVals.obj.ten_dvkt}
+                                </td>
+                                <td>
+                                ${trVals.obj.phong_chuc_nang.ten_phong_chuc_nang}
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="${trVals.obj.id}" class="big-checkbox" data-checked="True" data-unchecked="False">
+                                </td>
+                            </tr>
+                        `);
+                    })
+
+                } else {
+                    var trVals = $(this).closest('tr').data();
+                    
+                    delete trVals['row']
+
+                    $(`.${trVals.obj.id}`).remove();
+                    
+                    lstData = lstData.filter(function(item) {
+                        var item = item
+                        delete item['obj']['bao_hiem']
+                    
+                        return JSON.stringify(item) !== JSON.stringify(trVals);
+                    });
+
+                    console.log(lstData)
+                
+                    // replacePhanKhoaHtml(trVals)
+                    {% comment %} phanKhoaHtml = phanKhoaHtml.replace(`
+                            <tr class="${trVals.obj.id}">
+                                <td colspan="4" rowspan="1" style="border-bottom:1px solid black; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black; height:28px; text-align:left; vertical-align:bottom; white-space:nowrap"><span style="color:#000000; font-family:Times New Roman, serif"><span style="font-size:16px">${trVals.obj.ten_dvkt}</span></span></td>
+                                <td colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${trVals.obj.phong_chuc_nang.ten_phong_chuc_nang}</span></span></span></td>
+                                <td class="so-luong-dang-cho" colspan="7" rowspan="1" style="border-bottom:1px solid black; border-left:none; border-right:1px solid black; border-top:1px solid black; text-align:center; vertical-align:bottom; white-space:nowrap"><span style="font-size:16px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="color:black">${so_luong_dang_cho}</span></span></span></td>
+                            </tr>
+                            `, "") {% endcomment %}
+
+                }
+            });
+
+            $('#kt_datatable_3').on('click', 'tbody input[type="checkbox"]', function () {
+                if($(this).is(":checked")){
+                    lstCheckbox = {};
+                    getCheckbox();
+                    console.log(lstCheckbox);
+                } else {
+                    lstCheckbox = {}; 
+                    getCheckbox();
+                    console.log(lstCheckbox);
+                }
+            })
+
+            function postData(id_chuoi_kham){
+                var id_chuoi_kham = id_chuoi_kham
+                var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+                function csrfSafeMethod(method) {
+                    // these HTTP methods do not require CSRF protection
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        function getCookie(name) {
+                            var cookieValue = null;
+                            if (document.cookie && document.cookie != '') {
+                                var cookies = document.cookie.split(';');
+                                for (var i = 0; i < cookies.length; i++) {
+                                    var cookie = jQuery.trim(cookies[i]);
+                                    // Does this cookie string begin with the name we want?
+                                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                        break;
+                                    }
+                                }
+                            }
+                            return cookieValue;
+                        }
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                            // Only send the token to relative URLs i.e. locally.
+                            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        }
+                    } 
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'thay_doi_phan_khoa' %}",
+                    data: {
+                        'data': JSON.stringify(getPostData()),
+                        'csrfmiddlewaretoken': csrftoken,
+                        'id_chuoi_kham': id_chuoi_kham,
+                    },
+                    dataType: 'json',
+                    safe: false,
+                    success: function(response) {
+                        if (response.status == 200) {
+                            toastr.success(response.message, "Thành Công")
+                            location.reload();
+                        
+                        } else if (response.status == 404) {
+                            toastr.warning(response.message, "Lỗi")
+                        }
+
+                    },
+                    error: function() {
+                        toastr.warning("Phân Khoa Không Thành Công", "Lỗi")                                                                                                                         
+                    }
+                });
+            }
+
+            function getPostData(){
+                var rowData = lstData;
+                var checkBoxObj = lstCheckbox;
+                for (const each in checkBoxObj) {
+                    for (let i = 0; i < rowData.length; i++) {
+                        if (rowData[i].obj.id == each) {
+                            rowData[i].obj.bao_hiem = checkBoxObj[each];
+                        }
+                    }
+                }
+                console.log(rowData);
+                return rowData;
+            }
+
+            function getCheckbox(){
+                
+                $('#kt_datatable_3 tbody tr').each(function() {
+
+                    var sectionId = $(this).data('id');
+                    console.log(sectionId)
+
+                    $(this).find('input.big-checkbox:checked').each(function() {
+                        console.log($(this).attr('data-checked'));
+                        lstCheckbox[sectionId] = $(this).attr('data-checked');
+                    });
+
+                    $(this).find('input.big-checkbox:not(:checked)').each(function() {
+                        lstCheckbox[sectionId] = $(this).attr('data-unchecked');
+                    });
+                });
+            }
+
+            $("#btn_submit").on('click', function() {
+                var id_chuoi_kham = $(this).data('id-chuoi-kham')
+                getCheckbox();
+                getPostData();
+                postData(id_chuoi_kham);
+            })
+        })
+
+        $("#phan_khoa_modal").on('hidden.bs.modal', function() {
+            lstData = []
+            $("#phan_khoa_modal").removeData('bs.modal')
+            $('#kt_datatable').KTDatatable('destroy')    
+        })
+
+        $('#selectMauPhieu').on('changed.bs.select', function(e, clickedIndex, newValue, oldValue) {
+            var codename = this.value
+            console.log(codename)
+            $.ajax({
+                url        : HOST_URL + '/api/chi_tiet_mau_phieu/',
+                data       : {'codename': codename},
+                success: function(response){
+                    if (response.status == 200) {
+                        var newTableHtml = response.data.noi_dung
+
+                        $("#newTableHtml").html(newTableHtml)
+
+                        fillPatientInfo("#newTableHtml")
+
+                        var html = $("#newTableHtml").html()
+
+                        $('.summernote').summernote("code", html);
+
+                    } else if (response.status == 404){
+                        toastr.warning(response.data, "Xảy Ra Lỗi")
+                    }
+                    
+                },
+                error: function(response){
+                    
+                }
+            })
+        })
 
         return {
             // public functions

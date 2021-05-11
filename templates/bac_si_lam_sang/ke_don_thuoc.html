@@ -73,43 +73,14 @@
                     <!--begin::Search Form-->
                     <div class="mb-7">
                         <div class="row align-items-center">
-                            <div class="col-lg-9 col-xl-8">
+                            <div class="col-lg-12 col-xl-12">
                                 <div class="row align-items-center">
-                                    <div class="col-md-4 my-2 my-md-0">
+                                    <div class="col-md-6 my-2 my-md-0">
                                         <div class="input-icon">
                                             <input type="text" class="form-control" placeholder="Tìm kiếm..." id="kt_datatable_search_query_2" />
                                             <span>
                                                 <i class="flaticon2-search-1 text-muted"></i>
                                             </span>
-                                        </div>
-                                    </div>
-                                    {% comment %} <div class="col-md-2 my-md-0">
-                                        <select class="form-control selectpicker" id="kt_select2_1" data-live-search="true" name="param">
-                                            <option value="" selected disabled>Chọn Nhóm Thuốc</option>
-                                            {% for nhom in nhom_thuoc %}
-                                            <option value="{{ nhom.id }}">{{ nhom.ten_nhom }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div> {% endcomment %}
-                                    <div class="col-md-4 my-2 my-md-0">
-                                        <div class="d-flex align-items-center">
-                                            <label class="mr-3 mb-0 d-none d-md-block">Nhóm:</label>
-                                            <select class="form-control" id="kt_datatable_search_group">
-                                                <option value="">Tất Cả</option>
-                                                {% for nhom in nhom_thuoc %}
-                                                <option value="{{ nhom.id }}">{{ nhom.ten_nhom }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 my-2 my-md-0">
-                                        <div class="d-flex align-items-center">
-                                            <label class="mr-3 mb-0 d-none d-md-block">Loại:</label>
-                                            <select class="form-control" id="kt_datatable_search_type">
-                                                <option value="">Tất Cả</option>
-                                                <option value="True">Bảo Hiểm</option>
-                                                <option value="False">Dịch Vụ</option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -183,6 +154,12 @@
 
 {% block scripts %}
 
+{% comment %} <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script> {% endcomment %}
+<!--begin::Global Theme Bundle(used by all pages)-->
+
+<!--end::Global Theme Bundle-->
+
+<!--begin::Custom Javascripts(used by this page)-->
 <script>
 
 "use strict";
@@ -190,105 +167,183 @@
 
 var KTDatatableRecordSelectionDemo = function() {
     // Private functions
-    var id_nhom_thuoc;
-    var lstData = [];
-    var lstCheckbox = {};
-    var lstQuantity = {};
-    var lstUsage = {};
-    var lstNote = {};
 
-    var table = function(url) {
-        var url = url 
-        // enable extension
-        var datatable = $('#kt_datatable_2').KTDatatable({
-            data: {
-                type: 'remote',
-                source: { 
-                    read: {
-                        url: HOST_URL + url,
-                        method: 'GET',
-                    },
+    var options = {
+        // datasource definition
+        data: {
+            type: 'remote',
+            source: { 
+                read: {
+                    url: HOST_URL + '/api/thuoc/',
+                    method: 'GET',
                 },
-                pageSize: 10,
-                serverPaging: true,
-                serverFiltering: true,
-                serverSorting: false,
             },
+            pageSize: 10,
+            serverPaging: true,
+            serverFiltering: true,
+            serverSorting: false,
+            saveState: false,
+        },
 
-            // layout definition
-            layout: {
-                scroll: false, // enable/disable datatable scroll both horizontal and
-                footer: false // display/hide footer
+        // layout definition
+        layout: {
+            scroll: false, // enable/disable datatable scroll both horizontal and
+            footer: false // display/hide footer
+        },
+
+        // column sorting
+        sortable: true,
+
+        pagination: true,
+
+        // columns definition
+        columns: [{
+            field: 'id',
+            title: '#',
+            sortable: false,
+            width: 20,
+            selector: {
+                class: ''
             },
-
-            // column sorting
-            sortable: true,
-
-            pagination: true,
-
-            search: {
-                input: $('#kt_datatable_search_query_2'),
-                key: 'search'
-            },
-
-            extensions: {
-                // boolean or object (extension options)
-                checkbox: true,
-            },
-
-            // columns definition
-            columns: [{
-                field: 'id',
-                title: '#',
-                sortable: false,
-                width: 20,
-                selector: {
-                    class: ''
-                },
-                textAlign: 'center',
-            }, {
-                field: 'ten_thuoc',
-                title: 'Tên thuốc',
-            }, {
-                field: 'ten_hoat_chat',
-                title: 'Tên hoạt chất',
-            }, {
-                field: 'duong_dung',
-                title: 'Cách dùng',
-            }, {
-                field: 'so_luong_kha_dung',
-                title: 'Số lượng khả dụng',
-            }, {
-                field: 'don_vi_tinh',
-                title: 'Đơn vị tính',
-            }, {
-                field: 'ham_luong',
-                title: 'Hàm Lượng',
-            }, {
-                field: 'han_su_dung',
-                title: 'Hạn Sử Dụng',
-            }, {
-                field: 'bao_hiem',
-                title: 'Loại Thuốc',
+            textAlign: 'center',
+        }, {
+            field: 'ten_thuoc',
+            title: 'Tên thuốc',
+            template: function(row) {
+                return row.ten_thuoc
+            }
+        }, {
+                field: 'loai_thuoc',
+                title: 'Loại',
+                width: 40,
                 template: function(row){
-                    if(row.bao_hiem == true){
-                        return '<span class="label font-weight-bold label-lg label-light-info label-inline">Bảo Hiểm</span>';
-                    }else if(row.bao_hiem == false){
-                        return '<span class="label font-weight-bold label-lg label-light-success label-inline">Dịch Vụ</span>';
+                    var thuoc = row.loai_thuoc;
+                    if (row.loai_thuoc == 1){
+                        return "Tân Dược"
+                    }else if (row.loai_thuoc == 2){
+                        return "Chế phẩm YHCT"
+                    }else if (row.loai_thuoc == 3){
+                        return "Vị thuốc YHCT"
+                    }else if (row.loai_thuoc == 4){
+                        return "Phóng Xạ"
+                    } else if (row.loai_thuoc == 5) {
+                        return "Thực Phẩm Bảo Vệ Sức Khỏe"
+                    } else if (row.loai_thuoc == 6) {
+                        return "Vật Tư Y Tế"
+                    } else if (!row.loai_thuoc) {
+                        return '-'
                     }
                 }
-            }],  
+            }, {
+            field: 'ma_hoat_chat',
+            title: 'Mã hoạt chất',
+        }, {
+            field: 'ten_hoat_chat',
+            title: 'Tên hoạt chất',
+        }, {
+            field: 'duong_dung',
+            title: 'Cách dùng',
+        }, {
+            field: 'so_luong_kha_dung',
+            title: 'Số lượng khả dụng',
+        }, {
+            field: 'don_vi_tinh',
+            title: 'Đơn vị tính',
+        }],
+    };
+
+    // basic demo
+    var localSelectorDemo = function() {
+        // enable extension
+        options.extensions = {
+            // boolean or object (extension options)
+            checkbox: true,
+        };
+
+        options.search = {
+            input: $('#kt_datatable_search_query'),
+            key: 'search'
+        };
+
+        var datatable = $('#kt_datatable').KTDatatable(options);
+
+        $('#kt_datatable_search_status').on('change', function() {
+            datatable.search($(this).val().toLowerCase(), 'Status');
         });
 
-        $('#kt_datatable_search_group').on('change', function() {
-			datatable.search($(this).val().toLowerCase(), 'id_nhom_thuoc');
-		});
+        $('#kt_datatable_search_type').on('change', function() {
+            datatable.search($(this).val().toLowerCase(), 'Type');
+        });
 
-		$('#kt_datatable_search_type').on('change', function() {
-			datatable.search($(this).val(), 'bao_hiem');
-		});
+        $('#kt_datatable_search_status, #kt_datatable_search_type').selectpicker();
 
-		$('#kt_datatable_search_group, #kt_datatable_search_type').selectpicker();
+        datatable.on(
+            'datatable-on-check datatable-on-uncheck',
+            function(e) {
+                var checkedNodes = datatable.rows('.datatable-row-active').nodes();
+                var count = checkedNodes.length;
+                $('#kt_datatable_selected_records').html(count);
+                if (count > 0) {
+                    $('#kt_datatable_group_action_form').collapse('show');
+                } else {
+                    $('#kt_datatable_group_action_form').collapse('hide');
+                }
+            });
+
+        datatable.on('mouseenter', 'tbody tr', function(){
+            // alert($(this).data());
+            $(this).find('[data-toggle="tooltip"]').tooltip({
+                delay: 300,
+                title: $(this).data().obj.Country,
+                html: true,
+            });
+
+        })
+
+        $('#kt_datatable_fetch_modal').on('show.bs.modal', function(e) {
+            var ids = datatable.rows('.datatable-row-active').
+            nodes().
+            find('.checkbox > [type="checkbox"]').
+            map(function(i, chk) {
+                return $(chk).val();
+            });
+            console.log(ids);
+        
+            var c = document.createDocumentFragment();
+            for (var i = 0; i < ids.length; i++) {
+                var li = document.createElement('li');
+                li.setAttribute('data-id', ids[i]);
+                li.innerHTML = 'Selected record ID: ' + ids[i];
+                c.appendChild(li);
+            }
+            $('#kt_datatable_fetch_display').append(c);
+        }).on('hide.bs.modal', function(e) {
+            $('#kt_datatable_fetch_display').empty();
+        });
+    };
+
+    var serverSelectorDemo = function() {
+        // enable extension
+        options.extensions = {
+            // boolean or object (extension options)
+            checkbox: true,
+        };
+        options.search = {
+            input: $('#kt_datatable_search_query_2'),
+            key: 'search'
+        };
+
+        var datatable = $('#kt_datatable_2').KTDatatable(options);
+
+        $('#kt_datatable_search_status_2').on('change', function() {
+            datatable.search($(this).val().toLowerCase(), 'Status');
+        });
+
+        $('#kt_datatable_search_type_2').on('change', function() {
+            datatable.search($(this).val().toLowerCase(), 'Type');
+        });
+
+        $('#kt_datatable_search_status_2, #kt_datatable_search_type_2').selectpicker();
 
         datatable.on(
             'datatable-on-click-checkbox',
@@ -296,7 +351,11 @@ var KTDatatableRecordSelectionDemo = function() {
                 // datatable.checkbox() access to extension methods
                 var ids = datatable.checkbox().getSelectedId();
                 var count = ids.length;
+                // console.log(datatable.checkbox())
+                // console.log(datatable.checkbox().selectedRows)
 
+                // var lst_ids = datatable.checkbox().selectedRows;
+                // console.log(datatable.getRecord(lst_ids).getColumn('Country').getValue())
                 $('#kt_datatable_selected_records_2').html(count);
 
                 if (count > 0) {
@@ -305,6 +364,23 @@ var KTDatatableRecordSelectionDemo = function() {
                     $('#kt_datatable_group_action_form_2').collapse('hide');
                 }
             });
+
+        datatable.on('mouseenter', 'tbody tr', function(){
+            // alert($(this).data());
+            $(this).find('[data-toggle="tooltip"]').tooltip({
+                delay: 300,
+
+                title: "<em>Tooltip</em> <u>with</u> <b>HTML</b>",
+                html: true,
+            });
+
+        })
+
+        var lstData = [];
+        var lstCheckbox = {};
+        var lstQuantity = {};
+        var lstUsage = {};
+        var lstNote = {};
 
         $('#get-table-data').on('click', function (){
             var user_id = $(this).data('user-id');
@@ -321,6 +397,7 @@ var KTDatatableRecordSelectionDemo = function() {
             postData(user_id, id_chuoi_kham); 
         })
 
+    
         datatable.on('click', 'tbody input[type="checkbox"]', function () {
             $(this).toggleClass('selected');
             // console.log($(this).val())
@@ -379,11 +456,8 @@ var KTDatatableRecordSelectionDemo = function() {
 
             } else {
                 var trVals = $(this).closest('tr').data();
-
                 $(`.${trVals.obj.id}`).remove();
                 lstData = lstData.filter((item) => item!==trVals)
-                
-                console.log(lstData)
                 lstQuantity = {}
                 lstUsage = {}
                 lstNote = {}
@@ -443,7 +517,6 @@ var KTDatatableRecordSelectionDemo = function() {
                 url: "{% url 'store_ke_don' %}",
                 data: {
                     // here data should be a string so that
-                
                     // in your views.py you can fetch the value using get('data')
                     'data': JSON.stringify(getPostData(user_id)),
                     'csrfmiddlewaretoken': csrftoken,
@@ -579,7 +652,8 @@ var KTDatatableRecordSelectionDemo = function() {
     return {
         // public functions
         init: function() {
-            table('/api/thuoc/');
+          
+            serverSelectorDemo();
         },
     };
 }();

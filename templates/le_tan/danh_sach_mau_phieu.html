@@ -38,14 +38,14 @@
                         {% if perms.clinic.can_add_analysis_note %}
                         <a href="{% url 'them_mau_phieu' %}" class="btn btn-light-primary font-weight-bolder mr-3">
                             <i class="la la-plus icon-md"></i>
-                            Thêm Mẫu Phiếu
+                            Thêm Mẫu Phiếu Chỉ Số
                         </a>
                         {% endif %}
 
                         {% if perms.clinic.can_add_analysis_note %}
                         <a href="{% url 'them_mau_hoa_don' %}" class="btn btn-light-primary font-weight-bolder mr-3">
                             <i class="la la-plus icon-md"></i>
-                            Thêm Mẫu Hóa Đơn
+                            Thêm Mẫu Hóa Đơn/Mẫu Phiếu
                         </a>
                         {% endif %}
                         <!--end::Button-->
@@ -117,7 +117,7 @@ var KTDatatableModal = function() {
                     read: {
                         url: HOST_URL + '/api/danh_sach_mau_phieu/',
                         method: "GET",
-                        {% comment %} map: function(raw) {
+                        map: function(raw) {
                                 // sample data mapping
                                 var dataSet = raw;
                                 if (typeof raw.data !== 'undefined') {
@@ -125,14 +125,15 @@ var KTDatatableModal = function() {
                                 }
                                 console.log(dataSet)
                                 return dataSet;
-                            }, {% endcomment %}
+                            }, 
                     },
                     
                 },
                 pageSize: 10, // display 20 records per page
                 serverPaging: true,
-                {% comment %} serverFiltering: false, {% endcomment %}
-                {% comment %} serverSorting: true, {% endcomment %}
+                serverFiltering: true, 
+                serverSorting: false,
+                saveState: false,
             },
 
             // layout definition
@@ -146,11 +147,11 @@ var KTDatatableModal = function() {
             // column sorting
             sortable: true,
 
-            pagination: false,
+            pagination: true,
 
             search: {
                 input: $('#kt_datatable_search_query'),
-                key: 'generalSearch'
+                key: 'search'
             },
 
             // columns definition

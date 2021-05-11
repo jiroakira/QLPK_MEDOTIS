@@ -208,7 +208,6 @@
         var dateMasks = function(){
             //fill ngay san xuat
             var ngay_san_xuat = $("input[name=ngay_san_xuat]").val();
-            console.log(ngay_san_xuat)
             ngay_san_xuat = moment(new Date(ngay_san_xuat)).format('DD/MM/yyyy');
             if($('#inputNgaySanXuat').length){
                 $("#inputNgaySanXuat").inputmask("99/99/9999", {
@@ -222,7 +221,6 @@
 
             //fill han su dung
             var han_su_dung = $("input[name=han_su_dung]").val();
-            console.log(han_su_dung)
             han_su_dung = moment(new Date(han_su_dung)).format('DD/MM/yyyy');
             if($('#inputHanSuDung').length){
                 $("#inputHanSuDung").inputmask("99/99/9999", {

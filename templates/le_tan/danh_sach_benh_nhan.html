@@ -306,7 +306,9 @@
                             <label>Chọn Dịch Vụ Khám </label>
                             <select id="selectDichVuKham" class="form-control selectpicker">
                                 <option value="kham_chua_benh" selected>Khám Chữa Bệnh</option>
+                                <option value="kham_theo_yeu_cau">Khám Theo Yêu Cầu</option>
                                 <option value="kham_sua_khoe">Khám Sức Khỏe</option>
+                                
                             </select>
                         </div>
                         <div class="input-group date" id="kt_datetimepicker_1" data-target-input="nearest">
@@ -527,7 +529,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                 pageSize: 10,
                 serverPaging: true,
                 serverFiltering: true,
-                serverSorting: true,
+                serverSorting: false,
+                saveState: false,
             },
 
             // layout definition
@@ -543,7 +546,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 
             search: {
                 input: $('#kt_datatable_search_query'),
-                key: 'generalSearch'
+                key: 'search'
             },
 
             // columns definition
@@ -726,6 +729,20 @@ var KTDatatableRemoteAjaxDemo = function() {
             var id = $(this).data('id')
             var ten = $(this).data('ten')
 
+            var current = new Date()
+            var day = current.getDate()
+            var month = current.getMonth() + 1
+            var year = current.getFullYear()
+            var hour = current.getHours()
+            var minute = current.getMinutes()
+
+            
+            var current_time = `${day}/${month}/${year} ${hour}:${minute}`
+            console.log(current)
+            console.log(current_time)
+
+            $('#inputLichHenKham').val(current_time)
+
             $('#addLichHenKham').modal('show')
             $('#addLichHenKham').find('#ten_benh_nhan').html(ten)
             $('#addLichHenKham').find('#addLichSubmit').attr('data-id', id)
@@ -764,6 +781,9 @@ var KTDatatableRemoteAjaxDemo = function() {
                         $('#addLichHenKham').find("input, textarea").val("");
                     }
                     $('#addLichHenKham').modal('hide');
+                    setTimeout(function(){
+                        window.location.href = "/danh_sach_lich_hen/"
+                    },1000)
                 },
                 error: function(response){
                     toastr.warning(response.message)
@@ -785,31 +805,7 @@ var KTDatatableRemoteAjaxDemo = function() {
     }
 
     var _registerUser = function(){
-        //var formData = new FormData();
-        //$('#inputPhoneModal').on("change", function(){
-        //    console.log(1)
-        //    var phone = document.getElementById("inputPhoneModal").value;
-        //    if(phone== "") {
-        //        document.getElementById('error_phone').innerHTML = 'Không được để trống';
-        //        document.getElementById('success_phone').innerHTML = '';
-        //        return false;
-        //    }
-        //    else{
-        //        var regex_phone = /(84|0[3|5|7|8|9])+([0-9]{8})\b/gm;
-//
-        //        var test_phone = regex_phone.test(phone);
-//
-        //        if(test_phone==true){
-        //            document.getElementById('success_phone').innerHTML = 'Hợp lệ';
-        //            document.getElementById('error_phone').innerHTML = '';
-        //        }
-        //        else{
-        //            document.getElementById('success_phone').innerHTML = '';
-        //            document.getElementById('error_phone').innerHTML = 'Không hợp lệ';
-        //            return false;
-        //        }
-        //    }
-        //})
+
         $(document).on("click", ".registerModalSubmit", function() {
 
             var formData = new FormData()
