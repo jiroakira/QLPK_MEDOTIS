@@ -307,6 +307,10 @@ var KTDatatableModal = function() {
                             'title': 'Đã Thanh Toán LS',
                             'class': ' label-light-primary'
                         },
+                        4: {
+                            'title': 'Xác Nhận',
+                            'class': ' label-light-success'
+                        },
                         5: {
                             'title': 'Đã Đặt Trước',
                             'class': ' label-light-warning'
@@ -326,6 +330,10 @@ var KTDatatableModal = function() {
                         11: {
                             'title': 'Hoàn Thành',
                             'class': ' label-light-info'
+                        }, 
+                        12: {
+                            'title': 'Dừng Khám',
+                            'class': ' label-light-danger'
                         },                     
                     };
                     return '<span class="label label-lg font-weight-bold' + status[row.trang_thai.id].class + ' label-inline">' + status[row.trang_thai.id].title + '</span>';

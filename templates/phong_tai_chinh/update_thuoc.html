@@ -221,7 +221,7 @@
 
             //fill han su dung
             var han_su_dung = $("input[name=han_su_dung]").val();
-            han_su_dung = moment(new Date(han_su_dung)).format('DD/MM/yyyy');
+            han_su_dung = moment(new Date(ngay_san_xuat)).format('DD/MM/yyyy');
             if($('#inputHanSuDung').length){
                 $("#inputHanSuDung").inputmask("99/99/9999", {
                     "placeholder": "dd/mm/yyyy",
