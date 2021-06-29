@@ -24,6 +24,7 @@ xlrd = "*"
 openpyxl = "*"
 xlsxwriter = "*"
 django-guardian = "*"
+django-activity-stream = "*"
 
 [requires]
 python_version = "3.8"

@@ -1639,26 +1639,36 @@ class SetChoThanhToan(APIView):
     def get(self, request, format=None):
         id = self.request.query_params.get('id', None)
         user = request.user
+
         lich_hen = LichHenKham.objects.filter(id=id)[0]
-        trang_thai = TrangThaiLichHen.objects.get_or_create(
-            ten_trang_thai="Chờ Thanh Toán Lâm Sàng")[0]
 
-        lich_hen.trang_thai = trang_thai
-        lich_hen.nguoi_phu_trach = user
-        lich_hen.save()
-
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"first_process_user_{lich_hen.benh_nhan.id}", {
-                'type': 'first_process_notification',
+        if lich_hen.danh_sach_chuoi_kham.exists():
+            response = {
+                'status': 404,
+                "message": "Lịch Hẹn Đã Được Xác Nhận Thanh Toán Do Đã Được Phân Khoa"
             }
-        )
+            
+        else:
+            trang_thai = TrangThaiLichHen.objects.get_or_create(
+                ten_trang_thai="Chờ Thanh Toán Lâm Sàng")[0]
 
-        data = {
-            "message": "Thay đổi trạng thái thành công!"
-        }
+            lich_hen.trang_thai = trang_thai
+            lich_hen.nguoi_phu_trach = user
+            lich_hen.save()
 
-        return HttpResponse(json.dumps(data), content_type="application/json, charset=utf-8")
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"first_process_user_{lich_hen.benh_nhan.id}", {
+                    'type': 'first_process_notification',
+                }
+            )
+
+            response = {
+                'status': 200,
+                "message": "Thay đổi trạng thái thành công!"
+            }
+
+        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
 
 class SetXacNhanKham(APIView):
