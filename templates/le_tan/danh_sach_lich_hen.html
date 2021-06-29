@@ -736,8 +736,13 @@
                       data: { id : id },
                       dataType: "json",
                       success: function (response) {
-                          toastr.success(response.message, "Thành Công");
-                          $('#kt_datatable').KTDatatable('reload');
+                          if (response.status == 200){
+                            toastr.success(response.message, "Thành Công");
+                            $('#kt_datatable').KTDatatable('reload');
+                          } else if (response.status == 404) {
+                            toastr.info(response.message);
+                          }
+                          
                       }
                   });
               })

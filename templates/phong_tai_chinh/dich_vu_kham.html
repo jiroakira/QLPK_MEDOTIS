@@ -121,6 +121,19 @@
                     </a>
                   </li>
                   {% endif %}
+                  {% if perms.clinic.can_add_service %}
+                  <li class="navi-item">
+                    <a
+                      href="{% url 'them_nhom_dich_vu_kham' %}"
+                      class="navi-link addLichHenKhamBtn"
+                    >
+                      <span class="navi-icon">
+                        <i class="la la-file-import"></i>
+                      </span>
+                      <span class="navi-text">Thêm Nhóm Dịch Vụ</span>
+                    </a>
+                  </li>
+                  {% endif %}
                 </ul>
                 <!--end::Navigation-->
               </div>
