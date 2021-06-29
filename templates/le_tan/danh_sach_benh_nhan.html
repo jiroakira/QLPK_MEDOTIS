@@ -305,12 +305,23 @@
                         <div class="form-group">
                             <label>Chọn Dịch Vụ Khám </label>
                             <select id="selectDichVuKham" class="form-control selectpicker">
-                                <option value="kham_chua_benh" selected>Khám Chữa Bệnh</option>
-                                <option value="kham_theo_yeu_cau">Khám Theo Yêu Cầu</option>
-                                <option value="kham_sua_khoe">Khám Sức Khỏe</option>
+                                <option value="kham_chua_benh" selected>Thanh Toán Trước</option>
+                                <option value="kham_theo_yeu_cau">Thanh Toán Sau</option>
+                                
                                 
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label>Chọn Nhóm Dịch Vụ Khám </label>
+                            <select id="selectNhomDichVuKham" class="form-control selectpicker">
+                                <option value="" selected disabled>Chọn Nhóm Dịch Vụ Khám</option>
+                                {% for nhom_dich_vu in nhom_dich_vu_kham %}
+                                <option value="{{ nhom_dich_vu.id}}">{{ nhom_dich_vu.ten_nhom_dich_vu }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
                         <div class="input-group date" id="kt_datetimepicker_1" data-target-input="nearest">
                             <input type="text" id="inputLichHenKham" class="form-control datetimepicker-input" placeholder="Chọn thời gian bắt đầu" data-target="#kt_datetimepicker_1"/>
                             <div class="input-group-append" data-target="#kt_datetimepicker_1" data-toggle="datetimepicker">
@@ -758,12 +769,11 @@ var KTDatatableRemoteAjaxDemo = function() {
             var id = $(this).attr('data-id')
             var ly_do = $('#ly_do').val()
             var loai_dich_vu = $('#selectDichVuKham').val()
-            // console.log(id)
-            // console.log(ly_do)
-            // console.log(loai_dich_vu)
+            var nhom_dich_vu_kham = $('#selectNhomDichVuKham').val()
 
             formData.append('id_benh_nhan',id)
             formData.append('loai_dich_vu', loai_dich_vu)
+            formData.append('nhom_dich_vu_kham', nhom_dich_vu_kham)
             formData.append('ly_do', ly_do)
             formData.append('thoi_gian_bat_dau', lich_hen_kham)
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
@@ -776,14 +786,14 @@ var KTDatatableRemoteAjaxDemo = function() {
                 processData: false,
                 contentType: false,
                 success: function(response){
-                    if (response.status == 400) {
-                        toastr.warning(response.message, "Xảy Ra Lỗi")
-                    } else if (response.status == 409) {
-                        toastr.info(response.message, "Lỗi")
-                    } else {
+                
+                    if (response.status == 200) {
                         toastr.success(response.message, "Tạo Lịch Hẹn Thành Công")
                         $('#addLichHenKham').find("input, textarea").val("");
+                    } else if (response.status == 400){
+                        toastr.warning(response.message, "Xảy Ra Lỗi")
                     }
+                    
                     $('#addLichHenKham').modal('hide');
                     setTimeout(function(){
                         window.location.href = "/danh_sach_lich_hen/"
