@@ -1,24 +1,6 @@
 from clinic.models import TinhTrangPhongKham
 from django.contrib import admin
-from .models import (
-    BaiDang, ChiSoXetNghiem, ChiTietChiSoXetNghiem, 
-    ChuoiKham, DanhMucBenh, DanhMucChuongBenh, DanhMucKhoa, DanhMucLoaiBenh, DanhMucNhomBenh, 
-    DichVuKham, District, DoTuoiXetNghiem, DoiTuongXetNghiem, 
-    FileKetQua, 
-    FileKetQuaChuyenKhoa, 
-    FileKetQuaTongQuat, FilePhongKham, GoiThau, HtmlKetQua,  
-    KetQuaChuyenKhoa, 
-    KetQuaTongQuat, KetQuaXetNghiem, 
-    LichHenKham, LichSuChuoiKham, MauPhieu, NhomChiPhi, NhomTaiNan,
-    PhanKhoaKham, 
-    PhongChucNang, 
-    PhongKham, Province, 
-    TrangThaiChuoiKham, 
-    TrangThaiKhoaKham, 
-    TrangThaiLichHen, 
-    User, 
-    BacSi, Ward
-)
+from .models import *
 
 from django.contrib.auth.models import Permission
 
@@ -66,3 +48,4 @@ admin.site.register(District)
 admin.site.register(Ward)
 admin.site.register(Permission)
 admin.site.register(LichSuChuoiKham)
+admin.site.register(NhomDichVuKham)

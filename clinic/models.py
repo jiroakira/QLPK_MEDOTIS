@@ -303,7 +303,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def getSubName(self):
         lstChar = []
-        lstString = self.ho_ten.rstrip().lstrip().split(' ')
+        lstString = self.ho_ten.split(' ')
         for i in lstString:
             lstChar.append(i[0].upper())
         subName = "".join(lstChar)
@@ -584,6 +584,16 @@ class DichVuKham(models.Model):
             return self.phong_chuc_nang.ten_phong_chuc_nang
         else:
             return '-'
+
+class NhomDichVuKham(models.Model):
+    ten_nhom_dich_vu = models.CharField(max_length=255, null=True, blank=True)
+    dich_vu_kham = models.ManyToManyField("DichVuKham", null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Nhóm Dịch Vụ Khám"
+
+    def __str__(self):
+        return self.ten_nhom_dich_vu
 
 
 class GiaDichVu(models.Model):
