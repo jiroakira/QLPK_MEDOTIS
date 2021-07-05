@@ -5,7 +5,7 @@ from django.views.generic import RedirectView
 from medicine.api import ThuocViewSet, CongTyViewSet
 from django.urls import path, include
 from rest_framework import routers
-from .api import (ApiExportBenhNhanBaoHiemExcel, ApiExportExcelDichVu, ApiExportExcelThuoc, ApiListAllGroupOfUser, ApiListGroup, ApiListStaff, ChiTietMauPhieuAPIView, ChuoiKhamGanNhat, ChuoiKhamNguoiDung, ChuoiKhamViewSet,DangKiAPI, DangKiLichHen, DanhSachBacSi, DanhSachBacSi1, DanhSachBaiDang, DanhSachBaoCaoTheoThoiGian, DanhSachBenhNhan, DanhSachBenhNhanChoLamSang, DanhSachBenhNhanListCreateAPIView,DanhSachBenhNhanTheoPhong, DanhSachBenhNhanTheoPhongChucNang,DanhSachChuoiKhamBenhNhan, DanhSachDichVuKhamTheoPhong,DanhSachDichVuTheoPhongChucNang, DanhSachDoanhThuTheoThoiGian,DanhSachDoanhThuDichVu, DanhSachDoanhThuThuoc, DanhSachDonThuocBenhNhan,DanhSachDonThuocDaKe,DanhSachDonThuocPhongThuoc, DanhSachHoaDonDichVu,DanhSachHoaDonThuoc, DanhSachKetQuaChuoiKhamBenhNhan, DanhSachKhamTrongNgay, DanhSachLichHenTheoBenhNhan, DanhSachLichSuKhamBenhNhan, DanhSachMauPhieu, DanhSachNguonCung, DanhSachNhungThuocDuocNhap, DanhSachNhungThuocDuocXuat,DanhSachPhongChucNang, DanhSachThuocNhapDichVu, DanhSachThuocSapHetHan, DanhSachThuocXuatDichVu, DanhSachTieuChuanTheoNhomAPIview, DanhSachVatTu, DanhSachThanhToanLamSang,DanhSachThuocBenhNhan, DanhSachThuocTheoCongTy, DichVuKhamListCreateAPIView, DieuPhoiPhongChucNangView, DoanhThuTheoPhongChucNang,DonThuocGanNhat, FileKetQuaViewSet, FilterBaoHiem, FilterDistrict, FilterWard, GetDanhSachPhanKhoaCuaChuoiKham, GetFuncroomInfo, KetQuaChuoiKhamBenhNhan,KetQuaChuoiKhamBenhNhan2, KetQuaXetNghiemMobile, LichHenKhamViewSet, ListNguoiDungDangKiKham, ListTieuChuanDichVu,PhanKhoaKhamBenhNhan, PhieuKetQuaMobile, PhongChucNangTheoDichVu, SetChiSoDichVuKham, SetChoThanhToan, SetHtmlDichVuKham,SetXacNhanKham, TatCaLichHenBenhNhan, TatCaLichHenBenhNhanList, ThongTinBenhNhanTheoMa,ThongTinPhongChucNang, ThongTinPhongKham, ThuocListCreateAPIView, TimKiemKetQuaBenhNhan, UserInfor, UserViewSet, DichVuKhamViewSet,PhongChucNangViewSet,LichHenKhamSapToi, UserUpdateInfo,UserUpdateInfoRequest, UploadAvatarView,UpdateAppointmentDetail,CapNhatLichHen, HoaDonChuoiKhamNguoiDung, HoaDonChuoiKhamCanThanhToan,HoaDonThuocCanThanhToan, DichVuTheoPhongChucNang, DonThuocCuaChuoiKham, HoaDonThuocCuaChuoiKham, HoaDonDichVuCuaChuoiKham, HoaDonLamSangChuoiKham, HoaDonLamSangGanNhat, DanhSachHoaDonDichVuBaoHiem, DanhSachDoanhThuLamSang, XemDonThuoc, XemLaiBenhNhanDaKhamChuyenKhoaAPIView, XemLaiBenhNhanLamSangAPIView, XuatNhapTongThuocAPIView)
+from .api import *
 from .views import *
 
 from medicine.views import ke_don_thuoc_view
@@ -451,4 +451,7 @@ urlpatterns = [
 
     path('them_nhom_dich_vu_kham/', them_nhom_dich_vu_kham_view, name='them_nhom_dich_vu_kham'),
     path('store_nhom_dich_vu/', store_nhom_dich_vu, name='store_nhom_dich_vu'),
+    path('phong_lam_sang/<int:id>/', danh_sach_benh_nhan_theo_phong_lam_sang, name='phong_lam_sang'),
+    path('phong_lam_sang/<int:id>/ket_qua_kham/', danh_sach_ket_qua_phong_lam_sang, name='phong_lam_sang_ket_qua_kham'),
+    path('api/danh_sach_benh_nhan_theo_phong_lam_sang/', DanhSachBenhNhanTheoPhongLamSang.as_view()),
 ]

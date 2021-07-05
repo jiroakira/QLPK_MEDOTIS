@@ -4,26 +4,7 @@ from medicine.serializers import CongTySerializer, ThuocSerializer, ThuocSeriali
 from django.http.request import validate_host
 from rest_framework import fields, serializers
 from django.contrib.auth import get_user_model
-from .models import (
-    BaiDang, ChiSoXetNghiem, ChiTietChiSoXetNghiem,
-    DichVuKham, District,
-    FileKetQua,
-    FileKetQuaChuyenKhoa,
-    FileKetQuaTongQuat, HtmlKetQua,
-    KetQuaChuyenKhoa,
-    KetQuaTongQuat, KetQuaXetNghiem,
-    LichHenKham, MauPhieu, NhomChiSoXetNghiem,
-    PhanKhoaKham,
-    PhongChucNang,
-    PhongKham,
-    ProfilePhongChucNang,
-    TrangThaiChuoiKham,
-    TrangThaiKhoaKham,
-    TrangThaiLichHen,
-    ChuoiKham,
-    BacSi,
-    TinhTrangPhongKham, Ward, send_func_room_info,
-)
+from .models import *
 from medicine.models import DonThuoc, KeDonThuoc, NhomVatTu, TrangThaiDonThuoc, VatTu
 from django.contrib.auth.models import Group, Permission
 

@@ -1,4 +1,6 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
+
+<div style="display: none" id="id_phong_lam_sang" data-id="{{ id_phong_lam_sang }}"></div>
 <!--begin::Content-->
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
   <!--begin::Subheader-->
@@ -461,6 +463,9 @@
       var initDatatable = function() {
           var el = $('#kt_datatable');
 
+          var id_phong_lam_sang = $("#id_phong_lam_sang").attr('data-id');
+          console.log(id_phong_lam_sang)
+
           var datatable = el.KTDatatable({
               // datasource definition
               data: {
@@ -477,6 +482,9 @@
                               }
                               console.log(dataSet)
                               return dataSet;
+                          },
+                          params: {
+                            id_phong_lam_sang: id_phong_lam_sang
                           },
                       },
 

@@ -322,6 +322,16 @@
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label>Chọn Phòng Lâm Sàng </label>
+                            <select id="selectPhongLamSang" class="form-control selectpicker">
+                                <option value="" selected disabled>Chọn Phòng Lâm Sàng</option>
+                                {% for phong in phong_lam_sang %}
+                                <option value="{{ phong.id}}">{{ phong.ten_phong_lam_sang }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
                         <div class="input-group date" id="kt_datetimepicker_1" data-target-input="nearest">
                             <input type="text" id="inputLichHenKham" class="form-control datetimepicker-input" placeholder="Chọn thời gian bắt đầu" data-target="#kt_datetimepicker_1"/>
                             <div class="input-group-append" data-target="#kt_datetimepicker_1" data-toggle="datetimepicker">
@@ -770,10 +780,12 @@ var KTDatatableRemoteAjaxDemo = function() {
             var ly_do = $('#ly_do').val()
             var loai_dich_vu = $('#selectDichVuKham').val()
             var nhom_dich_vu_kham = $('#selectNhomDichVuKham').val()
+            var phong_lam_sang = $('#selectPhongLamSang').val()
 
             formData.append('id_benh_nhan',id)
             formData.append('loai_dich_vu', loai_dich_vu)
             formData.append('nhom_dich_vu_kham', nhom_dich_vu_kham)
+            formData.append('phong_lam_sang', phong_lam_sang)
             formData.append('ly_do', ly_do)
             formData.append('thoi_gian_bat_dau', lich_hen_kham)
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')

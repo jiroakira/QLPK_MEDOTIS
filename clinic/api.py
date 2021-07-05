@@ -16,24 +16,7 @@ from medicine.models import CongTy, DonThuoc, KeDonThuoc, NhomThuoc, Thuoc, Tran
 from django.http.response import Http404, HttpResponse, JsonResponse
 from rest_framework import views
 from rest_framework.views import APIView
-from clinic.models import (
-    BaiDang,
-    ChiSoXetNghiem,
-    DichVuKham, District,
-    FileKetQua,
-    KetQuaTongQuat,
-    LichHenKham, MauPhieu,
-    NhomChiSoXetNghiem,
-    PhanKhoaKham,
-    PhongChucNang,
-    PhongKham, Province,
-    TrangThaiChuoiKham,
-    TrangThaiKhoaKham,
-    TrangThaiLichHen,
-    ChuoiKham,
-    KetQuaChuyenKhoa,
-    BacSi, Ward
-)
+from clinic.models import *
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
 from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer, ChiSoXetNghiemSerializer, DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer, DichVuKhamSerializer, DichVuKhamSerializerFormatted, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuKhamBaoHiemSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer, GroupSerializer, HoaDonChuoiKhamSerializerSimple, HoaDonLamSangSerializerFormatted, HoaDonThuocSerializer, HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer, LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer,
@@ -1240,18 +1223,25 @@ class DanhSachKhamTrongNgay(generics.ListCreateAPIView):
         today_start = now.replace(hour=0, minute=0, second=0)
         today_end = tomorrow.replace(hour=0, minute=0, second=0)
 
-        queryset = ChuoiKham.objects.select_related('benh_nhan').filter(
-            thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end).order_by('-id')
-        term = self.request.query_params.get('query[search]')
-        flag = self.request.query_params.get('query[trang_thai]')
+        id_phong_lam_sang = self.request.query_params.get('id_phong_lam_sang')
+        phong_lam_sang = PhongLamSang.objects.get(id=id_phong_lam_sang)
 
-        if term is not None:
-            queryset = queryset.filter(Q(benh_nhan__ho_ten__icontains=term) | Q(
-                benh_nhan__so_dien_thoai__icontains=term)).order_by('-id')
+        lich_hen_theo_phong = phong_lam_sang.get_danh_sach_lich_hen_theo_phong()
 
-        if flag is not None:
-            trang_thai = TrangThaiChuoiKham.objects.get(id=flag)
-            queryset = queryset.filter(trang_thai=trang_thai).order_by('-id')
+        if lich_hen_theo_phong is not None:
+            queryset = lich_hen_theo_phong
+            term = self.request.query_params.get('query[search]')
+            flag = self.request.query_params.get('query[trang_thai]')
+
+            if term is not None:
+                queryset = queryset.filter(Q(benh_nhan__ho_ten__icontains=term) | Q(
+                    benh_nhan__so_dien_thoai__icontains=term)).order_by('-id')
+
+            if flag is not None:
+                trang_thai = TrangThaiChuoiKham.objects.get(id=flag)
+                queryset = queryset.filter(trang_thai=trang_thai).order_by('-id')
+        else:
+            queryset = []
 
         return queryset
 
@@ -3714,3 +3704,35 @@ class SetChiSoDichVuKham(APIView):
             'message': 'OKE'
         }
         return Response(response)
+
+class DanhSachBenhNhanTheoPhongLamSang(generics.ListCreateAPIView):
+    serializer_class = LichHenKhamSerializer
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        now = timezone.localtime(timezone.now())
+        tomorrow = now + timedelta(1)
+        today_start = now.replace(hour=0, minute=0, second=0)
+        today_end = tomorrow.replace(hour=0, minute=0, second=0)
+
+        id_phong_lam_sang = self.request.query_params.get('id')
+
+        phong_lam_sang = PhongLamSang.objects.get(id=id_phong_lam_sang)
+        queryset = phong_lam_sang.lich_hen_theo_phong.all()
+
+        queryset = queryset.filter(
+            thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end).order_by('-id')
+
+        term = self.request.query_params.get('query[search]')
+        trang_thai = self.request.query_params.get('query[trang_thai]')
+
+        if term is not None:
+            queryset = queryset.filter(Q(benh_nhan__ho_ten__icontains=term) | Q(
+                benh_nhan__so_dien_thoai__icontains=term)).order_by('-id')
+
+        if trang_thai is not None:
+            trang_thai_lich_hen = TrangThaiLichHen.objects.get(id=trang_thai)
+            queryset = queryset.filter(
+                trang_thai=trang_thai_lich_hen).order_by('-id')
+
+        return queryset
