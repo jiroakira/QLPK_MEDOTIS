@@ -501,6 +501,36 @@ class PhongChucNang(models.Model):
 
     # TODO review table PhongChucNang again
 
+class PhongLamSang(models.Model):
+    ten_phong_lam_sang = models.CharField(max_length=255, null=True, blank=True)
+    slug = models.SlugField(max_length=255, null=True, blank=True)
+
+    thoi_gian_tao = models.DateTimeField(
+        editable=False, null=True, blank=True, auto_now_add=True)
+    thoi_gian_cap_nhat = models.DateTimeField(
+        null=True, blank=True, auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Phòng Lâm Sàng"
+
+    def __str__(self):
+        return self.ten_phong_lam_sang
+
+    def save(self, *agrs, **kwargs):
+        if not self.id:
+            self.slug = text_to_id(self.ten_phong_lam_sang)
+        return super(PhongLamSang, self).save(*agrs, **kwargs)
+
+    def get_danh_sach_lich_hen_theo_phong(self):
+        list_lich_hen = []
+        if self.lich_hen_theo_phong.exists():
+            for lich_hen in self.lich_hen_theo_phong.all():
+                if lich_hen.get_chuoi_kham() is not None:
+                    list_lich_hen.append(lich_hen.get_chuoi_kham())
+                    
+            return list_lich_hen
+        else:
+            return None
 
 class DichVuKham(models.Model):
     """ Danh sách tất cả các dịch vụ khám trong phòng khám """
@@ -696,6 +726,8 @@ class LichHenKham(models.Model):
     nguoi_phu_trach = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name="nguoi_phu_trach")
 
+    phong_lam_sang = models.ForeignKey("PhongLamSang", on_delete=models.SET_NULL, null=True, blank=True, related_name="lich_hen_theo_phong")
+
     thoi_gian_bat_dau = models.DateTimeField()
     thoi_gian_ket_thuc = models.DateTimeField(null=True, blank=True)
     ly_do = models.TextField(null=True, blank=True)
@@ -776,6 +808,14 @@ class LichHenKham(models.Model):
             return id_chuoi_kham
         else:
             return ""
+
+    def get_chuoi_kham(self):
+        if self.danh_sach_chuoi_kham.exists():
+            chuoi_kham = self.danh_sach_chuoi_kham.all().last()
+        else:
+            chuoi_kham = None
+        
+        return chuoi_kham
 
 
 class LichSuTrangThaiLichHen(models.Model):
@@ -1826,3 +1866,4 @@ class Ward(models.Model):
 
     def __str__(self):
         return self.name
+

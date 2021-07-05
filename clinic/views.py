@@ -112,6 +112,7 @@ def index(request):
         nguoi_dung = User.objects.filter(chuc_nang=1)
 
         phong_chuc_nang = PhongChucNang.objects.all()
+        phong_lam_sang = PhongLamSang.objects.all()
         # * danh sách bệnh nhân chưa được khám
         trang_thai = TrangThaiLichHen.objects.get_or_create(
             ten_trang_thai="Đã Đặt Trước")[0]
@@ -204,12 +205,15 @@ def index(request):
             'thoi_gian': time_series,
             'bai_dang': bai_dang,
             'phong_chuc_nang': phong_chuc_nang,
+            'phong_lam_sang': phong_lam_sang,
         }
         return render(request, 'index.html', context=data)
     else:
         phong_chuc_nang = PhongChucNang.objects.all()
+        phong_lam_sang = PhongLamSang.objects.all()
         context = {
-            'phong_chuc_nang': phong_chuc_nang
+            'phong_chuc_nang': phong_chuc_nang,
+            'phong_lam_sang': phong_lam_sang,
         }
         return render(request, 'no_permission_view.html', context)
 
@@ -221,6 +225,7 @@ def danh_sach_benh_nhan(request):
     phong_chuc_nang = PhongChucNang.objects.all()
     tinh = Province.objects.all()
     nhom_dich_vu = NhomDichVuKham.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
 
     data = {
         'danh_sach_benh_nhan': danh_sach_benh_nhan,
@@ -228,6 +233,7 @@ def danh_sach_benh_nhan(request):
         'phong_chuc_nang': phong_chuc_nang,
         'province': tinh,
         'nhom_dich_vu_kham': nhom_dich_vu,
+        'phong_lam_sang': phong_lam_sang,
     }
     return render(request, 'le_tan/danh_sach_benh_nhan.html', context=data)
 
@@ -587,7 +593,7 @@ def add_lich_hen(request):
         nhom_dich_vu_kham = request.POST.get('nhom_dich_vu_kham', None)
         ly_do = request.POST.get('ly_do')
         loai_dich_vu = request.POST.get('loai_dich_vu')
-        print(nhom_dich_vu_kham == 'null')
+        phong_lam_sang_id = request.POST.get('phong_lam_sang')
 
         if thoi_gian_bat_dau == '':
             response = {
@@ -632,6 +638,7 @@ def add_lich_hen(request):
                 thanh_toan_sau=True,
             )
             lich_hen.save()
+
             response = {
                 'status': 200,
                 'message': "Tạo Lịch Hẹn Thành Công"
@@ -684,6 +691,18 @@ def add_lich_hen(request):
                 'status': 200,
                 'message': "Tạo Lịch Hẹn Thành Công"
             }
+
+        if phong_lam_sang_id != "null":
+            phong_lam_sang = PhongLamSang.objects.get(id=phong_lam_sang_id)
+            lich_hen.phong_lam_sang = phong_lam_sang
+            lich_hen.save()
+
+        else:
+            response = {
+                'status': 400,
+                'message': "Vui Lòng Chọn Phòng Lâm Sàng"
+            }  
+            return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
 
         response = {
             'status': 200,
@@ -887,22 +906,25 @@ def phong_chuyen_khoa(request, *args, **kwargs):
     id_phong_chuc_nang = kwargs.get('id_phong_chuc_nang')
     phong = get_object_or_404(PhongChucNang, id=id_phong_chuc_nang)
     codename_perm = f'can_view_{phong.slug}'
+    phong_lam_sang = PhongLamSang.objects.all()
+    phong_chuc_nang = PhongChucNang.objects.all()
     if request.user.has_perm(f'clinic.{codename_perm}'):
         phong_chuc_nang_detail = PhongChucNang.objects.get(
             id=id_phong_chuc_nang)
-        phong_chuc_nang = PhongChucNang.objects.all()
         trang_thai = TrangThaiKhoaKham.objects.all()
         data = {
             'phong_chuc_nang': phong_chuc_nang,
             'trang_thai': trang_thai,
             'id_phong_chuc_nang': id_phong_chuc_nang,
-            'phong_chuc_nang_detail': phong_chuc_nang_detail
+            'phong_chuc_nang_detail': phong_chuc_nang_detail,
+            'phong_lam_sang': phong_lam_sang,
         }
         return render(request, 'bac_si_chuyen_khoa/phong_chuyen_khoa.html', context=data)
     else:
-        phong_chuc_nang = PhongChucNang.objects.all()
+        
         data = {
             'phong_chuc_nang': phong_chuc_nang,
+            'phong_lam_sang': phong_lam_sang,
         }
         return render(request, 'do_not_have_permission.html', context=data)
 
@@ -1983,11 +2005,13 @@ def update_lich_hen(request, **kwargs):
 def danh_sach_lich_hen(request):
     trang_thai = TrangThaiLichHen.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     nguoi_dung = User.objects.filter(chuc_nang=1)
     data = {
         'trang_thai': trang_thai,
         'nguoi_dung': nguoi_dung,
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
     }
     return render(request, 'le_tan/danh_sach_lich_hen.html', context=data)
 
@@ -2601,28 +2625,85 @@ def update_thuoc(request):
         cong_ty = get_object_or_404(CongTy, id=id_cong_ty)
         thuoc = get_object_or_404(Thuoc, id=id_thuoc)
 
-        thuoc.ma_hoat_chat = ma_hoat_chat
-        thuoc.ten_hoat_chat = ten_hoat_chat
-        thuoc.ma_thuoc = ma_thuoc
-        thuoc.ten_thuoc = ten_thuoc
-        thuoc.ham_luong = ham_luong
-        thuoc.duong_dung = duong_dung
-        thuoc.so_dang_ky = so_dang_ky
-        thuoc.dong_goi = dong_goi
-        thuoc.don_vi_tinh = don_vi_tinh
-        thuoc.don_gia = don_gia
-        thuoc.don_gia_tt = don_gia_tt
-        thuoc.so_lo = so_lo
-        thuoc.so_luong_kha_dung = so_luong_kha_dung
-        thuoc.hang_sx = hang_sx
-        thuoc.nuoc_sx = nuoc_sx
-        thuoc.quyet_dinh = quyet_dinh
-        thuoc.loai_thuoc = loai_thuoc
-        thuoc.cong_bo = cong_bo
-        thuoc.han_su_dung = han_su_dung
-        thuoc.ngay_san_xuat = ngay_san_xuat
-        thuoc.cong_ty = cong_ty
-        thuoc.save()
+        if thuoc.so_lo is not None:
+            if so_lo != thuoc.so_lo:
+                thuoc = Thuoc.objects.create(
+                    ma_hoat_chat = ma_hoat_chat,
+                    ten_hoat_chat = ten_hoat_chat,
+                    ten_thuoc = ten_thuoc,
+                    ham_luong = ham_luong,
+                    duong_dung = duong_dung,
+                    so_dang_ky = so_dang_ky,
+                    dong_goi = dong_goi,
+                    don_vi_tinh = don_vi_tinh,
+                    don_gia = don_gia,
+                    don_gia_tt = don_gia_tt,
+                    so_lo = so_lo,
+                    so_luong_kha_dung = so_luong_kha_dung,
+                    hang_sx = hang_sx,
+                    nuoc_sx = nuoc_sx,
+                    quyet_dinh = quyet_dinh,
+                    loai_thuoc = loai_thuoc,
+                    cong_bo = cong_bo,
+                    han_su_dung = han_su_dung,
+                    ngay_san_xuat = ngay_san_xuat,
+                    cong_ty = cong_ty,
+                )
+                thuoc.ma_thuoc = f"MED{thuoc.id}"
+                thuoc.save()
+                
+                response = {
+                    'status': 200,
+                    'message': 'Cập Nhật Thông Tin Thành Công'
+                }
+            
+            else:
+                thuoc.ma_hoat_chat = ma_hoat_chat
+                thuoc.ten_hoat_chat = ten_hoat_chat
+                thuoc.ma_thuoc = ma_thuoc
+                thuoc.ten_thuoc = ten_thuoc
+                thuoc.ham_luong = ham_luong
+                thuoc.duong_dung = duong_dung
+                thuoc.so_dang_ky = so_dang_ky
+                thuoc.dong_goi = dong_goi
+                thuoc.don_vi_tinh = don_vi_tinh
+                thuoc.don_gia = don_gia
+                thuoc.don_gia_tt = don_gia_tt
+                thuoc.so_lo = so_lo
+                thuoc.so_luong_kha_dung = so_luong_kha_dung
+                thuoc.hang_sx = hang_sx
+                thuoc.nuoc_sx = nuoc_sx
+                thuoc.quyet_dinh = quyet_dinh
+                thuoc.loai_thuoc = loai_thuoc
+                thuoc.cong_bo = cong_bo
+                thuoc.han_su_dung = han_su_dung
+                thuoc.ngay_san_xuat = ngay_san_xuat
+                thuoc.cong_ty = cong_ty
+                thuoc.save()
+
+        else:
+            thuoc.ma_hoat_chat = ma_hoat_chat
+            thuoc.ten_hoat_chat = ten_hoat_chat
+            thuoc.ma_thuoc = ma_thuoc
+            thuoc.ten_thuoc = ten_thuoc
+            thuoc.ham_luong = ham_luong
+            thuoc.duong_dung = duong_dung
+            thuoc.so_dang_ky = so_dang_ky
+            thuoc.dong_goi = dong_goi
+            thuoc.don_vi_tinh = don_vi_tinh
+            thuoc.don_gia = don_gia
+            thuoc.don_gia_tt = don_gia_tt
+            thuoc.so_lo = so_lo
+            thuoc.so_luong_kha_dung = so_luong_kha_dung
+            thuoc.hang_sx = hang_sx
+            thuoc.nuoc_sx = nuoc_sx
+            thuoc.quyet_dinh = quyet_dinh
+            thuoc.loai_thuoc = loai_thuoc
+            thuoc.cong_bo = cong_bo
+            thuoc.han_su_dung = han_su_dung
+            thuoc.ngay_san_xuat = ngay_san_xuat
+            thuoc.cong_ty = cong_ty
+            thuoc.save()
 
         from actstream import action
         action.send(request.user, verb='cập nhật thông tin thuốc', target=thuoc)
@@ -7219,6 +7300,74 @@ def store_nhom_dich_vu(request):
             'message': "Tạo Mới Nhóm Dịch Vụ Thành Công"
         }
 
+    else:
+        response = {
+            'status': 404,
+            'message': "Xảy Ra Lỗi Trong Quá Trình Xử Lí"
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def danh_sach_benh_nhan_theo_phong_lam_sang(request, **kwargs):
+    id_phong_lam_sang = kwargs.get('id')
+    phong_lam_sang_obj = PhongLamSang.objects.get(id=id_phong_lam_sang)
+    phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
+    context = {
+        'id_phong_lam_sang': id_phong_lam_sang,
+        'phong_lam_sang_obj': phong_lam_sang_obj,
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
+    }
+    return render(request, 'bac_si_lam_sang/phong_lam_sang.html', context)
+
+def danh_sach_ket_qua_phong_lam_sang(request, **kwargs):
+    id_phong_lam_sang = kwargs.get('id')
+
+    print(id_phong_lam_sang)
+
+    trang_thai = TrangThaiLichHen.objects.all()
+    trang_thai_ck = TrangThaiChuoiKham.objects.all()
+    phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
+    phong_lam_sang_obj = PhongLamSang.objects.get(id=id_phong_lam_sang)
+
+    context = {
+        'phong_lam_sang_obj': phong_lam_sang_obj,
+        'phong_lam_sang': phong_lam_sang,
+        'phong_chuc_nang': phong_chuc_nang,
+        'trang_thai': trang_thai,
+        'trang_thai_ck': trang_thai_ck,
+        'id_phong_lam_sang': id_phong_lam_sang,
+    }
+
+    return render(request, 'bac_si_lam_sang/danh_sach_kham.html', context)
+
+def them_phong_lam_sang(request):
+    if request.method == "POST":
+
+        ten_phong_lam_sang = request.POST.get('ten_phong_lam_sang')
+
+        phong_lam_sang = PhongLamSang.objects.create(
+            ten_phong_lam_sang=ten_phong_lam_sang)
+
+        content_type = ContentType.objects.get_for_model(PhongLamSang)
+
+        new_group, created = Group.objects.get_or_create(
+            name=f"Nhóm Lâm Sàng {ten_phong_lam_sang}")
+        codename_perm = f'can_view_{phong_lam_sang.slug}'
+
+        if not Permission.objects.filter(codename=codename_perm).exists():
+            permission = Permission.objects.create(
+                codename=codename_perm,
+                name=f'Xem Nhóm Lâm Sàng {ten_phong_lam_sang}',
+                content_type=content_type
+            )
+            new_group.permissions.add(permission)
+            
+        response = {
+            'status': 200,
+            'message': "Tạo Nhóm Phòng Lâm Sàng Thành Công"
+        }
     else:
         response = {
             'status': 404,
