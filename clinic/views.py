@@ -7323,8 +7323,6 @@ def danh_sach_benh_nhan_theo_phong_lam_sang(request, **kwargs):
 def danh_sach_ket_qua_phong_lam_sang(request, **kwargs):
     id_phong_lam_sang = kwargs.get('id')
 
-    print(id_phong_lam_sang)
-
     trang_thai = TrangThaiLichHen.objects.all()
     trang_thai_ck = TrangThaiChuoiKham.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
@@ -7341,6 +7339,15 @@ def danh_sach_ket_qua_phong_lam_sang(request, **kwargs):
     }
 
     return render(request, 'bac_si_lam_sang/danh_sach_kham.html', context)
+
+def danh_sach_phong_lam_sang(request):
+    phong_lam_sang = PhongLamSang.objects.all()
+    phong_chuc_nang = PhongChucNang.objects.all()
+    context = {
+        'phong_lam_sang': phong_lam_sang,
+        'phong_chuc_nang': phong_chuc_nang
+    }
+    return render(request, 'bac_si_lam_sang/danh_sach_phong_lam_sang.html', context)
 
 def them_phong_lam_sang(request):
     if request.method == "POST":

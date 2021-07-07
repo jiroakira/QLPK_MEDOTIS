@@ -1119,3 +1119,8 @@ class DichVuKhamPhanKhoaSerializer(serializers.ModelSerializer):
 #             'dich_vu_kham',
 #             'bao_hiem',
 #         )
+
+class PhongLamSangSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhongLamSang
+        fields = '__all__'

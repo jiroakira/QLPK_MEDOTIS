@@ -9,7 +9,7 @@
 	<div class="brand flex-column-auto" id="kt_brand">
 		<!--begin::Logo-->
 		<a href="{% url 'index' %}" class="brand-logo">
-			<img alt="Logo" src="{% static 'assets/media/logos/logo_dong_hai.png' %} " class="max-w-50px"/>
+			<img alt="Logo" src="{% static 'assets/media/logos/logo_medotis.png' %} " class="max-w-50px"/>
 		</a>
 		<!--end::Logo-->
 		<!--begin::Toggle-->
@@ -242,7 +242,7 @@
 					</a>
 				</li> {% endcomment %}
 
-				{% if perms.clinic.preclinical_department_module_view %}
+				{% if 'clinic.preclinical_department_module_view' in perms %}
 				<li class="menu-section">
 					<h4 class="menu-text">Bác sĩ lâm sàng</h4>
 					<i class="menu-icon ki ki-bold-more-hor icon-md"></i>
@@ -265,6 +265,9 @@
 							<span class="menu-text">{{phong.ten_phong_lam_sang}}</span>
 						</a>
 					</li> {% endcomment %}
+					
+					{% check_user_perm perm_codename=phong.get_permission_codename as user_perm %}
+					{% if user_perm %}
 					<li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
 						<a href="javascript:;" class="menu-link menu-toggle">
 							<span class="svg-icon menu-icon">
@@ -308,8 +311,9 @@
 							</ul>
 						</div>
 					</li>
+					{% endif %}
 				{% endfor %}
-				
+
 				{% endif %}
 				{% comment %} {% if perms.clinic.can_view_list_of_patient %}
 				<li class="menu-item" aria-haspopup="true">
@@ -363,6 +367,8 @@
 
 				<!-- Danh sách chờ khám chuyên khoa -->
 				{% for phong in phong_chuc_nang %}
+					{% check_user_perm perm_codename=phong.get_permission_codename as user_perm %}
+					{% if user_perm %}
 					<li class="menu-item" aria-haspopup="true">
 						<a href="{% url 'phong_chuyen_khoa' phong.id %}" class="menu-link">
 							<span class="svg-icon menu-icon">
@@ -379,6 +385,7 @@
 							<span class="menu-text">{{phong.ten_phong_chuc_nang}}</span>
 						</a>
 					</li>
+					{% endif %}
 				{% endfor %}
 
 				{% endif %}
