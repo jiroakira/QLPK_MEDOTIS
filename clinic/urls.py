@@ -454,4 +454,7 @@ urlpatterns = [
     path('phong_lam_sang/<int:id>/', danh_sach_benh_nhan_theo_phong_lam_sang, name='phong_lam_sang'),
     path('phong_lam_sang/<int:id>/ket_qua_kham/', danh_sach_ket_qua_phong_lam_sang, name='phong_lam_sang_ket_qua_kham'),
     path('api/danh_sach_benh_nhan_theo_phong_lam_sang/', DanhSachBenhNhanTheoPhongLamSang.as_view()),
+    path('api/danh_sach_phong_lam_sang/', DanhSachPhongLamSangListCreateAPIView.as_view()),
+    path('danh_sach_phong_lam_sang/', danh_sach_phong_lam_sang, name='danh_sach_phong_lam_sang'),
+    path('store_phong_lam_sang/', them_phong_lam_sang, name='store_phong_lam_sang'),
 ]

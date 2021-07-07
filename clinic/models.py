@@ -25,6 +25,7 @@ from django.contrib.auth.models import PermissionsMixin
 import re
 import unicodedata
 from django.db.models import Count, F, Sum, Q
+from django.contrib.auth.models import Group, Permission
 
 
 def file_url(self, filename):
@@ -499,6 +500,16 @@ class PhongChucNang(models.Model):
     def get_thoi_gian_cap_nhat(self):
         return self.thoi_gian_cap_nhat.strftime("%d/%m/%y %H:%M:%S")
 
+    @property
+    def get_permission_codename(self):
+        permission_name = f'Xem {self.ten_phong_chuc_nang}'
+        try:
+            permission = Permission.objects.get(name=permission_name)
+            permission_codename = permission.codename
+        except Permission.DoesNotExist:
+            permission_codename = '-'
+        return permission_codename
+
     # TODO review table PhongChucNang again
 
 class PhongLamSang(models.Model):
@@ -531,6 +542,16 @@ class PhongLamSang(models.Model):
             return list_lich_hen
         else:
             return None
+
+    @property
+    def get_permission_codename(self):
+        permission_name = f'Xem Nhóm Lâm Sàng {self.ten_phong_lam_sang}'
+        try:
+            permission = Permission.objects.get(name=permission_name)
+            permission_codename = permission.codename
+        except Permission.DoesNotExist:
+            permission_codename = '-'
+        return permission_codename
 
 class DichVuKham(models.Model):
     """ Danh sách tất cả các dịch vụ khám trong phòng khám """
@@ -614,6 +635,8 @@ class DichVuKham(models.Model):
             return self.phong_chuc_nang.ten_phong_chuc_nang
         else:
             return '-'
+
+    
 
 class NhomDichVuKham(models.Model):
     ten_nhom_dich_vu = models.CharField(max_length=255, null=True, blank=True)
