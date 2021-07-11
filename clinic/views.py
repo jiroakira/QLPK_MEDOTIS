@@ -601,7 +601,7 @@ def add_lich_hen(request):
                 'message': "Thời gian bắt đầu không được thiếu"
             }
             return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
-        
+
         user = User.objects.get(id=id_benh_nhan)
 
         thoi_gian_bat_dau = datetime.strptime(thoi_gian_bat_dau, format_2)
@@ -669,7 +669,7 @@ def add_lich_hen(request):
 
             trang_thai_phan_khoa = TrangThaiKhoaKham.objects.get_or_create(
                 trang_thai_khoa_kham='Chờ Khám')[0]
-            
+
             for i in range(len(danh_sach_dich_vu)):
                 priority = i + 1
                 list_phan_khoa.append(
@@ -682,7 +682,7 @@ def add_lich_hen(request):
                         trang_thai=trang_thai_phan_khoa
                     )
                 )
-                
+
             hoa_don = HoaDonChuoiKham.objects.create(
                 chuoi_kham=chuoi_kham, ma_hoa_don=ma_hoa_don)
 
@@ -701,7 +701,7 @@ def add_lich_hen(request):
             response = {
                 'status': 400,
                 'message': "Vui Lòng Chọn Phòng Lâm Sàng"
-            }  
+            }
             return HttpResponse(json.dumps(response), content_type='application/json; charset=utf-8')
 
         response = {
@@ -921,7 +921,7 @@ def phong_chuyen_khoa(request, *args, **kwargs):
         }
         return render(request, 'bac_si_chuyen_khoa/phong_chuyen_khoa.html', context=data)
     else:
-        
+
         data = {
             'phong_chuc_nang': phong_chuc_nang,
             'phong_lam_sang': phong_lam_sang,
@@ -1034,7 +1034,7 @@ def store_phan_khoa(request):
         response = {
             'status': 200,
             'message': "Phân Khoa Khám Thành Công!",
-            'url': '/bac_si_lam_sang/danh_sach_benh_nhan_cho/'
+            'url': f'/phong_lam_sang/{lich_hen.phong_lam_sang.id}/',
         }
 
         channel_layer = get_channel_layer()
@@ -1360,6 +1360,7 @@ def upload_view_lam_sang(request, **kwargs):
 def phong_tai_chinh_danh_sach_cho(request):
     trang_thai = TrangThaiChuoiKham.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     phong_kham = PhongKham.objects.all().first()
     mau_hoa_don = MauPhieu.objects.filter(codename='hoa_don_lam_sang').first()
 
@@ -1369,6 +1370,7 @@ def phong_tai_chinh_danh_sach_cho(request):
     data = {
         'trang_thai': trang_thai,
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
         'phong_kham': phong_kham,
         'mau_hoa_don': mau_hoa_don,
         'nguoi_thanh_toan': nguoi_thanh_toan,
@@ -1394,6 +1396,7 @@ def hoa_don_dich_vu(request, **kwargs):
     id_chuoi_kham = kwargs.get('id_chuoi_kham')
     chuoi_kham = get_object_or_404(ChuoiKham, id=id_chuoi_kham)
     check_da_thanh_toan = chuoi_kham.check_thanh_toan()
+    phong_lam_sang = PhongLamSang.objects.all()
 
     if check_da_thanh_toan == True:
         check_thanh_toan_them = chuoi_kham.check_thanh_toan_them()
@@ -1456,6 +1459,7 @@ def hoa_don_dich_vu(request, **kwargs):
 
         data = {
             'phong_chuc_nang': phong_chuc_nang,
+            'phong_lam_sang': phong_lam_sang,
             'mau_hoa_don': mau_hoa_don,
             'danh_sach_dich_vu': danh_sach_dich_vu,
             'danh_sach_bao_hiem': danh_sach_bao_hiem,
@@ -1518,6 +1522,7 @@ def hoa_don_dich_vu(request, **kwargs):
 
         data = {
             'phong_chuc_nang': phong_chuc_nang,
+            'phong_lam_sang': phong_lam_sang,
             'mau_hoa_don': mau_hoa_don,
             'danh_sach_dich_vu': danh_sach_dich_vu,
             'danh_sach_bao_hiem': danh_sach_bao_hiem,
@@ -1544,6 +1549,8 @@ def hoa_don_thuoc(request, **kwargs):
     don_thuoc = get_object_or_404(DonThuoc, id=id_don_thuoc)
     danh_sach_thuoc = don_thuoc.ke_don.all()
     check_da_thanh_toan = don_thuoc.check_thanh_toan()
+
+    phong_lam_sang = PhongLamSang.objects.all()
 
     if check_da_thanh_toan == True:
         hoa_don_thuoc = don_thuoc.hoa_don_thuoc
@@ -1653,6 +1660,7 @@ def hoa_don_thuoc(request, **kwargs):
 
     data = {
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
         'don_thuoc': don_thuoc,
         'flag': don_thuoc.check_tphtdt,
         'mau_hoa_don_thuoc': mau_hoa_don_thuoc,
@@ -2628,35 +2636,35 @@ def update_thuoc(request):
         if thuoc.so_lo is not None:
             if so_lo != thuoc.so_lo:
                 thuoc = Thuoc.objects.create(
-                    ma_hoat_chat = ma_hoat_chat,
-                    ten_hoat_chat = ten_hoat_chat,
-                    ten_thuoc = ten_thuoc,
-                    ham_luong = ham_luong,
-                    duong_dung = duong_dung,
-                    so_dang_ky = so_dang_ky,
-                    dong_goi = dong_goi,
-                    don_vi_tinh = don_vi_tinh,
-                    don_gia = don_gia,
-                    don_gia_tt = don_gia_tt,
-                    so_lo = so_lo,
-                    so_luong_kha_dung = so_luong_kha_dung,
-                    hang_sx = hang_sx,
-                    nuoc_sx = nuoc_sx,
-                    quyet_dinh = quyet_dinh,
-                    loai_thuoc = loai_thuoc,
-                    cong_bo = cong_bo,
-                    han_su_dung = han_su_dung,
-                    ngay_san_xuat = ngay_san_xuat,
-                    cong_ty = cong_ty,
+                    ma_hoat_chat=ma_hoat_chat,
+                    ten_hoat_chat=ten_hoat_chat,
+                    ten_thuoc=ten_thuoc,
+                    ham_luong=ham_luong,
+                    duong_dung=duong_dung,
+                    so_dang_ky=so_dang_ky,
+                    dong_goi=dong_goi,
+                    don_vi_tinh=don_vi_tinh,
+                    don_gia=don_gia,
+                    don_gia_tt=don_gia_tt,
+                    so_lo=so_lo,
+                    so_luong_kha_dung=so_luong_kha_dung,
+                    hang_sx=hang_sx,
+                    nuoc_sx=nuoc_sx,
+                    quyet_dinh=quyet_dinh,
+                    loai_thuoc=loai_thuoc,
+                    cong_bo=cong_bo,
+                    han_su_dung=han_su_dung,
+                    ngay_san_xuat=ngay_san_xuat,
+                    cong_ty=cong_ty,
                 )
                 thuoc.ma_thuoc = f"MED{thuoc.id}"
                 thuoc.save()
-                
+
                 response = {
                     'status': 200,
                     'message': 'Cập Nhật Thông Tin Thành Công'
                 }
-            
+
             else:
                 thuoc.ma_hoat_chat = ma_hoat_chat
                 thuoc.ten_hoat_chat = ten_hoat_chat
@@ -2803,8 +2811,13 @@ def update_thuoc_phong_thuoc(request):
 @login_required(login_url='/dang_nhap/')
 def doanh_thu_phong_kham(request):
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
+    context = {
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
+    }
 
-    return render(request, 'phong_tai_chinh/doanh_thu_phong_kham.html', context={'phong_chuc_nang': phong_chuc_nang})
+    return render(request, 'phong_tai_chinh/doanh_thu_phong_kham.html', context)
 
 
 @login_required(login_url='/dang_nhap/')
@@ -3120,8 +3133,14 @@ def store_cong_ty(request):
 @login_required(login_url='/dang_nhap/')
 def danh_sach_bai_dang(request):
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
 
-    return render(request, "le_tan/danh_sach_bai_dang.html", context={'phong_chuc_nang': phong_chuc_nang})
+    context = {
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
+    }
+
+    return render(request, "le_tan/danh_sach_bai_dang.html", context)
 
 
 def store_thanh_toan_lam_sang(request):
@@ -3528,9 +3547,11 @@ def xoa_vat_tu(request):
 @login_required(login_url='/dang_nhap/')
 def danh_sach_bac_si(request):
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     province = Province.objects.all()
     data = {
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
         'province': province,
     }
 
@@ -3847,7 +3868,8 @@ def upload_ket_qua_lam_sang(request):
 
         response = {
             'status': 200,
-            'message': "Upload Kết Quả Thành Công!"
+            'message': "Upload Kết Quả Thành Công!",
+            'id_phong_lam_sang': lich_hen.phong_lam_sang.id,
         }
 
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
@@ -4560,9 +4582,11 @@ def import_ma_benh_excel(request):
 
 def danh_sach_mau_phieu(request):
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
 
     data = {
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
     }
     return render(request, 'le_tan/danh_sach_mau_phieu.html', context=data)
 
@@ -4570,9 +4594,11 @@ def danh_sach_mau_phieu(request):
 def them_mau_phieu(request):
     dich_vu = DichVuKham.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     context = {
         'dich_vu': dich_vu,
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
     }
     return render(request, 'le_tan/them_mau_phieu.html', context=context)
 
@@ -5539,8 +5565,14 @@ def view_danh_sach_nhom_quyen(request):
     query = reduce(operator.or_, (Q(name__contains=x)
                    for x in default_perms_name))
     permissions = Permission.objects.exclude(query)
+
+    phong_lam_sang = PhongLamSang.objects.all()
+    phong_chuc_nang = PhongChucNang.objects.all()
+
     context = {
-        'permissions': permissions
+        'permissions': permissions,
+        'phong_lam_sang': phong_lam_sang,
+        'phong_chuc_nang': phong_chuc_nang,
     }
     return render(request, 'danh_sach_nhom_quyen.html', context)
 
@@ -5579,10 +5611,12 @@ def view_danh_sach_nhan_vien(request):
     groups_serializer = GroupSerializer(groups, many=True)
     groups_data = json.loads(json.dumps(groups_serializer.data))
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     context = {
         'province': province,
         'groups': groups_data,
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
     }
     return render(request, 'danh_sach_nhan_vien.html', context)
 
@@ -7274,14 +7308,16 @@ def store_update_phieu_ket_qua(request):
         }
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
+
 def them_nhom_dich_vu_kham_view(request):
     dich_vu_kham = DichVuKham.objects.all()
 
     context = {
         'dich_vu_kham': dich_vu_kham
     }
-    
+
     return render(request, 'phong_tai_chinh/them_nhom_dich_vu_kham.html', context)
+
 
 def store_nhom_dich_vu(request):
     if request.method == "POST":
@@ -7290,7 +7326,8 @@ def store_nhom_dich_vu(request):
 
         list_dich_vu = json.loads(danh_sach_dich_vu)
 
-        nhom_dich_vu = NhomDichVuKham.objects.create(ten_nhom_dich_vu=ten_nhom_dich_vu)
+        nhom_dich_vu = NhomDichVuKham.objects.create(
+            ten_nhom_dich_vu=ten_nhom_dich_vu)
         for dich_vu_id in list_dich_vu:
             dich_vu_kham = DichVuKham.objects.get(id=dich_vu_id)
             nhom_dich_vu.dich_vu_kham.add(dich_vu_kham)
@@ -7307,6 +7344,7 @@ def store_nhom_dich_vu(request):
         }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
 
+
 def danh_sach_benh_nhan_theo_phong_lam_sang(request, **kwargs):
     id_phong_lam_sang = kwargs.get('id')
     phong_lam_sang_obj = PhongLamSang.objects.get(id=id_phong_lam_sang)
@@ -7319,6 +7357,7 @@ def danh_sach_benh_nhan_theo_phong_lam_sang(request, **kwargs):
         'phong_lam_sang': phong_lam_sang,
     }
     return render(request, 'bac_si_lam_sang/phong_lam_sang.html', context)
+
 
 def danh_sach_ket_qua_phong_lam_sang(request, **kwargs):
     id_phong_lam_sang = kwargs.get('id')
@@ -7340,6 +7379,7 @@ def danh_sach_ket_qua_phong_lam_sang(request, **kwargs):
 
     return render(request, 'bac_si_lam_sang/danh_sach_kham.html', context)
 
+
 def danh_sach_phong_lam_sang(request):
     phong_lam_sang = PhongLamSang.objects.all()
     phong_chuc_nang = PhongChucNang.objects.all()
@@ -7348,6 +7388,7 @@ def danh_sach_phong_lam_sang(request):
         'phong_chuc_nang': phong_chuc_nang
     }
     return render(request, 'bac_si_lam_sang/danh_sach_phong_lam_sang.html', context)
+
 
 def them_phong_lam_sang(request):
     if request.method == "POST":
@@ -7370,7 +7411,7 @@ def them_phong_lam_sang(request):
                 content_type=content_type
             )
             new_group.permissions.add(permission)
-            
+
         response = {
             'status': 200,
             'message': "Tạo Nhóm Phòng Lâm Sàng Thành Công"

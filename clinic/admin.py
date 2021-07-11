@@ -50,4 +50,3 @@ admin.site.register(Permission)
 admin.site.register(LichSuChuoiKham)
 admin.site.register(NhomDichVuKham)
 admin.site.register(PhongLamSang)
-
