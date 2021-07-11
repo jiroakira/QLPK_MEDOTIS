@@ -1224,6 +1224,7 @@ class DanhSachKhamTrongNgay(generics.ListCreateAPIView):
         today_end = tomorrow.replace(hour=0, minute=0, second=0)
 
         id_phong_lam_sang = self.request.query_params.get('id_phong_lam_sang')
+
         phong_lam_sang = PhongLamSang.objects.get(id=id_phong_lam_sang)
 
         lich_hen_theo_phong = phong_lam_sang.get_danh_sach_lich_hen_theo_phong()
@@ -1239,7 +1240,8 @@ class DanhSachKhamTrongNgay(generics.ListCreateAPIView):
 
             if flag is not None:
                 trang_thai = TrangThaiChuoiKham.objects.get(id=flag)
-                queryset = queryset.filter(trang_thai=trang_thai).order_by('-id')
+                queryset = queryset.filter(
+                    trang_thai=trang_thai).order_by('-id')
         else:
             queryset = []
 
@@ -1637,7 +1639,7 @@ class SetChoThanhToan(APIView):
                 'status': 404,
                 "message": "Lịch Hẹn Đã Được Xác Nhận Thanh Toán Do Đã Được Phân Khoa"
             }
-            
+
         else:
             trang_thai = TrangThaiLichHen.objects.get_or_create(
                 ten_trang_thai="Chờ Thanh Toán Lâm Sàng")[0]
@@ -1885,8 +1887,13 @@ class DanhSachBenhNhanTheoPhongChucNang(generics.ListCreateAPIView):
         id_phong = self.request.query_params.get('id')
         phong = PhongChucNang.objects.get(id=id_phong)
 
+        list_paid = []
         queryset = PhanKhoaKham.objects.filter(
             dich_vu_kham__phong_chuc_nang=phong, thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end).order_by('-id')
+
+        for qs in queryset:
+            if qs.chuoi_kham.check_thanh_toan():
+                list_paid.append(qs)
 
         term = self.request.query_params.get('query[search]')
         flag = self.request.query_params.get('query[trang_thai]')
@@ -1898,6 +1905,8 @@ class DanhSachBenhNhanTheoPhongChucNang(generics.ListCreateAPIView):
         if flag is not None:
             trang_thai = TrangThaiKhoaKham.objects.get(id=flag)
             queryset = queryset.filter(trang_thai=trang_thai).order_by('-id')
+
+        queryset = list_paid
 
         return queryset
 
@@ -3705,6 +3714,7 @@ class SetChiSoDichVuKham(APIView):
         }
         return Response(response)
 
+
 class DanhSachBenhNhanTheoPhongLamSang(generics.ListCreateAPIView):
     serializer_class = LichHenKhamSerializer
     pagination_class = CustomPagination
@@ -3736,6 +3746,7 @@ class DanhSachBenhNhanTheoPhongLamSang(generics.ListCreateAPIView):
                 trang_thai=trang_thai_lich_hen).order_by('-id')
 
         return queryset
+
 
 class DanhSachPhongLamSangListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = PhongLamSangSerializer
