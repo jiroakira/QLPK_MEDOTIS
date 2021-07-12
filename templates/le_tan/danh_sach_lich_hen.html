@@ -388,6 +388,22 @@
               </div>
             </div>
             <div class="form-group">
+              <label>Chọn Dịch Vụ Khám </label>
+              <select id="selectDichVuKhamEdit" class="selectDichVuKham form-control selectpicker">
+                  <option value="kham_chua_benh" selected>Thanh Toán Trước</option>
+                  <option value="kham_theo_yeu_cau">Thanh Toán Sau</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Chọn Phòng Lâm Sàng </label>
+              <select id="selectPhongLamSangEdit" class="selectPhongLamSang form-control selectpicker">
+                  <option value="" selected disabled>Chọn Phòng Lâm Sàng</option>
+                  {% for phong in phong_lam_sang %}
+                  <option value="{{ phong.id}}">{{ phong.ten_phong_lam_sang }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
               <label>Chọn Thời Gian Bắt Đầu Lịch Hẹn </label>
               <div
                 class="input-group date"
@@ -399,6 +415,7 @@
                   class="thoi_gian_bat_dau form-control datetimepicker-input"
                   placeholder="Thời gian bắt đầu của lịch hẹn"
                   data-target="#kt_datetimepicker_2"
+                  id='thoiGianBatDau'
                 />
                 <div
                   class="input-group-append"
@@ -411,6 +428,7 @@
                 </div>
               </div>
             </div>
+            
           </form>
         </div>
       </div>
@@ -425,6 +443,7 @@
         <button
           type="button"
           class="btn-update-lich-hen btn btn-primary font-weight-bold"
+          id="updateLichHen"
         >
           Cập nhật
         </button>
@@ -643,7 +662,7 @@
                   template: function(row) {
                       return `
                           {% if perms.clinic.can_change_appointment %}
-                          <a href="javascript:;" class="btn-edit btn btn-clean btn-icon" title="Thay đổi thời gian lịch hẹn" data-id="${row.id}" data-lich-hen="${row.thoi_gian_bat_dau}">
+                          <a href="javascript:;" class="btn-edit btn btn-clean btn-icon" title="Thay đổi thời gian lịch hẹn" data-id="${row.id}" data-lich-hen="${row.thoi_gian_bat_dau}" data-loai-dich-vu="${row.loai_dich_vu}" data-phong-lam-sang="${row.phong_lam_sang}">
                               <i class="la la-edit icon-lg text-primary"></i>
                           </a>
                           {% endif %}
@@ -914,19 +933,43 @@
               var id = $(this).data('id')
               $('#updateLichHenKham').modal('show')
               $('#updateLichHenKham').find('.thoi_gian_bat_dau').data('id', id)
+
+              $('#updateLichHenKham').find('#selectDichVuKhamEdit').selectpicker("val", $(this).attr('data-loai-dich-vu'))
+              $('#updateLichHenKham').find('#selectPhongLamSangEdit').selectpicker("val", $(this).attr('data-phong-lam-sang'))              
+              $('#updateLichHenKham').find('#thoiGianBatDau').val($(this).attr('data-lich-hen'))
+
+              $('#updateLichHenKham').find('#updateLichHen').attr('data-id', id)
+              $('#updateLichHenKham').find('#updateLichHen').attr('data-loai-dich-vu', $(this).attr('data-loai-dich-vu'))
+              $('#updateLichHenKham').find('#updateLichHen').attr('data-phong-lam-sang', $(this).attr('data-phong-lam-sang'))
+              $('#updateLichHenKham').find('#updateLichHen').attr('data-thoi-gian', $(this).attr('data-lich-hen'))
+
+              $('#updateLichHenKham').find('#selectDichVuKhamEdit').on("change", function() {
+                $('#updateLichHenKham').find('#updateLichHen').attr('data-loai-dich-vu', $("#selectDichVuKhamEdit").val())
+              })
+
+              $('#updateLichHenKham').find('#selectPhongLamSangEdit').on("change", function() {
+                $('#updateLichHenKham').find('#updateLichHen').attr('data-phong-lam-sang', $("#selectPhongLamSangEdit").val())
+              })
           })
       }
 
       var updateLichHenKham = function(){
           $(document).on("click", ".btn-update-lich-hen", function(){
               var thoi_gian_bat_dau = $('.thoi_gian_bat_dau').val()
-              var id = $('.thoi_gian_bat_dau').data('id')
-              console.log(thoi_gian_bat_dau, id)
+              
+              var id = $(this).attr('data-id')
+              var loai_dich_vu = $(this).attr('data-loai-dich-vu')
+              var phong_lam_sang = $(this).attr('data-phong-lam-sang')
+
+              console.log(id, loai_dich_vu, phong_lam_sang, thoi_gian_bat_dau)
+
               var csrf_token = "{{csrf_token}}"
 
               var formData = new FormData();
               formData.append('thoi_gian_bat_dau', thoi_gian_bat_dau)
               formData.append('id', id)
+              formData.append('loai_dich_vu', loai_dich_vu)
+              formData.append('phong_lam_sang', phong_lam_sang)
               formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
               $.ajax({
                   type       : "POST",
@@ -944,7 +987,7 @@
                   error: function(response){
                       toastr.warning('Có Lỗi Xảy Ra')
                   }
-              })
+              })  
           })
       }
 

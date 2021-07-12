@@ -935,6 +935,7 @@ def phan_khoa_kham(request, **kwargs):
     lich_hen = get_object_or_404(LichHenKham, id=id_lich_hen)
     benh_nhan = lich_hen.benh_nhan
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     mau_hoa_don = MauPhieu.objects.filter(codename='phieu_chi_dinh').first()
     bac_si_chi_dinh = request.user.ho_ten
     thoi_gian = datetime.now()
@@ -943,6 +944,7 @@ def phan_khoa_kham(request, **kwargs):
         'id_lich_hen': id_lich_hen,
         'lich_hen': lich_hen,
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
         'benh_nhan': benh_nhan,
         'mau_hoa_don': mau_hoa_don,
         'bac_si_chi_dinh': bac_si_chi_dinh,
@@ -1333,6 +1335,7 @@ def upload_view_lam_sang(request, **kwargs):
 
     ma_ket_qua = getSubName(benh_nhan.ho_ten) + '-' + str(date_time)
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     ngay_kham = datetime.now()
     mau_phieu = MauPhieu.objects.filter(
         codename='phieu_ket_qua_lam_sang').first()
@@ -1349,6 +1352,7 @@ def upload_view_lam_sang(request, **kwargs):
     data = {
         'id_chuoi_kham': id_chuoi_kham,
         'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
         'mau_phieu': mau_phieu,
         'ma_ket_qua': ma_ket_qua,
         'data_dict': data_dict,
@@ -2028,12 +2032,20 @@ def store_update_lich_hen(request):
     if request.method == 'POST':
         thoi_gian_bat_dau = request.POST.get('thoi_gian_bat_dau')
         id_lich_hen = request.POST.get('id')
+        loai_dich_vu = request.POST.get('loai_dich_vu')
+        phong_lam_sang_id = request.POST.get('phong_lam_sang')
+
+        phong_lam_sang = PhongLamSang.objects.get(id=phong_lam_sang_id)
         thoi_gian_bat_dau = datetime.strptime(thoi_gian_bat_dau, format_2)
         thoi_gian = thoi_gian_bat_dau.strftime("%Y-%m-%d %H:%M")
         trang_thai = TrangThaiLichHen.objects.get(ten_trang_thai="Xác Nhận")
         lich_hen = LichHenKham.objects.get(id=id_lich_hen)
+
         lich_hen.thoi_gian_bat_dau = thoi_gian
         lich_hen.trang_thai = trang_thai
+        lich_hen.loai_dich_vu = loai_dich_vu
+        lich_hen.phong_lam_sang = phong_lam_sang
+
         lich_hen.save()
 
         from actstream import action

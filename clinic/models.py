@@ -512,8 +512,10 @@ class PhongChucNang(models.Model):
 
     # TODO review table PhongChucNang again
 
+
 class PhongLamSang(models.Model):
-    ten_phong_lam_sang = models.CharField(max_length=255, null=True, blank=True)
+    ten_phong_lam_sang = models.CharField(
+        max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=255, null=True, blank=True)
 
     thoi_gian_tao = models.DateTimeField(
@@ -538,7 +540,7 @@ class PhongLamSang(models.Model):
             for lich_hen in self.lich_hen_theo_phong.all():
                 if lich_hen.get_chuoi_kham() is not None:
                     list_lich_hen.append(lich_hen.get_chuoi_kham())
-                    
+
             return list_lich_hen
         else:
             return None
@@ -552,6 +554,7 @@ class PhongLamSang(models.Model):
         except Permission.DoesNotExist:
             permission_codename = '-'
         return permission_codename
+
 
 class DichVuKham(models.Model):
     """ Danh sách tất cả các dịch vụ khám trong phòng khám """
@@ -636,7 +639,6 @@ class DichVuKham(models.Model):
         else:
             return '-'
 
-    
 
 class NhomDichVuKham(models.Model):
     ten_nhom_dich_vu = models.CharField(max_length=255, null=True, blank=True)
@@ -749,7 +751,8 @@ class LichHenKham(models.Model):
     nguoi_phu_trach = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name="nguoi_phu_trach")
 
-    phong_lam_sang = models.ForeignKey("PhongLamSang", on_delete=models.SET_NULL, null=True, blank=True, related_name="lich_hen_theo_phong")
+    phong_lam_sang = models.ForeignKey(
+        "PhongLamSang", on_delete=models.SET_NULL, null=True, blank=True, related_name="lich_hen_theo_phong")
 
     thoi_gian_bat_dau = models.DateTimeField()
     thoi_gian_ket_thuc = models.DateTimeField(null=True, blank=True)
@@ -837,8 +840,16 @@ class LichHenKham(models.Model):
             chuoi_kham = self.danh_sach_chuoi_kham.all().last()
         else:
             chuoi_kham = None
-        
+
         return chuoi_kham
+
+    def get_thoi_gian_bat_dau(self):
+        if self.thoi_gian_bat_dau is not None:
+            timestart = self.thoi_gian_bat_dau.strftime("%d/%m/%Y %H:%M")
+        else:
+            timestart = "-"
+
+        return timestart
 
 
 class LichSuTrangThaiLichHen(models.Model):
@@ -1039,6 +1050,13 @@ class ChuoiKham(models.Model):
         for phan_khoa in self.phan_khoa_kham.all():
             total += phan_khoa.get_gia_dich_vu()
         return total
+
+    def check_thanh_toan_sau(self):
+        flag = False
+        if self.lich_hen is not None:
+            if self.lich_hen.loai_dich_vu == "kham_theo_yeu_cau":
+                flag = True
+        return flag
 
 
 class InPaidBilledManager(models.Manager):
@@ -1889,4 +1907,3 @@ class Ward(models.Model):
 
     def __str__(self):
         return self.name
-
