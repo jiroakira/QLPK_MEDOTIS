@@ -123,6 +123,7 @@ class LichHenKhamSerializer(serializers.ModelSerializer):
     trang_thai_thanh_toan = serializers.CharField(source='check_thanh_toan')
     hoan_thanh_kham = serializers.BooleanField(source='check_thanh_toan')
     id_chuoi_kham = serializers.CharField(source='get_id_chuoi_kham')
+    thoi_gian_bat_dau = serializers.CharField(source='get_thoi_gian_bat_dau')
 
     class Meta:
         model = LichHenKham
@@ -144,6 +145,7 @@ class LichHenKhamSerializer(serializers.ModelSerializer):
             'trang_thai_thanh_toan',
             'thanh_toan_sau',
             'hoan_thanh_kham',
+            'phong_lam_sang',
         )
 
     def create(self, validated_data):
@@ -683,11 +685,13 @@ class HoaDonChuoiKhamSerializerSimple(serializers.ModelSerializer):
     trang_thai_thanh_toan = serializers.CharField(source='check_thanh_toan')
     thanh_toan_sau = serializers.BooleanField(source='lich_hen.thanh_toan_sau')
     thanh_toan_them = serializers.BooleanField(source='check_thanh_toan_them')
+    id_lich_hen = serializers.CharField(source='lich_hen.id')
 
     class Meta:
         model = ChuoiKham
         fields = (
             'id',
+            'id_lich_hen',
             'benh_nhan',
             'bac_si_dam_nhan',
             'trang_thai',
@@ -1119,6 +1123,7 @@ class DichVuKhamPhanKhoaSerializer(serializers.ModelSerializer):
 #             'dich_vu_kham',
 #             'bao_hiem',
 #         )
+
 
 class PhongLamSangSerializer(serializers.ModelSerializer):
     class Meta:

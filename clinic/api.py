@@ -1888,11 +1888,14 @@ class DanhSachBenhNhanTheoPhongChucNang(generics.ListCreateAPIView):
         phong = PhongChucNang.objects.get(id=id_phong)
 
         list_paid = []
+        list_pay_later = []
         queryset = PhanKhoaKham.objects.filter(
             dich_vu_kham__phong_chuc_nang=phong, thoi_gian_tao__gte=today_start, thoi_gian_tao__lt=today_end).order_by('-id')
 
         for qs in queryset:
             if qs.chuoi_kham.check_thanh_toan():
+                list_paid.append(qs)
+            elif qs.chuoi_kham.check_thanh_toan_sau():
                 list_paid.append(qs)
 
         term = self.request.query_params.get('query[search]')
