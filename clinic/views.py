@@ -1,6 +1,7 @@
 
 import re
 import string
+from django.http import response
 from django.views.decorators.csrf import csrf_exempt
 import random
 from decimal import Decimal
@@ -654,10 +655,13 @@ def add_lich_hen(request):
             ma_lk = f"CK{date_time}"
 
             nhom_dich_vu = NhomDichVuKham.objects.get(id=nhom_dich_vu_kham)
+
             danh_sach_dich_vu = nhom_dich_vu.dich_vu_kham.all()
 
             trang_thai_lich_hen = TrangThaiLichHen.objects.get_or_create(
                 ten_trang_thai="Đã Phân Khoa")[0]
+
+            lich_hen.nhom_dich_vu = nhom_dich_vu
             lich_hen.trang_thai = trang_thai_lich_hen
             lich_hen.save()
 
@@ -2019,11 +2023,14 @@ def danh_sach_lich_hen(request):
     phong_chuc_nang = PhongChucNang.objects.all()
     phong_lam_sang = PhongLamSang.objects.all()
     nguoi_dung = User.objects.filter(chuc_nang=1)
+
+    nhom_dich_vu = NhomDichVuKham.objects.all()
     data = {
         'trang_thai': trang_thai,
         'nguoi_dung': nguoi_dung,
         'phong_chuc_nang': phong_chuc_nang,
         'phong_lam_sang': phong_lam_sang,
+        'nhom_dich_vu': nhom_dich_vu,
     }
     return render(request, 'le_tan/danh_sach_lich_hen.html', context=data)
 
@@ -2034,6 +2041,7 @@ def store_update_lich_hen(request):
         id_lich_hen = request.POST.get('id')
         loai_dich_vu = request.POST.get('loai_dich_vu')
         phong_lam_sang_id = request.POST.get('phong_lam_sang')
+        nhom_dich_vu_kham = request.POST.get('nhom_dich_vu_kham')
 
         phong_lam_sang = PhongLamSang.objects.get(id=phong_lam_sang_id)
         thoi_gian_bat_dau = datetime.strptime(thoi_gian_bat_dau, format_2)
@@ -2047,6 +2055,64 @@ def store_update_lich_hen(request):
         lich_hen.phong_lam_sang = phong_lam_sang
 
         lich_hen.save()
+
+        user = lich_hen.benh_nhan
+
+        if nhom_dich_vu_kham != 'null':
+            list_phan_khoa = []
+
+            now = datetime.now()
+            date_time = now.strftime("%m%d%y%H%M%S")
+            subName = getSubName(user.ho_ten)
+            ma_hoa_don = "HD" + "-" + subName + '-' + date_time
+            ma_lk = f"CK{date_time}"
+
+            nhom_dich_vu = NhomDichVuKham.objects.get(id=nhom_dich_vu_kham)
+
+            danh_sach_dich_vu = nhom_dich_vu.dich_vu_kham.all()
+
+            trang_thai_lich_hen = TrangThaiLichHen.objects.get_or_create(
+                ten_trang_thai="Đã Phân Khoa")[0]
+
+            lich_hen.nhom_dich_vu = nhom_dich_vu
+            lich_hen.trang_thai = trang_thai_lich_hen
+            lich_hen.save()
+
+            trang_thai = TrangThaiChuoiKham.objects.get_or_create(
+                trang_thai_chuoi_kham="Chờ Thanh Toán")[0]
+            chuoi_kham = ChuoiKham.objects.create(
+                bac_si_dam_nhan=request.user, benh_nhan=user, trang_thai=trang_thai, lich_hen=lich_hen, ma_lk=ma_lk)
+            chuoi_kham.save()
+
+            trang_thai_phan_khoa = TrangThaiKhoaKham.objects.get_or_create(
+                trang_thai_khoa_kham='Chờ Khám')[0]
+
+            for i in range(len(danh_sach_dich_vu)):
+                priority = i + 1
+                list_phan_khoa.append(
+                    PhanKhoaKham(
+                        benh_nhan=user,
+                        dich_vu_kham=danh_sach_dich_vu[i],
+                        bac_si_lam_sang=request.user,
+                        chuoi_kham=chuoi_kham,
+                        priority=priority,
+                        trang_thai=trang_thai_phan_khoa
+                    )
+                )
+
+            hoa_don = HoaDonChuoiKham.objects.create(
+                chuoi_kham=chuoi_kham, ma_hoa_don=ma_hoa_don)
+
+            PhanKhoaKham.objects.bulk_create(list_phan_khoa)
+            response = {
+                'status': 200,
+                'message': "Tạo Lịch Hẹn Thành Công"
+            }
+
+        if phong_lam_sang_id != "null":
+            phong_lam_sang = PhongLamSang.objects.get(id=phong_lam_sang_id)
+            lich_hen.phong_lam_sang = phong_lam_sang
+            lich_hen.save()
 
         from actstream import action
         action.send(request.user, verb='thay đổi lịch hẹn',
@@ -2483,8 +2549,14 @@ def chinh_sua_nguon_cung(request):
 @login_required(login_url='/dang_nhap/')
 def danh_sach_dich_vu_kham(request):
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
 
-    return render(request, 'phong_tai_chinh/dich_vu_kham.html', context={'phong_chuc_nang': phong_chuc_nang})
+    context = {
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
+    }
+
+    return render(request, 'phong_tai_chinh/dich_vu_kham.html', context)
 
 
 @login_required(login_url='/dang_nhap/')
@@ -7243,8 +7315,10 @@ def xoa_ket_qua_chuyen_khoa(request):
 
 def menu_view(request):
     phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
     context = {
-        'phong_chuc_nang': phong_chuc_nang
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
     }
 
     return render(request, 'menu.html', context)
@@ -7323,9 +7397,13 @@ def store_update_phieu_ket_qua(request):
 
 def them_nhom_dich_vu_kham_view(request):
     dich_vu_kham = DichVuKham.objects.all()
+    phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
 
     context = {
-        'dich_vu_kham': dich_vu_kham
+        'dich_vu_kham': dich_vu_kham,
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
     }
 
     return render(request, 'phong_tai_chinh/them_nhom_dich_vu_kham.html', context)
@@ -7434,3 +7512,124 @@ def them_phong_lam_sang(request):
             'message': "Xảy Ra Lỗi Trong Quá Trình Xử Lí"
         }
     return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+
+def nhom_dich_vu_view(request):
+    phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
+
+    context = {
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
+    }
+
+    return render(request, 'phong_tai_chinh/danh_sach_nhom_dich_vu.html', context)
+
+
+def chinh_sua_nhom_dich_vu_view(request, **kwargs):
+    phong_chuc_nang = PhongChucNang.objects.all()
+    phong_lam_sang = PhongLamSang.objects.all()
+
+    id = kwargs.get('id')
+    nhom_dich_vu = NhomDichVuKham.objects.get(id=id)
+    group_dich_vu = [
+        dich_vu.ten_dvkt for dich_vu in nhom_dich_vu.dich_vu_kham.all()]
+    ids_dich_vu = [dich_vu.id for dich_vu in nhom_dich_vu.dich_vu_kham.all()]
+
+    danh_sach_dich_vu = DichVuKham.objects.all()
+
+    dich_vu = []
+    for dvk in danh_sach_dich_vu:
+        obj = {}
+        obj['id'] = dvk.id
+        obj['ten_dvkt'] = dvk.ten_dvkt
+        dich_vu.append(obj)
+
+    context = {
+        'phong_chuc_nang': phong_chuc_nang,
+        'phong_lam_sang': phong_lam_sang,
+        'group_dich_vu': group_dich_vu,
+        'ids_dich_vu': ids_dich_vu,
+        'dich_vu': dich_vu,
+        'nhom_dich_vu': nhom_dich_vu,
+
+    }
+    return render(request, 'phong_tai_chinh/chinh_sua_nhom_dich_vu.html', context)
+
+
+def update_nhom_dich_vu(request):
+    if request.method == "POST":
+        id = request.POST.get('id')
+        ten_nhom_dich_vu = request.POST.get('ten_nhom_dich_vu')
+        danh_sach_dich_vu = request.POST.get("danh_sach_dich_vu")
+        group_dich_vu = json.loads(danh_sach_dich_vu)
+
+        if ten_nhom_dich_vu == "":
+            response = {
+                'status': 404,
+                'message': 'Tên nhóm dịch vụ không được để trống'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+        try:
+            nhom_dich_vu = NhomDichVuKham.objects.get(id=id)
+            nhom_dich_vu.ten_nhom_dich_vu = ten_nhom_dich_vu
+
+            nhom_dich_vu.dich_vu_kham.clear()
+
+            for dvk_id in group_dich_vu:
+                dich_vu = DichVuKham.objects.get(id=dvk_id)
+                nhom_dich_vu.dich_vu_kham.add(dich_vu)
+
+            nhom_dich_vu.save()
+
+        except NhomDichVuKham.DoesNotExist:
+            response = {
+                'status': 404,
+                'message': 'Nhóm dịch vụ không tồn tại'
+            }
+            return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+        response = {
+            'status': 200,
+            'message': 'Cập nhật nhóm dịch vụ thành công'
+        }
+    else:
+        response = {
+            'status': 404,
+            'message': 'Không lưu được nhóm dịch vụ'
+        }
+    return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+
+def xoa_nhom_dich_vu(request):
+    if request.method == "GET":
+        id = request.GET.get('id')
+        print(id)
+        nhom_dich_vu = NhomDichVuKham.objects.get(id=id)
+        print(nhom_dich_vu)
+
+        nhom_dich_vu.dich_vu_kham.clear()
+        nhom_dich_vu.delete()
+
+        response = {
+            'status': 200,
+            'message': "Xóa Nhóm Dịch Vụ Thành Công"
+        }
+
+        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
+def xoa_phong_lam_sang(request):
+    if request.method == "GET":
+        id = request.GET.get('id')
+        phong_lam_sang = PhongLamSang.objects.get(id=id)
+        gorup = Group.objects.get(
+            name=f"Nhóm Lâm Sàng {phong_lam_sang.ten_phong_lam_sang}")
+        gorup.delete()
+        phong_lam_sang.delete()
+
+        response = {
+            'status': 200,
+            'message': "Xóa Phòng Lâm Sàng Thành Công"
+        }
+
+        return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")

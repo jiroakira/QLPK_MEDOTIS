@@ -20,7 +20,7 @@ from clinic.models import *
 from rest_framework import viewsets
 from django.contrib.auth import authenticate, get_user_model
 from .serializers import (BaiDangSerializer, BookLichHenKhamSerializer, ChiSoXetNghiemSerializer, DangKiSerializer, DanhSachDonThuocSerializer, DanhSachKetQuaChuoiKhamSerializer, DanhSachPhanKhoaSerializer, DanhSachPhongKhamSerializer, DichVuKhamSerializer, DichVuKhamSerializerFormatted, DichVuKhamSerializerSimple, DistrictSerializer, DonThuocSerializer, FileKetQuaSerializer, FilterChuoiKhamSerializer, FilterDichVuKhamBaoHiemSerializer, FilterDichVuSerializer, FilterDonThuocSerializer, FilterHoaDonChuoiKhamBaoHiemSerializer, GroupSerializer, HoaDonChuoiKhamSerializerSimple, HoaDonLamSangSerializerFormatted, HoaDonThuocSerializer, HoaDonThuocSerializerSimple, KetQuaTongQuatSerializer, KetQuaXetNghiemSerializer, LichHenKhamSerializer, LichHenKhamSerializerSimple, LichHenKhamUserSerializer,
-                          MauPhieuSerializer, NhomChiSoTieuChuanSerializer, PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer, PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer, PhongLamSangSerializer, ProfilePhongChucNangSerializer, StaffUserSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer, UserLoginSerializer, UserSerializer, ChuoiKhamSerializer, UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer, UploadAvatarSerializer, AppointmentUpdateDetailSerializer, UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer, HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer, DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
+                          MauPhieuSerializer, NhomChiSoTieuChuanSerializer, NhomDichVuSerializer, PhanKhoaKhamDichVuSerializer, PhanKhoaKhamSerializer, PhieuKetQuaSerializer, PhongChucNangSerializer, PhongChucNangSerializerSimple, PhongKhamSerializer, PhongLamSangSerializer, ProfilePhongChucNangSerializer, StaffUserSerializer, TatCaLichHenSerializer, TrangThaiLichHenSerializer, UserLoginSerializer, UserSerializer, ChuoiKhamSerializer, UserUpdateInfoSerializer, UserUpdateInfoRequestSerializer, UploadAvatarSerializer, AppointmentUpdateDetailSerializer, UpdateLichHenKhamSerializer, DichVuKhamHoaDonSerializer, HoaDonChuoiKhamThanhToanSerializer, KetQuaChuyenKhoaSerializer,  ChuoiKhamSerializerSimple, UserSerializerSimple, VatTuSerializer, DanhSachDichVuSerializer, HoaDonLamSangSerializer, DanhSachBacSiSerializer, DanhSachThuocSerializerSimple, WardSerializer)
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -3757,4 +3757,12 @@ class DanhSachPhongLamSangListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = PhongLamSang.objects.all()
+        return queryset
+
+class DanhSachNhomDichVuListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = NhomDichVuSerializer
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = NhomDichVuKham.objects.all()
         return queryset

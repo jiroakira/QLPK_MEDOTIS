@@ -404,6 +404,15 @@
               </select>
             </div>
             <div class="form-group">
+              <label>Chọn Nhóm Dịch Vụ Khám </label>
+              <select id="selectNhomDichVuEdit" class="form-control selectpicker">
+                  <option value="" selected disabled>Chọn Nhóm Dịch Vụ Khám</option>
+                  {% for nhom in nhom_dich_vu %}
+                  <option value="{{ nhom.id}}">{{ nhom.ten_nhom_dich_vu }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
               <label>Chọn Thời Gian Bắt Đầu Lịch Hẹn </label>
               <div
                 class="input-group date"
@@ -554,12 +563,12 @@
                   field: 'thoi_gian_bat_dau',
                   title: 'Thời Gian Đăng Ký',
                   template: function(row) {
-                      var date = new Date(Date.parse(row.thoi_gian_bat_dau))
+                      {% comment %} var date = new Date(Date.parse(row.thoi_gian_bat_dau)) {% endcomment %}
 
                       if(!row.thoi_gian_bat_dau){
                           return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
                       } else {
-                          return date.toLocaleString('vi-VN')
+                          return row.thoi_gian_bat_dau
                       }
                   }
               }, {
@@ -662,7 +671,7 @@
                   template: function(row) {
                       return `
                           {% if perms.clinic.can_change_appointment %}
-                          <a href="javascript:;" class="btn-edit btn btn-clean btn-icon" title="Thay đổi thời gian lịch hẹn" data-id="${row.id}" data-lich-hen="${row.thoi_gian_bat_dau}" data-loai-dich-vu="${row.loai_dich_vu}" data-phong-lam-sang="${row.phong_lam_sang}">
+                          <a href="javascript:;" class="btn-edit btn btn-clean btn-icon" title="Thay đổi thời gian lịch hẹn" data-id="${row.id}" data-lich-hen="${row.thoi_gian_bat_dau}" data-loai-dich-vu="${row.loai_dich_vu}" data-phong-lam-sang="${row.phong_lam_sang}" data-nhom-dich-vu="${row.nhom_dich_vu}">
                               <i class="la la-edit icon-lg text-primary"></i>
                           </a>
                           {% endif %}
@@ -936,11 +945,13 @@
 
               $('#updateLichHenKham').find('#selectDichVuKhamEdit').selectpicker("val", $(this).attr('data-loai-dich-vu'))
               $('#updateLichHenKham').find('#selectPhongLamSangEdit').selectpicker("val", $(this).attr('data-phong-lam-sang'))              
+              $('#updateLichHenKham').find('#selectNhomDichVuEdit').selectpicker("val", $(this).attr('data-nhom-dich-vu'))              
               $('#updateLichHenKham').find('#thoiGianBatDau').val($(this).attr('data-lich-hen'))
 
               $('#updateLichHenKham').find('#updateLichHen').attr('data-id', id)
               $('#updateLichHenKham').find('#updateLichHen').attr('data-loai-dich-vu', $(this).attr('data-loai-dich-vu'))
               $('#updateLichHenKham').find('#updateLichHen').attr('data-phong-lam-sang', $(this).attr('data-phong-lam-sang'))
+              $('#updateLichHenKham').find('#updateLichHen').attr('data-nhom-dich-vu', $(this).attr('data-nhom-dich-vu'))
               $('#updateLichHenKham').find('#updateLichHen').attr('data-thoi-gian', $(this).attr('data-lich-hen'))
 
               $('#updateLichHenKham').find('#selectDichVuKhamEdit').on("change", function() {
@@ -949,6 +960,10 @@
 
               $('#updateLichHenKham').find('#selectPhongLamSangEdit').on("change", function() {
                 $('#updateLichHenKham').find('#updateLichHen').attr('data-phong-lam-sang', $("#selectPhongLamSangEdit").val())
+              })
+
+              $('#updateLichHenKham').find('#selectNhomDichVuEdit').on("change", function() {
+                $('#updateLichHenKham').find('#updateLichHen').attr('data-nhom-dich-vu', $("#selectNhomDichVuEdit").val())
               })
           })
       }
@@ -960,6 +975,7 @@
               var id = $(this).attr('data-id')
               var loai_dich_vu = $(this).attr('data-loai-dich-vu')
               var phong_lam_sang = $(this).attr('data-phong-lam-sang')
+              var nhom_dich_vu = $(this).attr('data-nhom-dich-vu')
 
               console.log(id, loai_dich_vu, phong_lam_sang, thoi_gian_bat_dau)
 
@@ -970,6 +986,7 @@
               formData.append('id', id)
               formData.append('loai_dich_vu', loai_dich_vu)
               formData.append('phong_lam_sang', phong_lam_sang)
+              formData.append('nhom_dich_vu_kham', nhom_dich_vu)
               formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
               $.ajax({
                   type       : "POST",

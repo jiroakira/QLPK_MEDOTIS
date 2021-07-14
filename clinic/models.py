@@ -753,6 +753,8 @@ class LichHenKham(models.Model):
 
     phong_lam_sang = models.ForeignKey(
         "PhongLamSang", on_delete=models.SET_NULL, null=True, blank=True, related_name="lich_hen_theo_phong")
+    nhom_dich_vu = models.ForeignKey(
+        "NhomDichVuKham", on_delete=models.SET_NULL, null=True, blank=True)
 
     thoi_gian_bat_dau = models.DateTimeField()
     thoi_gian_ket_thuc = models.DateTimeField(null=True, blank=True)

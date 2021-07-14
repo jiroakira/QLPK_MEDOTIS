@@ -146,6 +146,7 @@ class LichHenKhamSerializer(serializers.ModelSerializer):
             'thanh_toan_sau',
             'hoan_thanh_kham',
             'phong_lam_sang',
+            'nhom_dich_vu',
         )
 
     def create(self, validated_data):
@@ -1128,4 +1129,10 @@ class DichVuKhamPhanKhoaSerializer(serializers.ModelSerializer):
 class PhongLamSangSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhongLamSang
+        fields = '__all__'
+
+
+class NhomDichVuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NhomDichVuKham
         fields = '__all__'
