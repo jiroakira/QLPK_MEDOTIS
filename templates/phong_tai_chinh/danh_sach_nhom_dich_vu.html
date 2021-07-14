@@ -14,7 +14,7 @@
                 <!--begin::Page Heading-->
                 <div class="d-flex align-items-baseline flex-wrap mr-5">
                     <!--begin::Page Title-->
-                    <h5 class="text-dark font-weight-bold my-1 mr-5">Danh Sách Các Phòng Lâm Sàng</h5>
+                    <h5 class="text-dark font-weight-bold my-1 mr-5">Danh Sách Các Nhóm Dịch Vụ</h5>
                     <!--end::Page Title-->
                 </div>
                 <!--end::Page Heading-->
@@ -32,11 +32,11 @@
             <div class="card card-custom">
                 <div class="card-header flex-wrap border-0 pt-6 pb-0">
                     <div class="card-title">
-                        <h3 class="card-label">Danh Sách Phòng Lâm Sàng</h3>
+                        <h3 class="card-label">Nhóm Dịch Vụ Trong Phòng Khám</h3>
                     </div>
                     <div class="card-toolbar">
                         <!-- begin::Button -->
-                        <a href="javascript:;" class="btn btn-light-primary font-weight-bolder mr-2" id="btn_them_phong_lam_sang">
+                        <a href="javascript:;" class="btn btn-light-primary font-weight-bolder mr-2" id="btn-them-nhom-quyen">
                             <span class="svg-icon svg-icon-sm">
                                 <svg xmlns="http:www.w3.org/2000/svg" xmlns:xlink="http:    www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -46,7 +46,7 @@
                                     </g>
                                 </svg>
                             </span>
-                            Thêm Phòng Lâm Sàng
+                            Thêm Nhóm Dịch Vụ
                         </a>
                         <!-- end::Button -->
 
@@ -102,11 +102,11 @@
 <!--end::Content-->
 
 <!-- Register Modal-->
-<div class="modal fade" id="themPhongLamSangModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+<div class="modal fade" id="themNhomQuyenModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Thêm mới phòng lâm sàng</h5>
+                <h5 class="modal-title">Thêm mới nhóm dịch vụ</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
                 </button>
@@ -114,21 +114,21 @@
             <div class="modal-body">
                 <div class="card-body">
                     <form id="form_register">
-                        {% comment %} <div class="form-group mb-8">
+                        <div class="form-group mb-8">
                             <div class="alert alert-custom alert-default" role="alert">
                                 <div class="alert-icon"><i class="flaticon-user-add text-primary"></i></div>
                                 <div class="alert-text font-weight-bolder">
-                                    Tạo mới nhóm quyền tùy chỉnh cho nhân viên
+                                    Tạo mới nhóm dịch vụ
                                 </div>
                             </div>
-                        </div> {% endcomment %}
+                        </div>
                         <div class="form-group row">
                             <div class="col-lg-12">
-                                <label>Tên phòng lâm sàng </label>
-                                <input type="text" class="form-control" id="inputNameModal"  placeholder="Nhập tên phòng lâm sàng"/>
+                                <label>Tên nhóm dịch vụ </label>
+                                <input type="text" class="form-control" id="inputNameModal"  placeholder="Nhập tên nhóm dịch vụ"/>
                             </div>
                         </div>
-                        {% comment %} <div class="form-group row">
+                        <div class="form-group row">
                             <div class="col-lg-12">
                                 <select id="kt_dual_listbox_3" class="dual-listbox" multiple>
                                     {% for p in permissions %}
@@ -136,13 +136,13 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                        </div> {% endcomment %}
+                        </div>
                     </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Đóng</button>
-                <button type="button" id="btn_store_phong_lam_sang" class="nhomQuyenModalSubmit btn btn-primary font-weight-bold">Tạo</button>
+                <button type="button" id="btn_store_nhom_quyen" class="nhomQuyenModalSubmit btn btn-primary font-weight-bold">Tạo Nhóm</button>
             </div>     
         </div>
     </div>
@@ -178,7 +178,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 type: 'remote',
                 source: {
                     read: {
-                        url: HOST_URL + '/api/danh_sach_phong_lam_sang/',
+                        url: HOST_URL + '/api/danh_sach_nhom_dich_vu/',
                         method: 'GET',
                         // sample custom headers
                         // headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
@@ -197,8 +197,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                 },
                 pageSize: 5,
                 serverPaging: true,
-                serverFiltering: true,
-                serverSorting: false,
+                // serverFiltering: true,
+                //serverSorting: true,
             },
 
             // layout definition
@@ -228,12 +228,8 @@ var KTDatatableRemoteAjaxDemo = function() {
                 textAlign: 'center',
                 autoHide: false,
             }, {
-                field: 'ten_phong_lam_sang',
-                title: 'Tên Phòng Lâm Sàng',
-                autoHide: false,
-            }, {
-                field: 'slug',
-                title: 'Slug',
+                field: 'ten_nhom_dich_vu',
+                title: 'Tên Nhóm Dịch Vụ',
                 autoHide: false,
             }, {
                 field: 'update',
@@ -244,7 +240,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
-                        <a href="/nhom_quyen/${row.id}/chinh_sua/" class="btn btn-lg btn-clean btn-icon" title="Chỉnh sửa thông tin phòng lâm sàng ${row.ten_phong_lam_sang}">
+                        <a href="/nhom_dich_vu/${row.id}/chinh_sua/" class="btn btn-lg btn-clean btn-icon" title="Chỉnh sửa thông tin nhóm dịch vụ ${row.ten_nhom_dich_vu}">
                             <i class="la la-edit icon-lg text-primary"></i>
                         </a>
                     `;
@@ -258,7 +254,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                 autoHide: false,
                 template: function(row) {
                     return `
-                        <a href="javascript:;" class="btn_delete btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ten_phong_lam_sang}" title="Xóa phòng lâm sàng">
+                        <a href="javascript:;" class="btn_delete btn btn-lg btn-clean btn-icon" data-id="${row.id}" data-ten="${row.ten_nhom_dich_vu}" title="Xóa nhóm dịch vụ">
                             <i class="la la-trash-alt icon-lg text-danger"></i>
                         </a>
                     `;
@@ -279,68 +275,64 @@ var KTDatatableRemoteAjaxDemo = function() {
 
     };
 
-    $('#btn_them_phong_lam_sang').on('click', function(){
-        $('#themPhongLamSangModal').modal('show')
+    $('#btn-them-nhom-quyen').on('click', function(){
+        $('#themNhomQuyenModal').modal('show')
         
     })
 
-    var deletePhongLamSang = function() {
-        $('#kt_datatable').on('click', '.btn_delete', function() {
-            var id = $(this).attr('data-id')
-            var ten_phong_lam_sang = $(this).attr('data-ten')
- 
-            Swal.fire({
-                title: "Xóa Phòng Lâm Sàng " + ten_phong_lam_sang + " khỏi danh sách",
-                text: "Bạn sẽ không thể hoàn tác lại!",
-                icon: "warning",
-                showCancelButton: true,
-                cancelButtonText: "Hủy",
-                confirmButtonText: "Xác Nhận!"
-            }).then(function(result) {
-                if (result.value) {
-                    console.log(id)
-                    var formData = new FormData()
-                    formData.append('id', id)
-                    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
- 
-                    $.ajax({
-                        type: "GET",
-                        url: "{% url 'xoa_phong_lam_sang' %}",
-                        data: {
-                            id: id
-                        },
+    var initDualListBox = function() {
 
-                        success: function(response){
-                            Swal.fire(
-                                'Đã Xóa!',
-                                'Phòng Lâm Sàng Đã Được Xóa',
-                                'success'
-                            )
-                            $('#kt_datatable').KTDatatable('reload');
-                        },
-                        error: function(response){
-                        }
-                    })
-                }else if (result.dismiss === 'cancel') {
-					Swal.fire(
-						'Đã Hủy',
-						'Phòng Lâm Sàng Vẫn Chưa Được Xóa',
-						'error'
-					)
-				}
+        var $this = $('#kt_dual_listbox_3');
+        // get options
+        var options = [];
+
+        var selectedOption = [];
+        $this.children('option').each(function () {
+            var value = $(this).val();
+            var label = $(this).text();
+            options.push({
+                text: label,
+                value: value
             });
- 
         });
-    }
-    
-    var storePhongLamSang = function() {
 
-        $("#btn_store_phong_lam_sang").on('click', function() {
+        function removeA(arr) {
+            var what, a = arguments, L = a.length, ax;
+            while (L > 1 && arr.length) {
+                what = a[--L];
+                while ((ax= arr.indexOf(what)) !== -1) {
+                    arr.splice(ax, 1);
+                }
+            }
+            return arr;
+        }
 
-            var ten_phong_lam_sang = $("#inputNameModal").val()
+        // init dual listbox
+        var dualListBox = new DualListbox($this.get(0), {
+            addEvent: function (value) {
+                console.log(value);
+                selectedOption.push(value)
+            },
+            removeEvent: function (value) {
+                console.log(value);
+                removeA(selectedOption, value);
+            },
+            availableTitle: 'Những nhóm dịch vụ hiện có',
+            selectedTitle: 'Những nhóm dịch vụ được chọn',
+            addButtonText: 'Thêm',
+            removeButtonText: 'Xóa',
+            addAllButtonText: 'Thêm tất cả',
+            removeAllButtonText: 'Xóa tất cả',
+            options: options,
+        });
+
+        $("#btn_store_nhom_quyen").on('click', function() {
             var formData = new FormData()
+            var ten_nhom_quyen = $("#inputNameModal").val()
+            console.log(selectedOption)
 
-            formData.append('ten_phong_lam_sang', ten_phong_lam_sang)
+            formData.append('ten_nhom_quyen', ten_nhom_quyen)
+            formData.append('danh_sach_quyen', JSON.stringify(selectedOption))
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
 
             KTApp.blockPage({
@@ -351,7 +343,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 
             $.ajax({
                 type: "POST",
-                url: "{% url 'store_phong_lam_sang' %}",
+                url: "{% url 'store_nhom_quyen' %}",
                 data: formData,
                 cache: false,
                 processData: false,
@@ -361,8 +353,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                         KTApp.unblockPage();
                         toastr.success(response.message, "Thành Công"),
                         $('#kt_datatable').KTDatatable('reload');
-                        $('#themPhongLamSangModal').modal('hide');
-                        $("#inputNameModal").val('')
+                        $('#themNhomQuyenModal').modal('hide');
 
                     } else if (response.status == 404) {
                         KTApp.unblockPage();
@@ -371,17 +362,67 @@ var KTDatatableRemoteAjaxDemo = function() {
                 },
                 error: function(response){
                     KTApp.unblockPage();
-                    toastr.warning("Không gửi được dữ liệu")
+                    toastr.warning("Không gửi được dữ liệu", 'Lỗi')
                 }
             })
         })
+  
     }
+
+    var deleteNhomQuyen = function() {
+        $('#kt_datatable').on('click', '.btn_delete', function() {
+            var id = $(this).attr('data-id')
+            var ten_nhom_dich_vu = $(this).attr('data-ten')
+ 
+            Swal.fire({
+                title: "Xóa Nhóm Dịch Vụ " +ten_nhom_dich_vu+ " khỏi danh sách",
+                text: "Bạn sẽ không thể hoàn tác lại nhóm dịch vụ này!",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: "Hủy",
+                confirmButtonText: "Xác Nhận!"
+            }).then(function(result) {
+                if (result.value) {
+                   
+                    {% comment %} var formData = new FormData() {% endcomment %}
+                    {% comment %} formData.append('id', id) {% endcomment %}
+                    {% comment %} formData.append('csrfmiddlewaretoken', '{{ csrf_token }}') {% endcomment %}
+ 
+                    $.ajax({
+                        type: "GET",
+                        url: "{% url 'xoa_nhom_dich_vu' %}",
+                        data: {
+                            "id": id
+                        },
+                        success: function(response){
+                            Swal.fire(
+                                'Đã Xóa!',
+                                'Nhóm dịch vụ đã được xóa thành công.',
+                                'success'
+                            )
+                            $('#kt_datatable').KTDatatable('reload');
+                        },
+                        error: function(response){
+                        }
+                    })
+                }else if (result.dismiss === 'cancel') {
+					Swal.fire(
+						'Đã Hủy',
+						'Nhóm dịch vụ vẫn chưa được xóa',
+						'error'
+					)
+				}
+            });
+ 
+        });
+    }
+    
 
     return {
         init: function() {
             demo();
-            deletePhongLamSang();
-            storePhongLamSang();
+            initDualListBox();
+            deleteNhomQuyen();
         },
     };
 }();
