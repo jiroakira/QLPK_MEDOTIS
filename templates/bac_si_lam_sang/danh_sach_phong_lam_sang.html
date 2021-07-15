@@ -236,20 +236,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                 title: 'Slug',
                 autoHide: false,
             }, {
-                field: 'update',
-                title: 'Chỉnh Sửa',
-                sortable: false,
-                width: 60,
-                textAlign: 'center',
-                autoHide: false,
-                template: function(row) {
-                    return `
-                        <a href="/nhom_quyen/${row.id}/chinh_sua/" class="btn btn-lg btn-clean btn-icon" title="Chỉnh sửa thông tin phòng lâm sàng ${row.ten_phong_lam_sang}">
-                            <i class="la la-edit icon-lg text-primary"></i>
-                        </a>
-                    `;
-                },
-            }, {
                 field: 'Delete',
                 title: 'Xóa',
                 sortable: false,
