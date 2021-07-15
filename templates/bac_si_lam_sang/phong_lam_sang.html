@@ -748,12 +748,11 @@
                   field: 'thoi_gian_bat_dau',
                   title: 'Thời Gian Hẹn',
                   template: function(row) {
-                      var date = new Date(Date.parse(row.thoi_gian_bat_dau))
 
                       if(!row.thoi_gian_bat_dau){
                           return '<span class="label font-weight-bold label-lg ' + 'label-light-info' + ' label-inline">' + 'Chưa Bắt Đầu' + '</span>';
                       } else {
-                          return date.toLocaleString('vi-VN')
+                          return row.thoi_gian_bat_dau
                       }
                   }
               }, {
