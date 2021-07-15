@@ -301,6 +301,7 @@ def cap_nhat_thong_tin_benh_nhan(request):
         gt_the_tu = request.POST.get('gt_the_tu')
         lien_tuc_5_nam_tu = request.POST.get('lien_tuc_5_nam_tu')
         can_nang = request.POST.get('can_nang')
+
         if can_nang != '':
             can_nang = request.POST.get('can_nang')
         else:
@@ -312,7 +313,8 @@ def cap_nhat_thong_tin_benh_nhan(request):
         benh_nhan = get_object_or_404(User, id=id_benh_nhan)
         benh_nhan.ho_ten = ho_ten
         benh_nhan.so_dien_thoai = so_dien_thoai
-        benh_nhan.cmnd_cccd = cmnd_cccd
+        if cmnd_cccd != '':
+            benh_nhan.cmnd_cccd = cmnd_cccd
         benh_nhan.dia_chi = dia_chi
         benh_nhan.ngay_sinh = ngay_sinh
         benh_nhan.gioi_tinh = gioi_tinh
@@ -7617,6 +7619,7 @@ def xoa_nhom_dich_vu(request):
         }
 
         return HttpResponse(json.dumps(response), content_type="application/json, charset=utf-8")
+
 
 def xoa_phong_lam_sang(request):
     if request.method == "GET":
